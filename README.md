@@ -427,7 +427,7 @@ and paste this content:
     version: 0.6.0
 ```
 
-To save: Cntrl+X, y, Entet.
+To save: Ctrl+X, y, Entet.
 
 ### Use rosinstall to Update the Workspace:
 Use rosinstall to ensure the workspace remains consistent with the specified versions.
