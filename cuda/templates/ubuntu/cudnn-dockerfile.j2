@@ -1,0 +1,333 @@
+ARG IMAGE_NAME
+FROM ${IMAGE_NAME}:{{ cuda.version.release_label }}-{{ cuda.cudnn.target }}-{{ cuda.os.distro }}{{ cuda.os.version }}{{ cuda.image_tag_suffix }} as base
+
+{% if "x86_64" in cuda %}
+FROM base as base-amd64
+
+{% set cudnn_version = cuda.x86_64.cudnn.version %}
+{% if "-" in cuda.x86_64.cudnn.version %}
+    {% set cudnn_version = cuda.x86_64.cudnn.version[:-2] %}
+{% endif -%}
+ENV NV_CUDNN_VERSION {{ cudnn_version }}
+{% if cuda.x86_64.cudnn.version[0] == "8" %}
+ENV NV_CUDNN_PACKAGE_NAME "libcudnn{{ cuda.x86_64.cudnn.version[0] }}"
+{% else %}
+ENV NV_CUDNN_PACKAGE_NAME "libcudnn{{ cuda.x86_64.cudnn.version[0] }}-cuda-{{ cuda.version.major }}"
+{% endif %}
+
+{% if cuda.cudnn.target == "runtime" %}
+{% if cuda.x86_64.cudnn.version[0] == "8" %}
+ENV NV_CUDNN_PACKAGE "libcudnn{{ cuda.x86_64.cudnn.version[0] }}=$NV_CUDNN_VERSION-1+cuda{{ cuda.version.major }}.{{ cuda.version.minor }}"
+{% else %}
+ENV NV_CUDNN_PACKAGE "libcudnn{{ cuda.x86_64.cudnn.version[0] }}-cuda-{{ cuda.version.major }}=${NV_CUDNN_VERSION}-1"
+{% endif %}
+
+{% if "source" in cuda.x86_64.cudnn %}
+    {% set dl_cudnn = true %}
+    {% set hashcmd = "md5sum" -%}
+    {% if "sha256sum" in cuda.x86_64.cudnn %}
+        {% set hashcmd = "sha256sum" %}
+    {% endif -%}
+    {% if "sha256sum" in cuda.x86_64.cudnn %}
+ENV NV_CUDNN_DL_HASHCMD sha256sum
+ENV NV_CUDNN_DL_SUM {{ cuda.x86_64.cudnn.sha256sum }}
+    {% else %}
+ENV NV_CUDNN_DL_HASHCMD md5sum
+ENV NV_CUDNN_DL_SUM {{ cuda.x86_64.cudnn.md5sum }}
+    {% endif %}
+ENV NV_CUDNN_DL_BASENAME {{ cuda.x86_64.cudnn.basename }}
+ENV NV_CUDNN_DL_URL {{ cuda.x86_64.cudnn.source }}
+
+RUN apt-get update && apt-get install -y --no-install-recommends wget
+
+RUN wget -q ${NV_CUDNN_DL_URL} \
+    && echo "${NV_CUDNN_DL_SUM}  ${NV_CUDNN_DL_BASENAME}" | ${NV_CUDNN_DL_HASHCMD} -c - \
+    && dpkg -i ${NV_CUDNN_DL_BASENAME} \
+    && rm -f ${NV_CUDNN_DL_BASENAME} \
+    && apt-get purge --autoremove -y wget
+
+{% endif %}
+{% else %}
+{% if cuda.x86_64.cudnn.version[0] == "8" %}
+ENV NV_CUDNN_PACKAGE "libcudnn{{ cuda.x86_64.cudnn.version[0] }}=$NV_CUDNN_VERSION-1+cuda{{ cuda.version.major }}.{{ cuda.version.minor }}"
+ENV NV_CUDNN_PACKAGE_DEV "libcudnn{{ cuda.x86_64.cudnn.version[0] }}-dev=$NV_CUDNN_VERSION-1+cuda{{ cuda.version.major }}.{{ cuda.version.minor }}"
+{% else %}
+ENV NV_CUDNN_PACKAGE "libcudnn{{ cuda.x86_64.cudnn.version[0] }}-cuda-{{ cuda.version.major }}=${NV_CUDNN_VERSION}-1"
+ENV NV_CUDNN_PACKAGE_DEV "libcudnn{{ cuda.x86_64.cudnn.version[0] }}-dev-cuda-{{ cuda.version.major }}=${NV_CUDNN_VERSION}-1"
+{% endif %}
+
+{% if "source" in cuda.x86_64.cudnn %}
+    {% set dl_cudnn = true %}
+    {% set hashcmd = "md5sum" -%}
+    {% if "sha256sum" in cuda.x86_64.cudnn %}
+        {% set hashcmd = "sha256sum" %}
+    {% endif -%}
+    {% if "sha256sum" in cuda.x86_64.cudnn %}
+ENV NV_CUDNN_DL_HASHCMD sha256sum
+ENV NV_CUDNN_DL_SUM {{ cuda.x86_64.cudnn.sha256sum }}
+    {% else %}
+ENV NV_CUDNN_DL_HASHCMD md5sum
+ENV NV_CUDNN_DL_SUM {{ cuda.x86_64.cudnn.md5sum }}
+    {% endif %}
+ENV NV_CUDNN_DL_BASENAME {{ cuda.x86_64.cudnn.basename }}
+ENV NV_CUDNN_DL_URL {{ cuda.x86_64.cudnn.source }}
+
+RUN apt-get update && apt-get install -y --no-install-recommends wget
+
+RUN wget -q ${NV_CUDNN_DL_URL} \
+    && echo "${NV_CUDNN_DL_SUM}  ${NV_CUDNN_DL_BASENAME}" | ${NV_CUDNN_DL_HASHCMD} -c - \
+    && dpkg -i ${NV_CUDNN_DL_BASENAME} \
+    && rm -f ${NV_CUDNN_DL_BASENAME}
+
+{% endif %}
+{% if "source" in cuda.x86_64.cudnn.dev %}
+    {% set dl_source = True -%}
+    {% set hashcmd = "md5sum" -%}
+    {% if "sha256sum" in cuda.x86_64.cudnn.dev %}
+        {% set hashcmd = "sha256sum" %}
+    {% endif -%}
+    {% if "sha256sum" in cuda.x86_64.cudnn.dev %}
+ENV NV_CUDNN_DEV_DL_HASHCMD sha256sum
+ENV NV_CUDNN_DEV_DL_SUM {{ cuda.x86_64.cudnn.dev.sha256sum }}
+    {% else %}
+ENV NV_CUDNN_DEV_DL_HASHCMD md5sum
+ENV NV_CUDNN_DEV_DL_SUM {{ cuda.x86_64.cudnn.dev.md5sum }}
+    {% endif %}
+ENV NV_CUDNN_DEV_DL_BASENAME {{ cuda.x86_64.cudnn.dev.basename }}
+ENV NV_CUDNN_DEV_DL_URL {{ cuda.x86_64.cudnn.dev.source }}
+
+RUN wget -q ${NV_CUDNN_DEV_DL_URL} \
+    && echo "${NV_CUDNN_DEV_DL_SUM}  ${NV_CUDNN_DEV_DL_BASENAME}" | ${NV_CUDNN_DEV_DL_HASHCMD} -c - \
+    && dpkg -i ${NV_CUDNN_DEV_DL_BASENAME} \
+    && rm -f ${NV_CUDNN_DEV_DL_BASENAME} \
+    && apt-get purge --autoremove -y wget
+
+{% endif %}
+
+{% endif %}
+{% endif %}
+{% if "arm64" in cuda %}
+FROM base as base-arm64
+
+{% set cudnn_version = cuda.arm64.cudnn.version %}
+{% if "-" in cuda.arm64.cudnn.version %}
+    {% set cudnn_version = cuda.arm64.cudnn.version[:-2] %}
+{% endif -%}
+
+ENV NV_CUDNN_VERSION {{ cudnn_version }}
+{% if cuda.arm64.cudnn.version[0] == "8" %}
+ENV NV_CUDNN_PACKAGE_NAME "libcudnn{{ cuda.arm64.cudnn.version[0] }}"
+{% else %}
+ENV NV_CUDNN_PACKAGE_NAME "libcudnn{{ cuda.arm64.cudnn.version[0] }}-cuda-{{ cuda.version.major }}"
+{% endif %}
+
+{% if cuda.cudnn.target == "runtime" %}
+{% if cuda.arm64.cudnn.version[0] == "8" %}
+ENV NV_CUDNN_PACKAGE "libcudnn{{ cuda.arm64.cudnn.version[0] }}=$NV_CUDNN_VERSION-1+cuda{{ cuda.version.major }}.{{ cuda.version.minor }}"
+{% else %}
+ENV NV_CUDNN_PACKAGE "libcudnn{{ cuda.arm64.cudnn.version[0] }}-cuda-{{ cuda.version.major }}=${NV_CUDNN_VERSION}-1"
+{% endif %}
+
+{% if "source" in cuda.arm64.cudnn %}
+    {% set dl_cudnn = true %}
+    {% set hashcmd = "md5sum" -%}
+    {% if "sha256sum" in cuda.arm64.cudnn %}
+        {% set hashcmd = "sha256sum" %}
+    {% endif -%}
+    {% if "sha256sum" in cuda.arm64.cudnn %}
+ENV NV_CUDNN_DL_HASHCMD sha256sum
+ENV NV_CUDNN_DL_SUM {{ cuda.arm64.cudnn.sha256sum }}
+    {% else %}
+ENV NV_CUDNN_DL_HASHCMD md5sum
+ENV NV_CUDNN_DL_SUM {{ cuda.arm64.cudnn.md5sum }}
+    {% endif %}
+ENV NV_CUDNN_DL_BASENAME {{ cuda.arm64.cudnn.basename }}
+ENV NV_CUDNN_DL_URL {{ cuda.arm64.cudnn.source }}
+
+RUN apt-get update && apt-get install -y --no-install-recommends wget
+
+RUN wget -q ${NV_CUDNN_DL_URL} \
+    && echo "${NV_CUDNN_DL_SUM}  ${NV_CUDNN_DL_BASENAME}" | ${NV_CUDNN_DL_HASHCMD} -c - \
+    && dpkg -i ${NV_CUDNN_DL_BASENAME} \
+    && rm -f ${NV_CUDNN_DL_BASENAME} \
+    && apt-get purge --autoremove -y wget
+
+{% endif %}
+{% else %}
+{% if cuda.arm64.cudnn.version[0] == "8" %}
+ENV NV_CUDNN_PACKAGE "libcudnn{{ cuda.arm64.cudnn.version[0] }}=$NV_CUDNN_VERSION-1+cuda{{ cuda.version.major }}.{{ cuda.version.minor }}"
+ENV NV_CUDNN_PACKAGE_DEV "libcudnn{{ cuda.arm64.cudnn.version[0] }}-dev=$NV_CUDNN_VERSION-1+cuda{{ cuda.version.major }}.{{ cuda.version.minor }}"
+{% else %}
+ENV NV_CUDNN_PACKAGE "libcudnn{{ cuda.arm64.cudnn.version[0] }}-cuda-{{ cuda.version.major }}=${NV_CUDNN_VERSION}-1"
+ENV NV_CUDNN_PACKAGE_DEV "libcudnn{{ cuda.arm64.cudnn.version[0] }}-dev-cuda-{{ cuda.version.major }}=${NV_CUDNN_VERSION}-1"
+{% endif %}
+
+{% if "source" in cuda.arm64.cudnn %}
+    {% set dl_cudnn = true %}
+    {% set hashcmd = "md5sum" -%}
+    {% if "sha256sum" in cuda.arm64.cudnn %}
+        {% set hashcmd = "sha256sum" %}
+    {% endif -%}
+    {% if "sha256sum" in cuda.arm64.cudnn %}
+ENV NV_CUDNN_DL_HASHCMD sha256sum
+ENV NV_CUDNN_DL_SUM {{ cuda.arm64.cudnn.sha256sum }}
+    {% else %}
+ENV NV_CUDNN_DL_HASHCMD md5sum
+ENV NV_CUDNN_DL_SUM {{ cuda.arm64.cudnn.md5sum }}
+    {% endif %}
+ENV NV_CUDNN_DL_BASENAME {{ cuda.arm64.cudnn.basename }}
+ENV NV_CUDNN_DL_URL {{ cuda.arm64.cudnn.source }}
+
+RUN apt-get update && apt-get install -y --no-install-recommends wget
+
+RUN wget -q ${NV_CUDNN_DL_URL} \
+    && echo "${NV_CUDNN_DL_SUM}  ${NV_CUDNN_DL_BASENAME}" | ${NV_CUDNN_DL_HASHCMD} -c - \
+    && dpkg -i ${NV_CUDNN_DL_BASENAME} \
+    && rm -f ${NV_CUDNN_DL_BASENAME}
+
+{% endif %}
+{% if "source" in cuda.arm64.cudnn.dev %}
+    {% set dl_cudnn = true %}
+    {% set hashcmd = "md5sum" -%}
+    {% if "sha256sum" in cuda.arm64.cudnn.dev %}
+        {% set hashcmd = "sha256sum" %}
+    {% endif -%}
+    {% if "sha256sum" in cuda.arm64.cudnn.dev %}
+ENV NV_CUDNN_DEV_DL_HASHCMD sha256sum
+ENV NV_CUDNN_DEV_DL_SUM {{ cuda.arm64.cudnn.dev.sha256sum }}
+    {% else %}
+ENV NV_CUDNN_DEV_DL_HASHCMD md5sum
+ENV NV_CUDNN_DEV_DL_SUM {{ cuda.arm64.cudnn.dev.md5sum }}
+    {% endif %}
+ENV NV_CUDNN_DEV_DL_BASENAME {{ cuda.arm64.cudnn.dev.basename }}
+ENV NV_CUDNN_DEV_DL_URL {{ cuda.arm64.cudnn.dev.source }}
+
+RUN wget -q ${NV_CUDNN_DEV_DL_URL} \
+    && echo "${NV_CUDNN_DEV_DL_SUM}  ${NV_CUDNN_DEV_DL_BASENAME}" | ${NV_CUDNN_DEV_DL_HASHCMD} -c - \
+    && dpkg -i ${NV_CUDNN_DEV_DL_BASENAME} \
+    && rm -f ${NV_CUDNN_DEV_DL_BASENAME} \
+    && apt-get purge --autoremove -y wget
+
+    {% endif %}
+{% endif %}
+{% endif -%}
+{% if "ppc64le" in cuda %}
+FROM base as base-ppc64le
+
+{% set cudnn_version = cuda.ppc64le.cudnn.version %}
+{% if "-" in cuda.ppc64le.cudnn.version %}
+    {% set cudnn_version = cuda.ppc64le.cudnn.version[:-2] %}
+{% endif -%}
+ENV NV_CUDNN_VERSION {{ cudnn_version }}
+{% if cuda.ppc64le.cudnn.version[0] == "8" %}
+ENV NV_CUDNN_PACKAGE_NAME "libcudnn{{ cuda.ppc64le.cudnn.version[0] }}"
+{% else %}
+ENV NV_CUDNN_PACKAGE_NAME "libcudnn{{ cuda.ppc64le.cudnn.version[0] }}-cuda-{{ cuda.version.major }}"
+{% endif %}
+
+{% if cuda.cudnn.target == "runtime" %}
+{% if cuda.ppc64le.cudnn.version[0] == "8" %}
+ENV NV_CUDNN_PACKAGE "libcudnn{{ cuda.ppc64le.cudnn.version[0] }}=$NV_CUDNN_VERSION-1+cuda{{ cuda.version.major }}.{{ cuda.version.minor }}"
+{% else %}
+ENV NV_CUDNN_PACKAGE "libcudnn{{ cuda.ppc64le.cudnn.version[0] }}-cuda-{{ cuda.version.major }}=${NV_CUDNN_VERSION}-1"
+{% endif %}
+
+{% if "source" in cuda.ppc64le.cudnn %}
+    {% set dl_cudnn = true %}
+    {% set hashcmd = "md5sum" -%}
+    {% if "sha256sum" in cuda.ppc64le.cudnn %}
+        {% set hashcmd = "sha256sum" %}
+    {% endif -%}
+    {% if "sha256sum" in cuda.ppc64le.cudnn %}
+ENV NV_CUDNN_DL_HASHCMD sha256sum
+ENV NV_CUDNN_DL_SUM {{ cuda.ppc64le.cudnn.sha256sum }}
+    {% else %}
+ENV NV_CUDNN_DL_HASHCMD md5sum
+ENV NV_CUDNN_DL_SUM {{ cuda.ppc64le.cudnn.md5sum }}
+    {% endif %}
+ENV NV_CUDNN_DL_BASENAME {{ cuda.ppc64le.cudnn.basename }}
+ENV NV_CUDNN_DL_URL {{ cuda.ppc64le.cudnn.source }}
+
+RUN apt-get update && apt-get install -y --no-install-recommends wget
+
+RUN wget -q ${NV_CUDNN_DL_URL} \
+    && echo "${NV_CUDNN_DL_SUM}  ${NV_CUDNN_DL_BASENAME}" | ${NV_CUDNN_DL_HASHCMD} -c - \
+    && dpkg -i ${NV_CUDNN_DL_BASENAME} \
+    && rm -f ${NV_CUDNN_DL_BASENAME} \
+    && apt-get purge --autoremove -y wget
+
+{% endif %}
+{% else %}
+{% if cuda.ppc64le.cudnn.version[0] == "8" %}
+ENV NV_CUDNN_PACKAGE "libcudnn{{ cuda.ppc64le.cudnn.version[0] }}=$NV_CUDNN_VERSION-1+cuda{{ cuda.version.major }}.{{ cuda.version.minor }}"
+ENV NV_CUDNN_PACKAGE_DEV "libcudnn{{ cuda.ppc64le.cudnn.version[0] }}-dev=$NV_CUDNN_VERSION-1+cuda{{ cuda.version.major }}.{{ cuda.version.minor }}"
+{% else %}
+ENV NV_CUDNN_PACKAGE "libcudnn{{ cuda.ppc64le.cudnn.version[0] }}-cuda-{{ cuda.version.major }}=${NV_CUDNN_VERSION}-1"
+ENV NV_CUDNN_PACKAGE_DEV "libcudnn{{ cuda.ppc64le.cudnn.version[0] }}-dev-cuda-{{ cuda.version.major }}=${NV_CUDNN_VERSION}-1"
+{% endif %}
+
+{% if "source" in cuda.ppc64le.cudnn %}
+    {% set dl_cudnn = true %}
+    {% set hashcmd = "md5sum" -%}
+    {% if "sha256sum" in cuda.ppc64le.cudnn %}
+        {% set hashcmd = "sha256sum" %}
+    {% endif -%}
+    {% if "sha256sum" in cuda.ppc64le.cudnn %}
+ENV NV_CUDNN_DL_HASHCMD sha256sum
+ENV NV_CUDNN_DL_SUM {{ cuda.ppc64le.cudnn.sha256sum }}
+    {% else %}
+ENV NV_CUDNN_DL_HASHCMD md5sum
+ENV NV_CUDNN_DL_SUM {{ cuda.ppc64le.cudnn.md5sum }}
+    {% endif %}
+ENV NV_CUDNN_DL_BASENAME {{ cuda.ppc64le.cudnn.basename }}
+ENV NV_CUDNN_DL_URL {{ cuda.ppc64le.cudnn.source }}
+
+RUN apt-get update && apt-get install -y --no-install-recommends wget
+
+RUN wget -q ${NV_CUDNN_DL_URL} \
+    && echo "${NV_CUDNN_DL_SUM}  ${NV_CUDNN_DL_BASENAME}" | ${NV_CUDNN_DL_HASHCMD} -c - \
+    && dpkg -i ${NV_CUDNN_DL_BASENAME} \
+    && rm -f ${NV_CUDNN_DL_BASENAME}
+
+{% endif %}
+{% if "source" in cuda.ppc64le.cudnn.dev %}
+    {% set dl_cudnn = true %}
+    {% set hashcmd = "md5sum" -%}
+    {% if "sha256sum" in cuda.ppc64le.cudnn.dev %}
+        {% set hashcmd = "sha256sum" %}
+    {% endif -%}
+    {% if "sha256sum" in cuda.ppc64le.cudnn.dev %}
+ENV NV_CUDNN_DEV_DL_HASHCMD sha256sum
+ENV NV_CUDNN_DEV_DL_SUM {{ cuda.ppc64le.cudnn.dev.sha256sum }}
+    {% else %}
+ENV NV_CUDNN_DEV_DL_HASHCMD md5sum
+ENV NV_CUDNN_DEV_DL_SUM {{ cuda.ppc64le.cudnn.dev.md5sum }}
+    {% endif %}
+ENV NV_CUDNN_DEV_DL_BASENAME {{ cuda.ppc64le.cudnn.dev.basename }}
+ENV NV_CUDNN_DEV_DL_URL {{ cuda.ppc64le.cudnn.dev.source }}
+
+RUN wget -q ${NV_CUDNN_DEV_DL_URL} \
+    && echo "${NV_CUDNN_DEV_DL_SUM}  ${NV_CUDNN_DEV_DL_BASENAME}" | ${NV_CUDNN_DEV_DL_HASHCMD} -c - \
+    && dpkg -i ${NV_CUDNN_DEV_DL_BASENAME} \
+    && rm -f ${NV_CUDNN_DEV_DL_BASENAME} \
+    && apt-get purge --autoremove -y wget
+
+{% endif %}
+{% endif %}
+{% endif -%}
+FROM base-${TARGETARCH}
+
+ARG TARGETARCH
+
+LABEL maintainer "NVIDIA CORPORATION <cudatools@nvidia.com>"
+LABEL com.nvidia.cudnn.version="${NV_CUDNN_VERSION}"
+
+{% if not dl_cudnn %}
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ${NV_CUDNN_PACKAGE} \
+    {% if cuda.cudnn.target == "devel" %}
+    ${NV_CUDNN_PACKAGE_DEV} \
+    {% endif %}
+    && apt-mark hold ${NV_CUDNN_PACKAGE_NAME} \
+    && rm -rf /var/lib/apt/lists/*
+{% endif %}

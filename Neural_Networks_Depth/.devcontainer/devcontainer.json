@@ -1,0 +1,48 @@
+{
+  "name": "ROS2 Development",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": "..",
+    "args": {
+      "WORKSPACE": "${containerWorkspaceFolder}"
+    }
+  },
+  "runArgs": [
+    "--network=host",
+    "--cap-add=SYS_PTRACE",
+    "--security-opt=seccomp:unconfined",
+    "--security-opt=apparmor:unconfined",
+    "--volume=/tmp/.X11-unix:/tmp/.X11-unix",
+    "--privileged",
+    "--runtime=nvidia",
+    "--gpus=all",
+    "-e", "RMW_IMPLEMENTATION=rmw_cyclonedds_cpp",
+    "-e", "DISPLAY=${localEnv:DISPLAY}",
+    "-e", "QT_X11_NO_MITSHM=1",
+    "-e", "QT_GRAPHICSSYSTEM=native",
+    "--add-host=host.docker.internal:host-gateway"
+  ],
+  "containerEnv": { "DISPLAY": "${localEnv:DISPLAY}" },
+  "settings": {
+    "terminal.integrated.profiles.linux": {
+      "bash": {
+        "path": "bash"
+      }
+    },
+    "terminal.integrated.defaultProfile.linux": "bash"
+  },
+  "extensions": [
+    "dotjoshjohnson.xml",
+    "zachflower.uncrustify",
+    "ms-azuretools.vscode-docker",
+    "ms-python.python",
+    "ms-vscode.cpptools",
+    "redhat.vscode-yaml",
+    "ms-iot.vscode-ros",
+    "smilerobotics.urdf",
+    "streetsidesoftware.code-spell-checker",
+    "twxs.cmake",
+    "yzhang.markdown-all-in-one",
+    "mhutchie.git-graph"
+  ]
+}

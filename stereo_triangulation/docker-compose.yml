@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  stereo_triangulation:
+    image: triangulation_node_image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspace
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    command: /bin/bash -c "source /opt/ros/humble/setup.bash && source /root/ros2_ws/install/setup.bash && ros2 run stereo_triangulation triangulation_node"
+    networks:
+      - dev-network
+    environment:
+      - DISPLAY=${DISPLAY}
+
+networks:
+  dev-network:
+    driver: bridge
+

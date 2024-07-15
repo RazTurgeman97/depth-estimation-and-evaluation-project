@@ -1,0 +1,23 @@
+[
+  {"type":"directory","name":"kitpick","contents":[
+    {"type":"directory","name":"l4t-cuda","contents":[
+      {"type":"directory","name":"base","contents":[
+        {"type":"file","name":"Dockerfile"}
+      ]},
+      {"type":"directory","name":"devel","contents":[
+        {"type":"directory","name":"cudnn8","contents":[
+          {"type":"file","name":"Dockerfile"}
+        ]},
+        {"type":"file","name":"Dockerfile"}
+      ]},
+      {"type":"directory","name":"runtime","contents":[
+        {"type":"directory","name":"cudnn8","contents":[
+          {"type":"file","name":"Dockerfile"}
+        ]},
+        {"type":"file","name":"Dockerfile"}
+      ]}
+    ]},
+    {"type":"file","name":"manifest.yml"}
+  ]},
+  {"type":"report","directories":6,"files":6}
+]

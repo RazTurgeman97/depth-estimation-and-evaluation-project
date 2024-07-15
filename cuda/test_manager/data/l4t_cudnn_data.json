@@ -1,0 +1,107 @@
+[
+  {
+    "path": "sw-gpu-cuda-installer-generic-local/packaging/v8.3_cuda_11.4/cudnn/linux-aarch64/8.3.2.49/libcudnn8_8.3.2.49-1+cuda11.4_arm64.deb",
+    "type": "file",
+    "size": 455892028,
+    "created": "2022-01-11T10:56:10.226Z",
+    "modified": "2022-01-11T10:56:03.573Z",
+    "sha1": "86c51809e7d91b1250994e5ad5999b3bd1386703",
+    "md5": "b3cb07b3ff96b51532cc3225ec348506",
+    "props": {
+      "arch": [
+        "aarch64"
+      ],
+      "branch": [
+        "v8.3_cuda_11.4"
+      ],
+      "component_name": [
+        "cudnn"
+      ],
+      "os": [
+        "linux"
+      ],
+      "release_status": [
+        "rc"
+      ],
+      "release_status_timestamp": [
+        "1641936232000"
+      ],
+      "source": [
+        "hw-cudnn-generic-local/CUDNN/v8.3_cuda_11.4/8.3.2.49/cudnn-linux-aarch64-8.3.2.49.tar.gz"
+      ],
+      "version": [
+        "8.3.2.49"
+      ]
+    }
+  },
+  {
+    "path": "sw-gpu-cuda-installer-generic-local/packaging/v8.3_cuda_11.4/cudnn/linux-aarch64/8.3.2.49/libcudnn8-dev_8.3.2.49-1+cuda11.4_arm64.deb",
+    "type": "file",
+    "size": 494412750,
+    "created": "2022-01-11T10:56:03.306Z",
+    "modified": "2022-01-11T10:55:55.683Z",
+    "sha1": "ac7ed79c3135b33c7f99749bafb87fa77d65dc3b",
+    "md5": "a34b332bdfbe21250f860298808850a7",
+    "props": {
+      "arch": [
+        "aarch64"
+      ],
+      "branch": [
+        "v8.3_cuda_11.4"
+      ],
+      "component_name": [
+        "cudnn"
+      ],
+      "os": [
+        "linux"
+      ],
+      "release_status": [
+        "rc"
+      ],
+      "release_status_timestamp": [
+        "1641936232000"
+      ],
+      "source": [
+        "hw-cudnn-generic-local/CUDNN/v8.3_cuda_11.4/8.3.2.49/cudnn-linux-aarch64-8.3.2.49.tar.gz"
+      ],
+      "version": [
+        "8.3.2.49"
+      ]
+    }
+  },
+  {
+    "path": "sw-gpu-cuda-installer-generic-local/packaging/v8.3_cuda_11.4/cudnn/linux-aarch64/8.3.2.49/libcudnn8-cross-aarch64_8.3.2.49-1+cuda11.4_all.deb",
+    "type": "file",
+    "size": 945851100,
+    "created": "2022-01-11T10:55:55.408Z",
+    "modified": "2022-01-11T10:55:41.035Z",
+    "sha1": "a3b1df045771002dbc27e82564353a621e8f86aa",
+    "md5": "8748b7cb524535bb6a9153184ca6cf7c",
+    "props": {
+      "arch": [
+        "aarch64"
+      ],
+      "branch": [
+        "v8.3_cuda_11.4"
+      ],
+      "component_name": [
+        "cudnn"
+      ],
+      "os": [
+        "linux"
+      ],
+      "release_status": [
+        "rc"
+      ],
+      "release_status_timestamp": [
+        "1641936232000"
+      ],
+      "source": [
+        "hw-cudnn-generic-local/CUDNN/v8.3_cuda_11.4/8.3.2.49/cudnn-linux-aarch64-8.3.2.49.tar.gz"
+      ],
+      "version": [
+        "8.3.2.49"
+      ]
+    }
+  }
+]

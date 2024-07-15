@@ -1,0 +1,166 @@
+ARG IMAGE_NAME
+FROM ${IMAGE_NAME}:{{ cuda.version.release_label }}-base-{{ cuda.os.distro }}{{ cuda.os.version }}{{ cuda.image_tag_suffix if "image_tag_suffix" in cuda }} as base
+
+ENV NV_CUDA_LIB_VERSION {{ cuda.version.release_label + "-1" }}
+
+{% if "x86_64" in cuda %}
+FROM base as base-amd64
+
+ENV NV_NVTX_VERSION {{ cuda.x86_64.components.nvtx.version }}
+{% if "libnpp" in cuda.x86_64.components %}
+    {% set has_libnpp_package = true %}
+ENV NV_LIBNPP_VERSION {{ cuda.x86_64.components.libnpp.version }}
+ENV NV_LIBNPP_PACKAGE libnpp-{{ cuda.version.major }}-{{ cuda.version.minor }}=${NV_LIBNPP_VERSION}
+{% endif %}
+ENV NV_LIBCUSPARSE_VERSION {{ cuda.x86_64.components.libcusparse.version }}
+
+ENV NV_LIBCUBLAS_PACKAGE_NAME libcublas-{{ cuda.version.major }}-{{ cuda.version.minor }}
+ENV NV_LIBCUBLAS_VERSION {{ cuda.x86_64.components.libcublas.version }}
+ENV NV_LIBCUBLAS_PACKAGE ${NV_LIBCUBLAS_PACKAGE_NAME}=${NV_LIBCUBLAS_VERSION}
+
+{% if "libnccl2" in cuda.x86_64.components and cuda.x86_64.components.libnccl2 %}
+    {% set has_libnccl_package = true %}
+ENV NV_LIBNCCL_PACKAGE_NAME libnccl2
+ENV NV_LIBNCCL_PACKAGE_VERSION {{ cuda.x86_64.components.libnccl2_dev.version }}
+ENV NCCL_VERSION {{ cuda.x86_64.components.libnccl2_dev.version }}
+ENV NV_LIBNCCL_PACKAGE ${NV_LIBNCCL_PACKAGE_NAME}=${NV_LIBNCCL_PACKAGE_VERSION}+cuda{{ cuda.version.major }}.{{ cuda.version.minor }}
+    {% if "libnccl2" in cuda.x86_64.components and "source" in cuda.x86_64.components.libnccl2 %}
+ENV NV_LIBNCCL_PACKAGE_SHA256SUM {{ cuda.x86_64.components.libnccl2.sha256sum }}
+ENV NV_LIBNCCL_PACKAGE_SOURCE {{ cuda.x86_64.components.libnccl2.source }}
+ENV NV_LIBNCCL_PACKAGE_SOURCE_NAME {{ cuda.x86_64.components.libnccl2.basename }}
+
+RUN apt-get update && apt-get install -y --no-install-recommends wget
+
+RUN wget -q ${NV_LIBNCCL_PACKAGE_SOURCE} \
+    && echo "$NV_LIBNCCL_PACKAGE_SHA256SUM  ${NV_LIBNCCL_PACKAGE_SOURCE_NAME}" | sha256sum -c --strict - \
+    && dpkg -i ${NV_LIBNCCL_PACKAGE_SOURCE_NAME} \
+    && rm -f ${NV_LIBNCCL_PACKAGE_SOURCE_NAME} \
+    && apt-get purge --autoremove -y wget \
+    && rm -rf /var/lib/apt/lists/*
+
+    {% endif %}
+
+{% endif -%}
+
+{% endif %}
+{% if "arm64" in cuda %}
+FROM base as base-arm64
+
+ENV NV_NVTX_VERSION {{ cuda.arm64.components.nvtx.version }}
+{% if "libnpp" in cuda.arm64.components %}
+    {% set has_libnpp_package = true %}
+ENV NV_LIBNPP_VERSION {{ cuda.arm64.components.libnpp.version }}
+ENV NV_LIBNPP_PACKAGE libnpp-{{ cuda.version.major }}-{{ cuda.version.minor }}=${NV_LIBNPP_VERSION}
+{% endif %}
+ENV NV_LIBCUSPARSE_VERSION {{ cuda.arm64.components.libcusparse.version }}
+
+{% if cuda.flavor == "jetson" %}
+    {% if cuda.version.major | int == 10 %}
+ENV NV_LIBCUBLAS_PACKAGE_NAME libcublas10
+    {% else %}
+ENV NV_LIBCUBLAS_PACKAGE_NAME libcublas-{{ cuda.version.major }}-{{ cuda.version.minor }}
+    {% endif %}
+{% else %}
+ENV NV_LIBCUBLAS_PACKAGE_NAME libcublas-{{ cuda.version.major }}-{{ cuda.version.minor }}
+{% endif %}
+ENV NV_LIBCUBLAS_VERSION {{ cuda.arm64.components.libcublas.version }}
+ENV NV_LIBCUBLAS_PACKAGE ${NV_LIBCUBLAS_PACKAGE_NAME}=${NV_LIBCUBLAS_VERSION}
+
+{% if "libnccl2" in cuda.arm64.components and cuda.arm64.components.libnccl2 %}
+    {% set has_libnccl_package = true %}
+ENV NV_LIBNCCL_PACKAGE_NAME libnccl2
+ENV NV_LIBNCCL_PACKAGE_VERSION {{ cuda.arm64.components.libnccl2.version }}
+ENV NCCL_VERSION {{ cuda.arm64.components.libnccl2.version }}
+ENV NV_LIBNCCL_PACKAGE ${NV_LIBNCCL_PACKAGE_NAME}=${NV_LIBNCCL_PACKAGE_VERSION}+cuda{{ cuda.version.major }}.{{ cuda.version.minor }}
+    {% if "libnccl2" in cuda.arm64.components and "source" in cuda.arm64.components.libnccl2 %}
+ENV NV_LIBNCCL_PACKAGE_SHA256SUM {{ cuda.arm64.components.libnccl2.sha256sum }}
+ENV NV_LIBNCCL_PACKAGE_SOURCE {{ cuda.arm64.components.libnccl2.source }}
+ENV NV_LIBNCCL_PACKAGE_SOURCE_NAME {{ cuda.arm64.components.libnccl2.basename }}
+
+RUN apt-get update && apt-get install -y --no-install-recommends wget
+
+RUN wget -q ${NV_LIBNCCL_PACKAGE_SOURCE} \
+    && echo "$NV_LIBNCCL_PACKAGE_SHA256SUM  ${NV_LIBNCCL_PACKAGE_SOURCE_NAME}" | sha256sum -c --strict - \
+    && dpkg -i ${NV_LIBNCCL_PACKAGE_SOURCE_NAME} \
+    && rm -f ${NV_LIBNCCL_PACKAGE_SOURCE_NAME} \
+    && apt-get purge --autoremove -y wget \
+    && rm -rf /var/lib/apt/lists/*
+    {% endif %}
+
+{% endif %}
+{% endif -%}
+
+{% if "ppc64le" in cuda %}
+FROM base as base-ppc64le
+
+ENV NV_NVTX_VERSION {{ cuda.ppc64le.components.nvtx.version }}
+{% if "libnpp" in cuda.ppc64le.components %}
+    {% set has_libnpp_package = true %}
+ENV NV_LIBNPP_VERSION {{ cuda.ppc64le.components.libnpp.version }}
+ENV NV_LIBNPP_PACKAGE libnpp-{{ cuda.version.major }}-{{ cuda.version.minor }}=${NV_LIBNPP_VERSION}
+{% endif %}
+ENV NV_LIBCUSPARSE_VERSION {{ cuda.ppc64le.components.libcusparse.version }}
+
+ENV NV_LIBCUBLAS_PACKAGE_NAME libcublas-{{ cuda.version.major }}-{{ cuda.version.minor }}
+ENV NV_LIBCUBLAS_VERSION {{ cuda.ppc64le.components.libcublas.version }}
+ENV NV_LIBCUBLAS_PACKAGE ${NV_LIBCUBLAS_PACKAGE_NAME}=${NV_LIBCUBLAS_VERSION}
+
+{% if "libnccl2" in cuda.ppc64le.components and cuda.ppc64le.components.libnccl2 %}
+    {% set has_libnccl_package = true %}
+ENV NV_LIBNCCL_PACKAGE_NAME libnccl2
+ENV NV_LIBNCCL_PACKAGE_VERSION {{ cuda.ppc64le.components.libnccl2.version }}
+ENV NCCL_VERSION {{ cuda.ppc64le.components.libnccl2.version }}
+ENV NV_LIBNCCL_PACKAGE ${NV_LIBNCCL_PACKAGE_NAME}=${NV_LIBNCCL_PACKAGE_VERSION}+cuda{{ cuda.version.major }}.{{ cuda.version.minor }}
+    {% if "libnccl2" in cuda.ppc64le.components and "source" in cuda.ppc64le.components.libnccl2 %}
+ENV NV_LIBNCCL_PACKAGE_SHA256SUM {{ cuda.ppc64le.components.libnccl2.sha256sum }}
+ENV NV_LIBNCCL_PACKAGE_SOURCE {{ cuda.ppc64le.components.libnccl2.source }}
+ENV NV_LIBNCCL_PACKAGE_SOURCE_NAME {{ cuda.ppc64le.components.libnccl2.basename }}
+
+RUN apt-get update && apt-get install -y --no-install-recommends wget
+
+RUN wget -q ${NV_LIBNCCL_PACKAGE_SOURCE} \
+    && echo "$NV_LIBNCCL_PACKAGE_SHA256SUM  ${NV_LIBNCCL_PACKAGE_SOURCE_NAME}" | sha256sum -c --strict - \
+    && dpkg -i ${NV_LIBNCCL_PACKAGE_SOURCE_NAME} \
+    && rm -f ${NV_LIBNCCL_PACKAGE_SOURCE_NAME} \
+    && apt-get purge --autoremove -y wget \
+    && rm -rf /var/lib/apt/lists/*
+    {% endif %}
+
+{% endif %}
+{% endif -%}
+
+FROM base-${TARGETARCH}
+
+ARG TARGETARCH
+
+LABEL maintainer "NVIDIA CORPORATION <cudatools@nvidia.com>"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    cuda-libraries-{{ cuda.version.major }}-{{ cuda.version.minor }}=${NV_CUDA_LIB_VERSION} \
+    {% if has_libnpp_package %}
+    ${NV_LIBNPP_PACKAGE} \
+    {% endif %}
+    cuda-nvtx-{{ cuda.version.major }}-{{ cuda.version.minor }}=${NV_NVTX_VERSION} \
+    libcusparse-{{ cuda.version.major }}-{{ cuda.version.minor }}=${NV_LIBCUSPARSE_VERSION} \
+    ${NV_LIBCUBLAS_PACKAGE} \
+    {% if has_libnccl_package %}
+    ${NV_LIBNCCL_PACKAGE} \
+    {% endif %}
+    && rm -rf /var/lib/apt/lists/*
+
+# Keep apt from auto upgrading the cublas and nccl packages. See https://gitlab.com/nvidia/container-images/cuda/-/issues/88
+RUN apt-mark hold ${NV_LIBCUBLAS_PACKAGE_NAME}{% if has_libnccl_package %} ${NV_LIBNCCL_PACKAGE_NAME}{% endif %}
+
+{% if cuda.flavor == "jetson" %}
+RUN rm /etc/apt/sources.list.d/cuda.list
+RUN rm -rf /var/lib/apt/lists/*
+{% endif %}
+
+# Add entrypoint items
+COPY entrypoint.d/ /opt/nvidia/entrypoint.d/
+COPY nvidia_entrypoint.sh /opt/nvidia/
+ENV NVIDIA_PRODUCT_NAME="CUDA"
+{% if cuda.end_of_life %}
+ENV NVIDIA_CUDA_END_OF_LIFE=1
+{% endif %}
+ENTRYPOINT ["/opt/nvidia/nvidia_entrypoint.sh"]

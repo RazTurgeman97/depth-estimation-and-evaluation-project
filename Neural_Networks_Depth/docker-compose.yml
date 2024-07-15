@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  neural_network_stereo_depth_pkg:
+    image: nn_depth_estimation_image
+    runtime: nvidia
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspace
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    command: /bin/bash -c "source /opt/ros/humble/setup.bash && source /root/ros2_ws/install/setup.bash"
+    networks:
+      - dev-network
+    environment:
+      - DISPLAY=${DISPLAY}
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
+
+networks:
+  dev-network:
+    driver: bridge
+

@@ -1,0 +1,38 @@
+ARG IMAGE_NAME
+FROM ${IMAGE_NAME}:10.2-base-ubi8 as base
+
+FROM base as base-amd64
+
+ENV NV_CUDA_LIB_VERSION 10.2.89-1
+ENV NV_NVTX_VERSION 10.2.89-1
+ENV NV_LIBNPP_VERSION 10.2.89-1
+
+ENV NV_LIBCUBLAS_PACKAGE_NAME libcublas10
+ENV NV_LIBCUBLAS_VERSION 10.2.2.89-1
+ENV NV_LIBCUBLAS_PACKAGE ${NV_LIBCUBLAS_PACKAGE_NAME}-${NV_LIBCUBLAS_VERSION}
+
+ENV NV_LIBNCCL_PACKAGE_NAME libnccl
+ENV NV_LIBNCCL_PACKAGE_VERSION 2.15.5-1
+ENV NCCL_VERSION 2.15.5
+ENV NV_LIBNCCL_PACKAGE ${NV_LIBNCCL_PACKAGE_NAME}-${NV_LIBNCCL_PACKAGE_VERSION}+cuda10.2
+
+FROM base-${TARGETARCH}
+
+ARG TARGETARCH
+
+LABEL maintainer "NVIDIA CORPORATION <sw-cuda-installer@nvidia.com>"
+
+RUN yum install -y \
+    cuda-libraries-10-2-${NV_CUDA_LIB_VERSION} \
+    cuda-nvtx-10-2-${NV_NVTX_VERSION} \
+    cuda-npp-10-2-${NV_LIBNPP_VERSION} \
+    ${NV_LIBCUBLAS_PACKAGE} \
+    && yum clean all \
+    && rm -rf /var/cache/yum/*
+
+# Add entrypoint items
+COPY entrypoint.d/ /opt/nvidia/entrypoint.d/
+COPY nvidia_entrypoint.sh /opt/nvidia/
+ENV NVIDIA_PRODUCT_NAME="CUDA"
+ENV NVIDIA_CUDA_END_OF_LIFE=1
+ENTRYPOINT ["/opt/nvidia/nvidia_entrypoint.sh"]

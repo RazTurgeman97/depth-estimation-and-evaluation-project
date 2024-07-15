@@ -1,0 +1,50 @@
+// See https://aka.ms/vscode-remote/devcontainer.json for format details.
+{
+  "dockerFile": "../Dockerfile",
+  // "dockerFile": "../Dockerfile_aarch64",
+  "build": {
+   "args": {
+    "WORKSPACE": "${containerWorkspaceFolder}"
+   }
+
+  },
+  "runArgs": [
+   "--network=host",
+   "--cap-add=SYS_PTRACE",
+   "--security-opt=seccomp:unconfined",
+   "--security-opt=apparmor:unconfined",
+   "--volume=/tmp/.X11-unix:/tmp/.X11-unix",
+   "--privileged",
+  //  "--runtime=nvidia",
+  //  "--gpus=all",
+   "-e", "RMW_IMPLEMENTATION=rmw_cyclonedds_cpp",
+   "-e", "DISPLAY=${env:DISPLAY}",
+   "-e", "QT_X11_NO_MITSHM=1",
+   "-e", "QT_GRAPHICSSYSTEM=native",
+   "--add-host=host.docker.internal:host-gateway",
+  ],
+  "containerEnv": { "DISPLAY": "${localEnv:DISPLAY}" },
+  // Set *default* container specific settings.json values on container create.
+  "settings": {
+   "terminal.integrated.profiles.linux": {
+    "bash": {
+     "path": "bash"
+    },
+   },
+   "terminal.integrated.defaultProfile.linux": "bash"
+  },
+  "extensions": [
+   "dotjoshjohnson.xml",
+   "zachflower.uncrustify",
+   "ms-azuretools.vscode-docker",
+   "ms-python.python",
+   "ms-vscode.cpptools",
+   "redhat.vscode-yaml",
+   "ms-iot.vscode-ros",
+   "smilerobotics.urdf",
+   "streetsidesoftware.code-spell-checker",
+   "twxs.cmake",
+   "yzhang.markdown-all-in-one",
+   "mhutchie.git-graph"
+  ]
+ }

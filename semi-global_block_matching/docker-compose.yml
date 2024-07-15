@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  stereo_matcher:
+    image: stereo_matcher_image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspace
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    command: /bin/bash -c "source /opt/ros/humble/setup.bash && ros2 launch your_launch_file.launch.py"
+    networks:
+      - dev-network
+    environment:
+      - DISPLAY=${DISPLAY}
+
+  # another_service:
+  #   image: another_image
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - .:/workspace
+  #     - /tmp/.X11-unix:/tmp/.X11-unix
+  #   command: /bin/bash -c "source /opt/ros/humble/setup.bash && ros2 launch another_launch_file.launch.py"
+  #   networks:
+  #     - dev-network
+  #   environment:
+  #     - DISPLAY=${DISPLAY}
+
+networks:
+  dev-network:
+    driver: bridge
