@@ -9,7 +9,7 @@ from cv_bridge import CvBridge
 class ImageSplitter(Node):
     def __init__(self):
         super().__init__('image_splitter')
-        self.subscription = self.create_subscription(Image,'/usb_cam/image_raw',self.listener_callback,10)
+        self.subscription = self.create_subscription(Image,'/usb_cam/image_raw/compressed',self.listener_callback,10)
         self.publisher_left = self.create_publisher(Image, '/left_camera/image_raw', 10)
         self.publisher_right = self.create_publisher(Image, '/right_camera/image_raw', 10)
         self.pub_left_camera_info = self.create_publisher(CameraInfo, '/left_camera/camera_info', 10)
