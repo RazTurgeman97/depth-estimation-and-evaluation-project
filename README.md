@@ -4,7 +4,7 @@ My Depth Estimation Project for my B.S.c Degree in Mechanical Engineering at Ben
 This project uses stereo cameras with ROS2 to perform depth estimation. The following instructions will help you set up the environment using Docker.
 
 
-## In order to make the permission changes for /dev/video* persistent across reboots, you can create a udev rule. Here’s how you can do it:
+## To make the permission changes for /dev/video* persistent across reboots, you can create a udev rule. Here’s how you can do it:
 ### Create a new udev rule file:
 
 ```bash
@@ -32,7 +32,7 @@ sudo udevadm trigger
 ls -l /dev/video*
 ```
 
-## In order to use nvidia runtime:
+## To use nvidia runtime:
 
 ### make sure that daemon.json contains the following:
 
@@ -120,7 +120,7 @@ sudo systemctl restart docker
 sudo docker info | grep -i runtime
 ```
 
-## Troubleshooting nvidia runtume:
+## Troubleshooting nvidia runtime:
 
 ### Check Permissions:
 
@@ -176,7 +176,7 @@ Runtimes: nvidia runc io.containerd.runc.v2
 Default Runtime: nvidia
 ```
 
-### If the get an ERROR: Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+### If you get an ERROR: Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
 
 Start Docker Service.
 
@@ -244,7 +244,7 @@ Check Docker info again:
 docker info | grep -i runtime
 ```
 
-### if you get "chown: cannot access '/var/run/docker.sock': No such file or directory"
+### If you get "chown: cannot access '/var/run/docker.sock': No such file or directory"
 
 First, stop the Docker service:
 
@@ -286,7 +286,7 @@ Check Docker info to see if the NVIDIA runtime is now the default:
 docker info | grep -i runtime
 ```
 
-## To make the changes presist after reboot:
+## To make the changes persist after reboot:
 
 ### Enable Docker to start on boot
 
@@ -354,3 +354,88 @@ After rebooting, check Docker runtime settings again:
 docker info | grep -i runtime
 ```
 
+# usb_cam troubleshooting:
+
+While working on the project and after countless uses of usb_cam on the latest version (0.6.0, and 0.8.1 since the 1st of May) the program started to malfunction.
+After much searching, I have found that the problem lies in the usb_cam program. Version 0.6.0 and 0.7.0 persist with the issue, version 0.6.0 seems to be fixing it.
+
+Here is how to remove the usb_cam and install the 0.6.0 release:
+
+## Remove the Current usb_cam Package:
+
+```bash
+cd ~/ros2_ws/src
+rm -rf usb_cam
+```
+
+## Clone the usb_cam Repository and Check Out Version 0.6.0:
+
+```bash
+git clone https://github.com/ros-drivers/usb_cam.git
+cd usb_cam
+git checkout tags/0.6.0
+```
+
+## Install Dependencies:
+Ensure that all dependencies required by the usb_cam package are installed.
+
+```bash
+cd ~/ros2_ws/src
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+```
+
+## Build Your Workspace:
+
+```bash
+colcon build --packages-select usb_cam
+```
+
+## Source Your Workspace:
+Source your workspace to update your environment with the newly installed usb_cam package.
+
+```bash
+source ~/ros2_ws/install/setup.bash
+```
+
+## To ensure that your workspace stays on version 0.6.0 of the usb_cam package and does not get updated inadvertently, you can follow these steps:
+
+### Create a New Branch:
+Create a new branch from the detached HEAD state you are currently in. This will ensure that your workspace remains on version 0.6.0.
+
+```bash
+cd ~/ros2_ws/src/usb_cam
+git switch -c stable-0.6.0
+```
+
+### Add a .rosinstall File:
+Add a .rosinstall file to your workspace that specifies the exact commit or tag to use for the usb_cam package. This ensures that rosinstall will always check out the specified version.
+
+Create a file named .rosinstall in the root of your workspace (~/ros2_ws):
+
+```bash
+cd ~/ros2_ws
+nano .rosinstall
+```
+and paste this content:
+
+```yaml
+
+- git:
+    local-name: src/usb_cam
+    uri: https://github.com/ros-drivers/usb_cam.git
+    version: 0.6.0
+```
+
+To save: Cntrl+X, y, Entet.
+
+### Use rosinstall to Update the Workspace:
+Use rosinstall to ensure the workspace remains consistent with the specified versions.
+
+```bash
+cd ~/ros2_ws
+rosinstall .
+```
+
+### Commit Your Changes:
+Commit the .rosinstall file to your version control system (e.g., git) if you are using one, so that the exact state of the workspace can be reproduced.
