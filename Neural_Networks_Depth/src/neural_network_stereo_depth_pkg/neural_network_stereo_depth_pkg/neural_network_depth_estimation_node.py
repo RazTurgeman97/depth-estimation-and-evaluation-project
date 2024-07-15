@@ -42,12 +42,12 @@ class NeuralNetworkDepthEstimationNode(Node):
         baseline = abs(self.T[0])
         focal_length = self.camera_matrix_left[0, 0]  # Assuming fx from intrinsics
 
-        hitnet_model_path = '/root/ros2_ws/src/neural_network_stereo_depth_pkg/models/ONNX-HITNET-Stereo-Depth-estimation/models/middlebury_d400/saved_model_480x640/model_float32.onnx'
+        hitnet_model_path = '/root/ros2_ws/src/neural_network_stereo_depth_pkg/models/ONNX-HITNET-Stereo-Depth-estimation/models/middlebury_d400/saved_model_720x1280/model_float32.onnx'
         hitnet_model_type = ModelType.middlebury
         hitnet_camera_config = HitNetCameraConfig(baseline, focal_length)
         self.hitnet_model = HitNet(hitnet_model_path, hitnet_model_type, hitnet_camera_config, max_dist=5)
 
-        cre_model_path = '/root/ros2_ws/src/neural_network_stereo_depth_pkg/models/ONNX-CREStereo-Depth-Estimation/models/crestereo_init_iter10_360x640.onnx'
+        cre_model_path = '/root/ros2_ws/src/neural_network_stereo_depth_pkg/models/ONNX-CREStereo-Depth-Estimation/models/crestereo_init_iter10_720x1280.onnx'
         cre_camera_config = CRECameraConfig(baseline, focal_length)
         self.cre_model = CREStereoModel(cre_model_path, cre_camera_config, max_dist=10)
 

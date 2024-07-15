@@ -8,7 +8,7 @@ def generate_launch_description():
     usb_cam_config = os.path.join(
         get_package_share_directory('usb_cam'),
         'config',
-        'params_2.yaml'
+        'params_1.yaml'
     )
 
     return LaunchDescription([
@@ -23,10 +23,5 @@ def generate_launch_description():
             package='image_splitter',
             executable='image_splitter_node',
             name='image_splitter'
-        ),
-        # Node(
-        #     package='stereo_triangulation',
-        #     executable='triangulation_node',
-        #     name='triangulation_node'
-        # )
+        )
     ])
