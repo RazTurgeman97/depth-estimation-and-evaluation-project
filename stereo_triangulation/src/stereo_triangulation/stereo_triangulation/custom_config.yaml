@@ -7,10 +7,15 @@ enable_infra: false
 enable_infra1: true
 enable_infra2: true
 
-# Set the infrared camera profiles (resolution and frame rate)
+# Set camera profiles (resolution and frame rate)
 depth_module.infra_profile: 640x480x60
 depth_module.depth_profile: 640x480x60
 #param rgb_camera.color_profile: 640x480x60
+
+# Set format
+# depth_module.infra1_format:
+# depth_module.infra2_format:
+# depth_module.infra_format:
 
 # Disable alignment and synchronization if not needed
 align_depth.enable: false
