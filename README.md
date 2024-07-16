@@ -435,6 +435,8 @@ To save: Ctrl+X, y, Entet.
 Use rosinstall to ensure the workspace remains consistent with the specified versions.
 
 ```bash
+sudo apt install python3-rosinstall # If not installed already
+
 cd ~/ros2_ws
 rosinstall .
 ```
