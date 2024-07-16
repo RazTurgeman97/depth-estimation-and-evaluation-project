@@ -361,6 +361,40 @@ After much searching, I have found that the problem lies in the usb_cam program.
 
 Here is how to remove the usb_cam and install the 0.6.0 release:
 
+## complete removal and reinstallation:
+
+### Uninstall the Package:
+
+```bash
+sudo apt-get remove ros-humble-usb-cam
+sudo apt autoremove
+```
+
+### Clean Build Workspace:
+#### Navigate to your workspace and remove any residual build and install files:
+
+```bash
+cd ~/ros2_ws
+rm -rf build install log
+```
+
+### Verify Package Removal:
+#### Ensure the package is not listed:
+
+```bash
+ros2 pkg list | grep usb_cam
+```
+
+#### Reinstall the Package:
+
+```bash
+sudo apt-get update
+sudo apt-get install ros-humble-usb-cam
+```
+
+
+
+
 ## Remove the Current usb_cam Package:
 
 ```bash
