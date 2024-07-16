@@ -20,7 +20,7 @@ class StereoTriangulationNode(Node):
         self.get_logger().info("Subscriptions set up.")
         
         # Publishers
-        self.left_depth_publisher = self.create_publisher(Image, '/left_camera_triangulation/depth_image', 10)
+        self.left_depth_publisher = self.create_publisher(Image, '/left_camera_triangulation/depth_image', 1)
         
         self.get_logger().info("Triangulation Node has started.")
 
@@ -28,10 +28,11 @@ class StereoTriangulationNode(Node):
         self.right_image = None
 
         self.exit_flag = False
+        self.frame_size_key = None
 
     def load_calibration(self):
         # Provided JSON-like data
-        calib = {
+        self.calib = {
             "baseline": -95.0439,
             "intrinsic_left": [
                 [0.505839, 0.808565, 0.503078],
@@ -72,26 +73,47 @@ class StereoTriangulationNode(Node):
                 [0.00597504, 0.00110762, 0.999982]
             ]
         }
+        self.baseline = np.array([self.calib["baseline"], 0, 0])
+        self.R_mat = np.array(self.calib["world2left_rot"])
 
-        self.camera_matrix_left = np.array(calib['intrinsic_left'])
-        self.dist_coeffs_left = np.zeros(5)  # Assuming no distortion for simplification
-        self.camera_matrix_right = np.array(calib['intrinsic_right'])
-        self.dist_coeffs_right = np.zeros(5)  # Assuming no distortion for simplification
-        self.T = np.array([calib['baseline'], 0, 0])
-        R_mat = np.array(calib['world2left_rot'])
-
-        image_size = (1280, 720)
-        self.R1, self.R2, self.P1, self.P2, self.Q, self.ROI_L, self.ROI_R = cv2.stereoRectify(
-            self.camera_matrix_left, self.dist_coeffs_left,
-            self.camera_matrix_right, self.dist_coeffs_right,
-            image_size, R_mat, self.T)
+    def select_frame_size_key(self, image):
+        height, width = image.shape[:2]
+        for key, params in self.calib["rectified"].items():
+            if params["width"] == width and params["height"] == height:
+                self.frame_size_key = key
+                self.fx = params["fx"]
+                self.fy = params["fy"]
+                self.ppx = params["ppx"]
+                self.ppy = params["ppy"]
+                self.image_size = (width, height)
+                self.camera_matrix_left = np.array([
+                    [self.fx, 0, self.ppx],
+                    [0, self.fy, self.ppy],
+                    [0, 0, 1]
+                ])
+                self.camera_matrix_right = self.camera_matrix_left.copy()  # Assuming symmetric cameras
+                self.R1, self.R2, self.P1, self.P2, self.Q, self.ROI_L, self.ROI_R = cv2.stereoRectify(
+                    self.camera_matrix_left, np.zeros(5),
+                    self.camera_matrix_right, np.zeros(5),
+                    self.image_size, self.R_mat, self.baseline)
+                self.get_logger().info(f"Frame size key {self.frame_size_key} selected with size {self.image_size}")
+                return True
+        return False
 
     def left_image_callback(self, msg):
         self.left_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+        if self.frame_size_key is None:
+            if not self.select_frame_size_key(self.left_image):
+                self.get_logger().error("Frame size not found in calibration data.")
+                return
         self.process_images()
 
     def right_image_callback(self, msg):
         self.right_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+        if self.frame_size_key is None:
+            if not self.select_frame_size_key(self.right_image):
+                self.get_logger().error("Frame size not found in calibration data.")
+                return
         self.process_images()
 
     def process_images(self):
