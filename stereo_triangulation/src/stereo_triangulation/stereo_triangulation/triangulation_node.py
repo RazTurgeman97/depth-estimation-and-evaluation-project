@@ -21,7 +21,6 @@ class StereoTriangulationNode(Node):
         
         # Publishers
         self.left_depth_publisher = self.create_publisher(Image, '/left_camera_triangulation/depth_image', 10)
-        self.right_depth_publisher = self.create_publisher(Image, '/right_camera_triangulation/depth_image', 10)
         
         self.get_logger().info("Triangulation Node has started.")
 
