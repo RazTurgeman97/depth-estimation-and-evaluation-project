@@ -1,0 +1,26 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/razturgeman/ros2_ws/install/usb_cam/include/**",
+        "/home/razturgeman/ros2_ws/install/stereo_image_proc/include/**",
+        "/home/razturgeman/ros2_ws/install/image_proc/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/razturgeman/ros2_ws/depth-estimation-project/camera_initialization/src/camera_initialization/include/**",
+        "/home/razturgeman/ros2_ws/src/usb_cam/include/**",
+        "include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
