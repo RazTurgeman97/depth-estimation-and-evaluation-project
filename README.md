@@ -380,6 +380,8 @@ git checkout tags/0.6.0
 Ensure that all dependencies required by the usb_cam package are installed.
 
 ```bash
+sudo apt install python3-rosdep2 # If not installed already
+
 cd ~/ros2_ws/src
 rosdep update
 rosdep install --from-paths src --ignore-src -r -y
