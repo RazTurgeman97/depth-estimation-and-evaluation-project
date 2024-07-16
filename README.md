@@ -392,8 +392,9 @@ sudo apt-get update
 sudo apt-get install ros-humble-usb-cam
 ```
 
+end of scenerio 1.
 
-
+*** if it doesnt work, you could try an older version of usb_cam. look for avalible versions on: https://github.com/ros-drivers/usb_cam/tags ***
 
 ## Remove the Current usb_cam Package:
 
