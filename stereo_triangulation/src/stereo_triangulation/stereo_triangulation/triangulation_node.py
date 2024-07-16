@@ -2,7 +2,6 @@ import rclpy
 from rclpy.node import Node
 import cv2
 import numpy as np
-import yaml
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 
@@ -12,14 +11,12 @@ class StereoTriangulationNode(Node):
         self.bridge = CvBridge()
 
         # Load camera parameters
-        self.declare_parameter('calibration_file', '/opt/ros/humble/share/stereo_triangulation/config/calibration-camchain.yaml')
-        calibration_file = self.get_parameter('calibration_file').get_parameter_value().string_value
-        self.load_calibration(calibration_file)
+        self.load_calibration()
         self.get_logger().info("Calibration Data Loaded Successfully.")
 
         # Subscribers
-        self.create_subscription(Image, '/left_camera/image_raw', self.left_image_callback, 10)
-        self.create_subscription(Image, '/right_camera/image_raw', self.right_image_callback, 10)
+        self.create_subscription(Image, '/camera/camera/infra1/image_rect_raw', self.left_image_callback, 10)
+        self.create_subscription(Image, '/camera/camera/infra2/image_rect_raw', self.right_image_callback, 10)
         self.get_logger().info("Subscriptions set up.")
         
         # Publishers
@@ -33,44 +30,69 @@ class StereoTriangulationNode(Node):
 
         self.exit_flag = False
 
-    def load_calibration(self, filename):
-        with open(filename, 'r') as file:
-            calib = yaml.safe_load(file)
-        self.camera_matrix_left = np.array([
-            [calib['cam0']['intrinsics'][0], 0, calib['cam0']['intrinsics'][2]],
-            [0, calib['cam0']['intrinsics'][1], calib['cam0']['intrinsics'][3]],
-            [0, 0, 1]
-        ])
-        self.dist_coeffs_left = np.array(calib['cam0']['distortion_coeffs'])
-        self.camera_matrix_right = np.array([
-            [calib['cam1']['intrinsics'][0], 0, calib['cam1']['intrinsics'][2]],
-            [0, calib['cam1']['intrinsics'][1], calib['cam1']['intrinsics'][3]],
-            [0, 0, 1]
-        ])
-        self.dist_coeffs_right = np.array(calib['cam1']['distortion_coeffs'])
-        T_cn_cnm1 = np.array(calib['cam1']['T_cn_cnm1'])
-        self.T = T_cn_cnm1[:3, 3]
-        R_mat = T_cn_cnm1[:3, :3]
+    def load_calibration(self):
+        # Provided JSON-like data
+        calib = {
+            "baseline": -95.0439,
+            "intrinsic_left": [
+                [0.505839, 0.808565, 0.503078],
+                [0.492961, -0.0618031, 0.0696098],
+                [-0.000149548, 0.000388624, -0.0226]
+            ],
+            "intrinsic_right": [
+                [0.504375, 0.805967, 0.505367],
+                [0.49573, -0.0594383, 0.0707053],
+                [-0.000174214, 0.000842824, -0.0233214]
+            ],
+            "rectified": {
+                "0": {"fx": 968.857, "fy": 968.857, "width": 1920, "height": 1080, "ppx": 970.559, "ppy": 533.393},
+                "1": {"fx": 645.905, "fy": 645.905, "width": 1280, "height": 720, "ppx": 647.039, "ppy": 355.595},
+                "2": {"fx": 387.543, "fy": 387.543, "width": 640, "height": 480, "ppx": 324.224, "ppy": 237.357},
+                "3": {"fx": 427.912, "fy": 427.912, "width": 848, "height": 480, "ppx": 428.664, "ppy": 237.082},
+                "4": {"fx": 322.952, "fy": 322.952, "width": 640, "height": 360, "ppx": 323.52, "ppy": 177.798},
+                "5": {"fx": 213.956, "fy": 213.956, "width": 424, "height": 240, "ppx": 214.332, "ppy": 118.541},
+                "6": {"fx": 193.771, "fy": 193.771, "width": 320, "height": 240, "ppx": 162.112, "ppy": 118.679},
+                "7": {"fx": 242.214, "fy": 242.214, "width": 480, "height": 270, "ppx": 242.64, "ppy": 133.299},
+                "8": {"fx": 645.905, "fy": 645.905, "width": 1280, "height": 800, "ppx": 647.039, "ppy": 395.595},
+                "9": {"fx": 484.429, "fy": 484.429, "width": 960, "height": 540, "ppx": 485.279, "ppy": 266.696},
+                "10": {"fx": 581.314, "fy": 581.314, "width": 0, "height": 0, "ppx": 366.335, "ppy": 356.036},
+                "11": {"fx": 465.052, "fy": 465.052, "width": 0, "height": 0, "ppx": 293.068, "ppy": 284.829},
+                "12": {"fx": 645.905, "fy": 645.905, "width": 640, "height": 400, "ppx": 647.039, "ppy": 395.595},
+                "13": {"fx": 4.70255e-37, "fy": 0, "width": 576, "height": 576, "ppx": 0, "ppy": 0},
+                "14": {"fx": 0, "fy": 0, "width": 720, "height": 720, "ppx": 0, "ppy": 0},
+                "15": {"fx": 0, "fy": 0, "width": 1152, "height": 1152, "ppx": 0, "ppy": 0}
+            },
+            "world2left_rot": [
+                [0.999971, -0.00226072, 0.00731733],
+                [0.00225269, 0.999997, 0.00110529],
+                [-0.00731981, -0.00108877, 0.999973]
+            ],
+            "world2right_rot": [
+                [0.999976, 0.00354033, -0.00597893],
+                [-0.00354689, 0.999993, -0.00108644],
+                [0.00597504, 0.00110762, 0.999982]
+            ]
+        }
+
+        self.camera_matrix_left = np.array(calib['intrinsic_left'])
+        self.dist_coeffs_left = np.zeros(5)  # Assuming no distortion for simplification
+        self.camera_matrix_right = np.array(calib['intrinsic_right'])
+        self.dist_coeffs_right = np.zeros(5)  # Assuming no distortion for simplification
+        self.T = np.array([calib['baseline'], 0, 0])
+        R_mat = np.array(calib['world2left_rot'])
+
         image_size = (1280, 720)
         self.R1, self.R2, self.P1, self.P2, self.Q, self.ROI_L, self.ROI_R = cv2.stereoRectify(
             self.camera_matrix_left, self.dist_coeffs_left,
             self.camera_matrix_right, self.dist_coeffs_right,
             image_size, R_mat, self.T)
-        self.map1_left, self.map2_left = cv2.initUndistortRectifyMap(
-            self.camera_matrix_left, self.dist_coeffs_left, self.R1, self.P1, image_size, cv2.CV_16SC2)
-        self.map1_right, self.map2_right = cv2.initUndistortRectifyMap(
-            self.camera_matrix_right, self.dist_coeffs_right, self.R2, self.P2, image_size, cv2.CV_16SC2)
 
     def left_image_callback(self, msg):
         self.left_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
-        rectified_left = cv2.remap(self.left_image, self.map1_left, self.map2_left, cv2.INTER_LINEAR)
-        self.left_image = rectified_left
         self.process_images()
 
     def right_image_callback(self, msg):
         self.right_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
-        rectified_right = cv2.remap(self.right_image, self.map1_right, self.map2_right, cv2.INTER_LANCZOS4)
-        self.right_image = rectified_right
         self.process_images()
 
     def process_images(self):
@@ -86,11 +108,6 @@ class StereoTriangulationNode(Node):
             points_left = np.array([kp1[m.queryIdx].pt for m in matches], dtype=np.float32)
             points_right = np.array([kp2[m.trainIdx].pt for m in matches], dtype=np.float32)
 
-            # # Filter matches using RANSAC
-            # E, mask = cv2.findEssentialMat(points_left, points_right, self.camera_matrix_left, method=cv2.RANSAC, prob=0.999, threshold=1.0)
-            # points_left = points_left[mask.ravel() == 1]
-            # points_right = points_right[mask.ravel() == 1]
-
             # Triangulate points
             points_4d_hom = cv2.triangulatePoints(self.P1, self.P2, points_left.T, points_right.T)
             points_4d = points_4d_hom[:3] / points_4d_hom[3]
@@ -102,26 +119,26 @@ class StereoTriangulationNode(Node):
             valid_mask = (depth > min_depth_threshold) & (depth < max_depth_threshold)
             valid_points = points_left[valid_mask]
             valid_depth = depth[valid_mask]
-            valid_points_right = points_right[valid_mask]
-            valid_depth_right = depth[valid_mask]
 
             # Publish depth images
             self.publish_depth_image(self.left_image, valid_points, valid_depth, self.left_depth_publisher)
-            self.publish_depth_image(self.right_image, valid_points_right, valid_depth_right, self.right_depth_publisher)
 
     def publish_depth_image(self, image, points, depth, publisher):
-        depth_min, depth_max = np.min(depth), np.max(depth)
-        for i, (point, d) in enumerate(zip(points, depth)):
-            x, y = int(point[0]), int(point[1])
-            if np.isfinite(d) and d > 0:  # Ensure valid depth values
-                normalized_depth = int(255 * (d - depth_min) / (depth_max - depth_min))
-                color = (0, 0, 255 - normalized_depth)  # Blue to Red
-                cv2.circle(image, (x, y), 5, color, -1)  # Blue to Red
-            else:
-                cv2.circle(image, (x, y), 5, (0, 0, 0), -1)  # Black for invalid depth
+        if depth.size > 0:
+            depth_min, depth_max = np.min(depth), np.max(depth)
+            if depth_max == depth_min:  # Avoid division by zero
+                depth_max += 1.0
+            for i, (point, d) in enumerate(zip(points, depth)):
+                x, y = int(point[0]), int(point[1])
+                if np.isfinite(d) and d > 0:  # Ensure valid depth values
+                    normalized_depth = int(255 * (d - depth_min) / (depth_max - depth_min))
+                    color = (0, 0, 255 - normalized_depth)  # Blue to Red
+                    cv2.circle(image, (x, y), 5, color, -1)  # Blue to Red
+                else:
+                    cv2.circle(image, (x, y), 5, (0, 0, 0), -1)  # Black for invalid depth
 
-        depth_image_msg = self.bridge.cv2_to_imgmsg(image, encoding="bgr8")
-        publisher.publish(depth_image_msg)
+            depth_image_msg = self.bridge.cv2_to_imgmsg(image, encoding="bgr8")
+            publisher.publish(depth_image_msg)
 
 def main(args=None):
     rclpy.init(args=args)
@@ -135,4 +152,3 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-
