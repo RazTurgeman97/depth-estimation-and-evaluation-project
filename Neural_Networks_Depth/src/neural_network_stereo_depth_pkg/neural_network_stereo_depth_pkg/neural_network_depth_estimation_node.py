@@ -4,9 +4,7 @@ from sensor_msgs.msg import Image
 import cv2
 import numpy as np
 from cv_bridge import CvBridge
-import yaml
 from datetime import datetime
-from collections import deque
 from neural_network_stereo_depth_pkg.hitnet_model import HitNet, ModelType, CameraConfig as HitNetCameraConfig
 from neural_network_stereo_depth_pkg.cre_model import CREStereoModel, CameraConfig as CRECameraConfig
 
@@ -15,103 +13,157 @@ class NeuralNetworkDepthEstimationNode(Node):
         super().__init__('neural_network_depth_estimation_node')
         self.subscription_left = self.create_subscription(
             Image,
-            '/left_camera/image_raw',
+            '/camera/camera/infra1/image_rect_raw',
             self.left_image_callback,
             10)
         self.subscription_right = self.create_subscription(
             Image,
-            '/right_camera/image_raw',
+            '/camera/camera/infra2/image_rect_raw',
             self.right_image_callback,
             10)
         
-        self.publisher_hitnet_depth = self.create_publisher(Image, '/hitnet/depth', 10)
-        self.publisher_cre_depth = self.create_publisher(Image, '/cre/depth', 10)
+        self.publisher_hitnet_depth = self.create_publisher(Image, '/HITNET/depth', 10)
+        self.publisher_cre_depth = self.create_publisher(Image, '/CRE/depth', 10)
+
+        # self.publisher_test = self.create_publisher(Image, '/test/image_raw', 10)
         
         self.bridge = CvBridge()
-        self.declare_parameter('calibration_file', '/opt/ros/humble/share/depth_estimation/config/calibration-camchain.yaml')
-        calibration_file = self.get_parameter('calibration_file').get_parameter_value().string_value
-        self.load_calibration(calibration_file)
-        self.get_logger().info("Calibration Data Loaded Successfully.")
+        self.load_calibration()
 
         self.left_image = None
         self.right_image = None
+
         self.exit_flag = False
-        self.depth_history = deque(maxlen=7)  # Store the last 7 frames for temporal smoothing
-
-        # Extract baseline and focal length from calibration data
-        baseline = abs(self.T[0])
-        focal_length = self.camera_matrix_left[0, 0]  # Assuming fx from intrinsics
-
-        hitnet_model_path = '/root/ros2_ws/src/neural_network_stereo_depth_pkg/models/ONNX-HITNET-Stereo-Depth-estimation/models/middlebury_d400/saved_model_720x1280/model_float32.onnx'
-        hitnet_model_type = ModelType.middlebury
-        hitnet_camera_config = HitNetCameraConfig(baseline, focal_length)
-        self.hitnet_model = HitNet(hitnet_model_path, hitnet_model_type, hitnet_camera_config, max_dist=5)
-
-        cre_model_path = '/root/ros2_ws/src/neural_network_stereo_depth_pkg/models/ONNX-CREStereo-Depth-Estimation/models/crestereo_init_iter10_720x1280.onnx'
-        cre_camera_config = CRECameraConfig(baseline, focal_length)
-        self.cre_model = CREStereoModel(cre_model_path, cre_camera_config, max_dist=10)
+        
+        self.frame_size_key = None
+        self.hitnet_model = None
+        self.cre_model = None
 
         self.get_logger().info('Subscriptions set up.')
         self.get_logger().info('Neural Network Depth Estimation Node has started.')
 
-    def load_calibration(self, filename):
-        with open(filename, 'r') as file:
-            calib = yaml.safe_load(file)
-        self.camera_matrix_left = np.array([
-            [calib['cam0']['intrinsics'][0], 0, calib['cam0']['intrinsics'][2]],
-            [0, calib['cam0']['intrinsics'][1], calib['cam0']['intrinsics'][3]],
-            [0, 0, 1]
-        ])
-        self.dist_coeffs_left = np.array(calib['cam0']['distortion_coeffs'])
-        self.camera_matrix_right = np.array([
-            [calib['cam1']['intrinsics'][0], 0, calib['cam1']['intrinsics'][2]],
-            [0, calib['cam1']['intrinsics'][1], calib['cam1']['intrinsics'][3]],
-            [0, 0, 1]
-        ])
-        self.dist_coeffs_right = np.array(calib['cam1']['distortion_coeffs'])
-        T_cn_cnm1 = np.array(calib['cam1']['T_cn_cnm1'])
-        self.T = T_cn_cnm1[:3, 3]
-        R_mat = T_cn_cnm1[:3, :3]
-        image_size = (1280, 720)
-        self.R1, self.R2, self.P1, self.P2, self.Q, self.ROI_L, self.ROI_R = cv2.stereoRectify(
-            self.camera_matrix_left, self.dist_coeffs_left,
-            self.camera_matrix_right, self.dist_coeffs_right,
-            image_size, R_mat, self.T)
-        self.map1_left, self.map2_left = cv2.initUndistortRectifyMap(
-            self.camera_matrix_left, self.dist_coeffs_left, self.R1, self.P1, image_size, cv2.CV_16SC2)
-        self.map1_right, self.map2_right = cv2.initUndistortRectifyMap(
-            self.camera_matrix_right, self.dist_coeffs_right, self.R2, self.P2, image_size, cv2.CV_16SC2)
+    def select_frame_size_key(self, image):
+        height, width = image.shape[:2]
+        for key, params in self.calib["rectified"].items():
+            if params["width"] == width and params["height"] == height:
+                self.frame_size_key = key
+                self.fx = params["fx"]
+                self.fy = params["fy"]
+                self.ppx = params["ppx"]
+                self.ppy = params["ppy"]
+                self.image_size = (width, height)
+                self.camera_matrix_left = np.array([
+                    [self.fx, 0, self.ppx],
+                    [0, self.fy, self.ppy],
+                    [0, 0, 1]
+                ])
+                self.get_logger().info(f"Frame size key {self.frame_size_key} selected with size {self.image_size}")
+                self.initialize_models()
+                return True
+        return False
+
+    def initialize_models(self):
+        baseline = self.baseline
+        focal_length = self.fx  # Use fx as the focal length
+
+        hitnet_model_path = '/root/ros2_ws/src/neural_network_stereo_depth_pkg/models/ONNX-HITNET-Stereo-Depth-estimation/models/middlebury_d400/saved_model_480x640/model_float32.onnx'
+        hitnet_model_type = ModelType.middlebury
+        hitnet_camera_config = HitNetCameraConfig(baseline, focal_length)
+        self.hitnet_model = HitNet(hitnet_model_path, hitnet_model_type, hitnet_camera_config, max_dist=5)
+
+        cre_model_path = '/root/ros2_ws/src/neural_network_stereo_depth_pkg/models/ONNX-CREStereo-Depth-Estimation/models/crestereo_init_iter10_480x640.onnx'
+        cre_camera_config = CRECameraConfig(baseline, focal_length)
+        self.cre_model = CREStereoModel(cre_model_path, cre_camera_config, max_dist=10)
+
+    def load_calibration(self):
+        self.calib = {
+            "baseline": -95.044,
+            "intrinsic_left": [
+                [0.506, 0.809, 0.503],
+                [0.493, -0.062, 0.070],
+                [-0.000, 0.000, -0.023]
+            ],
+            "intrinsic_right": [
+                [0.505, 0.806, 0.505],
+                [0.496, -0.059, 0.071],
+                [-0.000, 0.001, -0.023]
+            ],
+            "rectified": {
+                "0": {"fx": 968.857, "fy": 968.857, "width": 1920, "height": 1080, "ppx": 970.559, "ppy": 533.393},
+                "1": {"fx": 645.905, "fy": 645.905, "width": 1280, "height": 720, "ppx": 647.039, "ppy": 355.595},
+                "2": {"fx": 387.543, "fy": 387.543, "width": 640, "height": 480, "ppx": 324.224, "ppy": 237.357},
+                "3": {"fx": 427.912, "fy": 427.912, "width": 848, "height": 480, "ppx": 428.664, "ppy": 237.082},
+                "4": {"fx": 322.952, "fy": 322.952, "width": 640, "height": 360, "ppx": 323.52, "ppy": 177.798},
+                "5": {"fx": 213.956, "fy": 213.956, "width": 424, "height": 240, "ppx": 214.332, "ppy": 118.541},
+                "6": {"fx": 193.771, "fy": 193.771, "width": 320, "height": 240, "ppx": 162.112, "ppy": 118.679},
+                "7": {"fx": 242.214, "fy": 242.214, "width": 480, "height": 270, "ppx": 242.64, "ppy": 133.299},
+                "8": {"fx": 645.905, "fy": 645.905, "width": 1280, "height": 800, "ppx": 647.039, "ppy": 395.595},
+                "9": {"fx": 484.429, "fy": 484.429, "width": 960, "height": 540, "ppx": 485.279, "ppy": 266.696},
+                "10": {"fx": 581.314, "fy": 581.314, "width": 0, "height": 0, "ppx": 366.335, "ppy": 356.036},
+                "11": {"fx": 465.052, "fy": 465.052, "width": 0, "height": 0, "ppx": 293.068, "ppy": 284.829},
+                "12": {"fx": 645.905, "fy": 645.905, "width": 640, "height": 400, "ppx": 647.039, "ppy": 395.595},
+                "13": {"fx": 4.70255e-37, "fy": 0, "width": 576, "height": 576, "ppx": 0, "ppy": 0},
+                "14": {"fx": 0, "fy": 0, "width": 720, "height": 720, "ppx": 0, "ppy": 0},
+                "15": {"fx": 0, "fy": 0, "width": 1152, "height": 1152, "ppx": 0, "ppy": 0}
+            },
+            "world2left_rot": [
+                [1.000, -0.002, 0.007],
+                [0.002, 1.000, 0.001],
+                [-0.007, -0.001, 1.000]
+            ],
+            "world2right_rot": [
+                [1.000, 0.004, -0.006],
+                [-0.004, 1.000, -0.001],
+                [0.006, 0.001, 1.000]
+            ]
+        }
+        self.baseline = np.abs(self.calib["baseline"])
+        self.R_mat = np.array(self.calib["world2left_rot"])
 
     def left_image_callback(self, msg):
-        self.left_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
-        rectified_left = cv2.remap(self.left_image, self.map1_left, self.map2_left, cv2.INTER_LINEAR)
-        self.left_image = rectified_left
-        if self.right_image is not None:
-            self.process_images()
+        self.left_image = self.bridge.imgmsg_to_cv2(msg, 'mono8')
+        self.get_logger().info(f'Received left image of shape: {self.left_image.shape}')
+        if self.frame_size_key is None:
+            if not self.select_frame_size_key(self.left_image):
+                self.get_logger().error("Frame size not found in calibration data.")
+                return
+        self.left_image = cv2.cvtColor(self.left_image, cv2.COLOR_GRAY2BGR)
+        self.process_images()
+        #self.publisher_test.publish(msg)
 
     def right_image_callback(self, msg):
-        self.right_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8').reshape(msg.height, msg.width, -1)
-        rectified_right = cv2.remap(self.right_image, self.map1_right, self.map2_right, cv2.INTER_LANCZOS4)
-        self.right_image = rectified_right
-        if self.left_image is not None:
-            self.process_images()
+        self.right_image = self.bridge.imgmsg_to_cv2(msg, 'mono8')
+        self.get_logger().info(f'Received right image of shape: {self.right_image.shape}')
+        if self.frame_size_key is None:
+            if not self.select_frame_size_key(self.right_image):
+                self.get_logger().error("Frame size not found in calibration data.")
+                return
+        self.right_image = cv2.cvtColor(self.right_image, cv2.COLOR_GRAY2BGR)
+        self.process_images()
 
     def process_images(self):
+        if self.hitnet_model is None or self.cre_model is None:
+            self.get_logger().error("Models not initialized.")
+            return
+
+        if self.left_image is None or self.right_image is None:
+            self.get_logger().error("Left or right image is None.")
+            return
+        
+        self.get_logger().info(f'Processing images of shape: left={self.left_image.shape}, right={self.right_image.shape}')
+
+        
         # HITNET model depth estimation
         try:
             start_time = datetime.now()
             hitnet_disparity = self.hitnet_model(self.left_image, self.right_image)
             hitnet_depth = self.hitnet_model.get_depth_from_disparity(hitnet_disparity, self.hitnet_model.camera_config)
             
-            # Temporal smoothing
-            self.depth_history.append(hitnet_depth)
-            smoothed_depth = np.mean(self.depth_history, axis=0)
-            
             end_time = datetime.now()
             duration = end_time - start_time
             self.get_logger().info(f'HITNET inference time: {duration.total_seconds()} seconds')
-            self.get_logger().info(f'HITNET depth map range: min {smoothed_depth.min()}, max {smoothed_depth.max()}')
-            self.publish_depth(smoothed_depth, "hitnet")
+            self.get_logger().info(f'HITNET depth map range: min {hitnet_depth.min()}, max {hitnet_depth.max()}')
+            self.publish_depth(hitnet_depth, "HITNET")
         except Exception as e:
             self.get_logger().error(f'Error in HITNET model: {e}')
 
@@ -123,7 +175,7 @@ class NeuralNetworkDepthEstimationNode(Node):
             duration = end_time - start_time
             self.get_logger().info(f'CRE inference time: {duration.total_seconds()} seconds')
             self.get_logger().info(f'CRE depth map range: min {cre_depth.min()}, max {cre_depth.max()}')
-            self.publish_depth(cre_depth, "cre")
+            self.publish_depth(cre_depth, "CRE")
         except Exception as e:
             self.get_logger().error(f'Error in CRE model: {e}')
 
@@ -132,9 +184,9 @@ class NeuralNetworkDepthEstimationNode(Node):
         depth_map_colored = cv2.applyColorMap(cv2.convertScaleAbs(255 - depth_map_normalized, 1), cv2.COLORMAP_JET)
         depth_msg = self.bridge.cv2_to_imgmsg(depth_map_colored, encoding='bgr8')
         
-        if model_type == "hitnet":
+        if model_type == "HITNET":
             self.publisher_hitnet_depth.publish(depth_msg)
-        elif model_type == "cre":
+        elif model_type == "CRE":
             self.publisher_cre_depth.publish(depth_msg)
 
 def main(args=None):

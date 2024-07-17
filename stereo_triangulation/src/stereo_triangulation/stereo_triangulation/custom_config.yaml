@@ -2,6 +2,7 @@
 enable_color: false
 enable_depth: false
 enable_infra: false
+infra_rgb: true ###
 
 # Enable only the infrared streams
 enable_infra1: true
@@ -13,8 +14,8 @@ depth_module.depth_profile: 640x480x60
 #param rgb_camera.color_profile: 640x480x60
 
 # Set format
-# depth_module.infra1_format:
-# depth_module.infra2_format:
+depth_module.infra1_format: Y8 # (8-bit grayscale)
+depth_module.infra2_format: Y8 # (8-bit grayscale)
 # depth_module.infra_format:
 
 # Disable alignment and synchronization if not needed

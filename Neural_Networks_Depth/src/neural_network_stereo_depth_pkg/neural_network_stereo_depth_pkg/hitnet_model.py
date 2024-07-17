@@ -18,7 +18,7 @@ class CameraConfig:
 DEFAULT_CONFIG = CameraConfig(0.546, 120)  # rough estimate from the original calibration
 
 class HitNet:
-    def __init__(self, model_path, model_type=ModelType.eth3d, camera_config=DEFAULT_CONFIG, max_dist=10):
+    def __init__(self, model_path, model_type=ModelType.middlebury, camera_config=DEFAULT_CONFIG, max_dist=10):
         self.model_type = model_type
         self.camera_config = camera_config
         self.max_dist = max_dist

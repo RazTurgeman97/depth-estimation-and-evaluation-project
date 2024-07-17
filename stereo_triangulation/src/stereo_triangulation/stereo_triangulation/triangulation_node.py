@@ -31,7 +31,6 @@ class StereoTriangulationNode(Node):
         self.frame_size_key = None
 
     def load_calibration(self):
-        # Provided JSON-like data
         self.calib = {
             "baseline": -95.0439,
             "intrinsic_left": [
