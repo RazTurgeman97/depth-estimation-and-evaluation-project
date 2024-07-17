@@ -1,18 +1,16 @@
 version: '3.8'
 
 services:
-  camera_init:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  realsense:
+    image: realsense:latest
     volumes:
+      - /dev:/dev
       - .:/root/ros2_ws
       - /tmp/.X11-unix:/tmp/.X11-unix
-    devices:
-      - /dev/video0:/dev/video0
-      - /dev/video2:/dev/video2
-    networks:
-      - dev-network
+    device_cgroup_rules:
+      - 'c 81:* rmw'
+      - 'c 189:* rmw'
+    privileged: true
     environment:
       - DISPLAY=${DISPLAY}
 

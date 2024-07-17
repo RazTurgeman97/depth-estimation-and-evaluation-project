@@ -1,0 +1,29 @@
+# Disable all streams by default
+enable_color: false
+enable_depth: false
+enable_infra: false
+
+# Enable only the infrared streams
+enable_infra1: true
+enable_infra2: true
+
+# Set the infrared camera profiles (resolution and frame rate)
+depth_module.infra_profile: 640x480x60
+depth_module.depth_profile: 640x480x60
+#param rgb_camera.color_profile: 640x480x60
+
+# Disable alignment and synchronization if not needed
+align_depth.enable: false
+enable_sync: false
+
+# Optionally disable TF publishing if not needed
+publish_tf: false
+tf_publish_rate: 0.0
+
+# Disable specific plugins for additional image formats
+camera.infra1.image_rect_raw.compressed: false
+camera.infra1.image_rect_raw.compressedDepth: false
+camera.infra1.image_rect_raw.theora: false
+camera.infra2.image_rect_raw.compressed: false
+camera.infra2.image_rect_raw.compressedDepth: false
+camera.infra2.image_rect_raw.theora: false
