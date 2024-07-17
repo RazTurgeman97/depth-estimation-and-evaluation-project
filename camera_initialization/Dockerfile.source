@@ -4,7 +4,6 @@ FROM osrf/ros:humble-desktop-full
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV WS_DIR=/root/ros2_ws
-ENV LIBREALSENSE_VERSION=v2.55.1
 
 # Install dependencies
 RUN apt-get update -y \
@@ -25,6 +24,7 @@ RUN apt-get update -y \
     libglu1-mesa-dev \
     at \
     libudev-dev \
+    linux-headers-$(uname -r) \
     v4l-utils \
     kmod \
     curl \
@@ -61,30 +61,24 @@ RUN apt-get update -y \
     && apt-get install -y ros-humble-realsense2-* \
     && apt-get clean
 
-# # Set up the workspace
-# WORKDIR ${WS_DIR}
-# RUN mkdir -p src \
-#     && cd src \
-#     && git clone https://github.com/IntelRealSense/realsense-ros.git -b ros2-development \
-#     && cd ..
+# Set up the workspace
+WORKDIR ${WS_DIR}
+RUN mkdir -p src
 
-# # Initialize rosdep
-# RUN bash -c "source /opt/ros/humble/setup.bash \
-#     && if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then rosdep init; fi \
-#     && rosdep update \
-#     && rosdep install -i --from-path src --rosdistro humble -y"
+# Install Cyclone DDS
+RUN apt update && \
+    apt install -y ros-humble-rmw-cyclonedds-cpp
 
-# # Build the workspace
-# RUN bash -c "source /opt/ros/humble/setup.bash \
-#     && colcon build"
+# Set the RMW implementation to Cyclone DDS
+ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
-# # Source the setup script
-# RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-# RUN echo "source ${WS_DIR}/install/setup.bash" >> ~/.bashrc
+# Build the workspace and log the output to console
+RUN /bin/bash -c "source /opt/ros/humble/setup.bash && cd /root/ros2_ws && colcon build --event-handlers console_cohesion+"
 
-# # Copy entrypoint script
-# COPY entrypoint.sh /entrypoint.sh
-# RUN chmod +x /entrypoint.sh
+# Source the setup file and set RMW implementation in bashrc
+RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
+    echo "source /root/ros2_ws/install/setup.bash" >> /root/.bashrc && \
+    echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /root/.bashrc
 
-# # Entrypoint script
-# ENTRYPOINT ["/entrypoint.sh"]
+# Source the setup file and list installed packages
+RUN /bin/bash -c "source /root/ros2_ws/install/setup.bash && ros2 pkg list"
