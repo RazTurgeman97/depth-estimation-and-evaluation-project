@@ -25,8 +25,6 @@ class NeuralNetworkDepthEstimationNode(Node):
         self.publisher_hitnet_depth = self.create_publisher(Image, '/HITNET/depth', 10)
         self.publisher_cre_depth = self.create_publisher(Image, '/CRE/depth', 10)
 
-        # self.publisher_test = self.create_publisher(Image, '/test/image_raw', 10)
-        
         self.bridge = CvBridge()
         self.load_calibration()
 
@@ -129,7 +127,6 @@ class NeuralNetworkDepthEstimationNode(Node):
                 return
         self.left_image = cv2.cvtColor(self.left_image, cv2.COLOR_GRAY2BGR)
         self.process_images()
-        #self.publisher_test.publish(msg)
 
     def right_image_callback(self, msg):
         self.right_image = self.bridge.imgmsg_to_cv2(msg, 'mono8')
@@ -152,17 +149,24 @@ class NeuralNetworkDepthEstimationNode(Node):
         
         self.get_logger().info(f'Processing images of shape: left={self.left_image.shape}, right={self.right_image.shape}')
 
-        
         # HITNET model depth estimation
         try:
             start_time = datetime.now()
             hitnet_disparity = self.hitnet_model(self.left_image, self.right_image)
+            self.get_logger().info(f'HITNET disparity map range: min {hitnet_disparity.min()}, max {hitnet_disparity.max()}')
+            
             hitnet_depth = self.hitnet_model.get_depth_from_disparity(hitnet_disparity, self.hitnet_model.camera_config)
+            self.get_logger().info(f'HITNET depth map before normalization range: min {hitnet_depth.min()}, max {hitnet_depth.max()}')
+            
+            # Clipping values
+            hitnet_depth = np.clip(hitnet_depth, 0, 10000)  # Clip depth values to a reasonable range
+
+            # Post-processing filters
+            hitnet_depth = cv2.medianBlur(hitnet_depth, 5)
             
             end_time = datetime.now()
             duration = end_time - start_time
             self.get_logger().info(f'HITNET inference time: {duration.total_seconds()} seconds')
-            self.get_logger().info(f'HITNET depth map range: min {hitnet_depth.min()}, max {hitnet_depth.max()}')
             self.publish_depth(hitnet_depth, "HITNET")
         except Exception as e:
             self.get_logger().error(f'Error in HITNET model: {e}')
@@ -181,7 +185,7 @@ class NeuralNetworkDepthEstimationNode(Node):
 
     def publish_depth(self, depth_map, model_type):
         depth_map_normalized = cv2.normalize(depth_map, None, 0, 255, cv2.NORM_MINMAX)
-        depth_map_colored = cv2.applyColorMap(cv2.convertScaleAbs(255 - depth_map_normalized, 1), cv2.COLORMAP_JET)
+        depth_map_colored = cv2.applyColorMap(cv2.convertScaleAbs(depth_map_normalized, 1), cv2.COLORMAP_JET)
         depth_msg = self.bridge.cv2_to_imgmsg(depth_map_colored, encoding='bgr8')
         
         if model_type == "HITNET":
