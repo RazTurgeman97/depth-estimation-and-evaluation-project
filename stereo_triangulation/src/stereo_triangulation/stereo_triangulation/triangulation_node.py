@@ -75,53 +75,8 @@ class StereoTriangulationNode(Node):
         self.baseline = np.array([self.calib["baseline"], 0, 0])
         self.R_mat = np.array(self.calib["world2left_rot"])
 
-        # # Intrinsic parameters
-        # self.K_depth = np.array([
-        #     [387.54296875, 0, 324.22357178],
-        #     [0, 387.54296875, 237.35708618],
-        #     [0, 0, 1]
-        # ])
-        
-        # self.K_color = np.array([
-        #     [384.70373535, 0, 320.56973267],
-        #     [0, 384.24240112, 243.43904114],
-        #     [0, 0, 1]
-        # ])
-
-        # # Distortion coefficients (if needed, typically for rectification)
-        # self.dist_coeffs_depth = np.zeros(5)  # Assuming zero distortion for the example
-        # self.dist_coeffs_color = np.array([-0.0556505, 0.0678931, 0.000100488, 0.00120735, -0.0223614])
-
-        # # Extrinsic parameters
-        # self.R = np.array([
-        #     [0.999997, 0.000683788, -0.00218137],
-        #     [-0.000691332, 0.999994, -0.0034595],
-        #     [0.00217899, 0.00346099, 0.999992]
-        # ])
-
-        # self.T = np.array([-0.0591067, -4.98296e-05, 0.000281159])
-
-        # # Rectification (assuming already rectified images)
-        # self.R1 = np.eye(3)
-        # self.R2 = np.eye(3)
-        
-        # # Projection matrices
-        # self.P1 = np.zeros((3, 4))
-        # self.P1[:3, :3] = self.K_depth
-        
-        # self.P2 = np.zeros((3, 4))
-        # self.P2[:3, :3] = self.K_color
-        # self.P2[:, 3] = np.dot(self.K_color, self.T)  # Apply translation to the second projection matrix
-
-        # # Disparity-to-depth mapping matrix
-        # self.Q = np.array([
-        #     [1, 0, 0, -self.K_depth[0, 2]],
-        #     [0, 1, 0, -self.K_depth[1, 2]],
-        #     [0, 0, 0, self.K_depth[0, 0]],
-        #     [0, 0, -1/self.T[0], 0]
-        # ])
-
-         # Intrinsic parameters for infra1 and infra2
+        ## Extracted d455 Intel realsense camera parameters using pyrealsense2 pipeline
+        # Intrinsic parameters for infra1 and infra2
         self.K_infra1 = np.array([
             [387.54296875, 0, 324.22357178],
             [0, 387.54296875, 237.35708618],
