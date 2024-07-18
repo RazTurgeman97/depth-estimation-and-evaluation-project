@@ -15,14 +15,16 @@ class CameraConfig:
     baseline: float
     f: float
 
-DEFAULT_CONFIG = CameraConfig(0.546, 120)  # rough estimate from the original calibration
+# DEFAULT_CONFIG = CameraConfig(0.546, 120)  # rough estimate from the original calibration
 
 class HitNet:
-    def __init__(self, model_path, model_type=ModelType.middlebury, camera_config=DEFAULT_CONFIG, max_dist=10):
+    def __init__(self, model_path, model_type, camera_config, max_dist):
         self.model_type = model_type
         self.camera_config = camera_config
         self.max_dist = max_dist
-        self.session = onnxruntime.InferenceSession(model_path, providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+        session_options = onnxruntime.SessionOptions()
+        session_options.log_severity_level = 1
+        self.session = onnxruntime.InferenceSession(model_path, session_options, providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
         self.get_input_details()
         self.get_output_details()
 
@@ -97,4 +99,5 @@ class HitNet:
         norm_depth_map[norm_depth_map >= 255] = 0
         norm_depth_map = cv2.resize(norm_depth_map, img_shape)
         return cv2.applyColorMap(cv2.convertScaleAbs(norm_depth_map, 1), cv2.COLORMAP_MAGMA)
+
 
