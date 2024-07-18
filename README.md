@@ -3,6 +3,19 @@ My Depth Estimation Project for my B.S.c Degree in Mechanical Engineering at Ben
 
 This project uses stereo cameras with ROS2 to perform depth estimation. The following instructions will help you set up the environment using Docker.
 
+## Enable nvidia runtime after reboot:
+
+```bash
+sudo systemctl stop docker
+sudo systemctl stop docker.socket
+
+sudo systemctl start docker
+
+sudo systemctl restart docker
+
+docker info | grep -i runtime
+```
+
 
 ## To make the permission changes for /dev/video* persistent across reboots, you can create a udev rule. Here’s how you can do it:
 ### Create a new udev rule file:
