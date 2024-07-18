@@ -9,9 +9,14 @@ enable_infra1: true
 enable_infra2: true
 
 # Set camera profiles (resolution and frame rate)
-depth_module.infra_profile: 640x480x60
-depth_module.depth_profile: 640x480x60
+
+# depth_module.infra_profile: 640x480x60
+# depth_module.depth_profile: 640x480x60
+
 #param rgb_camera.color_profile: 640x480x60
+
+depth_module.infra_profile: 1280x720x30
+depth_module.depth_profile: 1280x720x30
 
 # Set format
 depth_module.infra1_format: Y8 # (8-bit grayscale)

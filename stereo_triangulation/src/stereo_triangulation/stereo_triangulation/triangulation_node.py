@@ -20,7 +20,7 @@ class StereoTriangulationNode(Node):
         self.get_logger().info("Subscriptions set up.")
         
         # Publishers
-        self.left_depth_publisher = self.create_publisher(Image, '/left_camera_triangulation/depth_image', 1)
+        self.left_depth_publisher = self.create_publisher(Image, '/camera_triangulation/depth_image', 1)
         
         self.get_logger().info("Triangulation Node has started.")
 
@@ -32,16 +32,16 @@ class StereoTriangulationNode(Node):
 
     def load_calibration(self):
         self.calib = {
-            "baseline": -95.0439,
+            "baseline": -95.044,
             "intrinsic_left": [
-                [0.505839, 0.808565, 0.503078],
-                [0.492961, -0.0618031, 0.0696098],
-                [-0.000149548, 0.000388624, -0.0226]
+                [0.506, 0.809, 0.503],
+                [0.493, -0.062, 0.070],
+                [-0.000, 0.000, -0.023]
             ],
             "intrinsic_right": [
-                [0.504375, 0.805967, 0.505367],
-                [0.49573, -0.0594383, 0.0707053],
-                [-0.000174214, 0.000842824, -0.0233214]
+                [0.505, 0.806, 0.505],
+                [0.496, -0.059, 0.071],
+                [-0.000, 0.001, -0.023]
             ],
             "rectified": {
                 "0": {"fx": 968.857, "fy": 968.857, "width": 1920, "height": 1080, "ppx": 970.559, "ppy": 533.393},
@@ -62,14 +62,14 @@ class StereoTriangulationNode(Node):
                 "15": {"fx": 0, "fy": 0, "width": 1152, "height": 1152, "ppx": 0, "ppy": 0}
             },
             "world2left_rot": [
-                [0.999971, -0.00226072, 0.00731733],
-                [0.00225269, 0.999997, 0.00110529],
-                [-0.00731981, -0.00108877, 0.999973]
+                [1.000, -0.002, 0.007],
+                [0.002, 1.000, 0.001],
+                [-0.007, -0.001, 1.000]
             ],
             "world2right_rot": [
-                [0.999976, 0.00354033, -0.00597893],
-                [-0.00354689, 0.999993, -0.00108644],
-                [0.00597504, 0.00110762, 0.999982]
+                [1.000, 0.004, -0.006],
+                [-0.004, 1.000, -0.001],
+                [0.006, 0.001, 1.000]
             ]
         }
         self.baseline = np.array([self.calib["baseline"], 0, 0])
@@ -118,7 +118,7 @@ class StereoTriangulationNode(Node):
     def process_images(self):
         if self.left_image is not None and self.right_image is not None:
             # Match keypoints (for demonstration, using ORB)
-            orb = cv2.ORB.create(nfeatures=500, scaleFactor=1.2, nlevels=8)
+            orb = cv2.ORB.create(nfeatures=10000, scaleFactor=1.2, nlevels=8)
             kp1, des1 = orb.detectAndCompute(self.left_image, None)
             kp2, des2 = orb.detectAndCompute(self.right_image, None)
             bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
@@ -140,7 +140,7 @@ class StereoTriangulationNode(Node):
             valid_points = points_left[valid_mask]
             valid_depth = depth[valid_mask]
 
-            # Publish depth images
+            # Publish depth image
             self.publish_depth_image(self.left_image, valid_points, valid_depth, self.left_depth_publisher)
 
     def publish_depth_image(self, image, points, depth, publisher):
