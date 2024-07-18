@@ -150,7 +150,7 @@ class StereoTriangulationNode(Node):
 
     def process_images(self):
         if self.left_image is not None and self.right_image is not None:
-            orb = cv2.ORB.create(nfeatures=10000, scaleFactor=1.2, nlevels=8)
+            orb = cv2.ORB.create()
             kp1, des1 = orb.detectAndCompute(self.left_image, None)
             kp2, des2 = orb.detectAndCompute(self.right_image, None)
             bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
