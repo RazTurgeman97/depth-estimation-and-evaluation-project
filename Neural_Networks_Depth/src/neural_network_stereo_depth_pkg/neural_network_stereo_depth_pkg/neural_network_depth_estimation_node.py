@@ -162,7 +162,7 @@ class NeuralNetworkDepthEstimationNode(Node):
             hitnet_depth = np.clip(hitnet_depth, 0, 10000)  # Clip depth values to a reasonable range
 
             # Post-processing filters
-            hitnet_depth = cv2.medianBlur(hitnet_depth, 5)
+            #hitnet_depth = cv2.medianBlur(hitnet_depth, 5)
             
             end_time = datetime.now()
             duration = end_time - start_time
@@ -175,6 +175,10 @@ class NeuralNetworkDepthEstimationNode(Node):
         try:
             start_time = datetime.now()
             cre_depth = self.cre_model.estimate_depth(self.left_image, self.right_image)
+
+            # Clipping values
+            cre_depth = np.clip(cre_depth, 0, 10000)  # Clip depth values to a reasonable range
+
             end_time = datetime.now()
             duration = end_time - start_time
             self.get_logger().info(f'CRE inference time: {duration.total_seconds()} seconds')
