@@ -38,9 +38,6 @@ RUN apt update && \
 # Install Python packages
 RUN pip3 install opencv-python-headless numpy onnxruntime-gpu
 
-# Copy calibration file
-COPY calibration-camchain.yaml /opt/ros/humble/share/depth_estimation/config/calibration-camchain.yaml
-
 # Copy source code
 COPY . /root/ros2_ws
 

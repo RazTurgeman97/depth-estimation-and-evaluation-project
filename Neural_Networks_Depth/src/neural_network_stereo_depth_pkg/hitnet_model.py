@@ -16,10 +16,10 @@ class CameraConfig:
     baseline: float
     f: float
 
-DEFAULT_CONFIG = CameraConfig(0.546, 120)  # Rough estimate from the original calibration
+# DEFAULT_CONFIG = CameraConfig(0.546, 120)  # Rough estimate from the original calibration
 
 class HitNetModel:
-    def __init__(self, model_path, model_type=ModelType.eth3d, camera_config=DEFAULT_CONFIG, max_dist=10):
+    def __init__(self, model_path, model_type, camera_config, max_dist):
         self.model_type = model_type
         self.camera_config = camera_config
         self.max_dist = max_dist

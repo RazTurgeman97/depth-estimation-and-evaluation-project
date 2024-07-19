@@ -1,7 +1,11 @@
 # Disable all streams by default
-enable_color: false
-enable_depth: false
+enable_color: true
+enable_depth: true
 enable_infra: false
+
+enable_accel: false
+enable_gyro: false
+enable_rgbd: true
 
 # Enable only the infrared streams
 enable_infra1: true
@@ -10,20 +14,29 @@ enable_infra2: true
 # Set the infrared camera profiles (resolution and frame rate)
 depth_module.infra_profile: 640x480x60
 depth_module.depth_profile: 640x480x60
+rgb_camera.color_profile: 640x480x60
+
 #param rgb_camera.color_profile: 640x480x60
 
 # Disable alignment and synchronization if not needed
-align_depth.enable: false
-enable_sync: false
+align_depth.enable: true
+enable_sync: true
+# depth_module.inter_cam_sync_mode: 0
+# depth_module.emitter_on_off: disable
+# depth_module.emitter_enabled: disable
+depth_module.enable_auto_exposure: true
+# depth_module.exposure: 10000
 
 # Optionally disable TF publishing if not needed
 publish_tf: false
 tf_publish_rate: 0.0
 
 # Disable specific plugins for additional image formats
-camera.infra1.image_rect_raw.compressed: false
-camera.infra1.image_rect_raw.compressedDepth: false
-camera.infra1.image_rect_raw.theora: false
-camera.infra2.image_rect_raw.compressed: false
-camera.infra2.image_rect_raw.compressedDepth: false
-camera.infra2.image_rect_raw.theora: false
+#camera.infra1.image_rect_raw.compressed: false
+#camera.infra1.image_rect_raw.compressedDepth: false
+#camera.infra1.image_rect_raw.theora: false
+#camera.infra2.image_rect_raw.compressed: false
+#camera.infra2.image_rect_raw.compressedDepth: false
+#camera.infra2.image_rect_raw.theora: false
+
+accelerate_gpu_with_glsl: true
