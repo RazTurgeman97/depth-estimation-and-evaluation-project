@@ -18,7 +18,7 @@ class CameraConfig:
 
 # DEFAULT_CONFIG = CameraConfig(0.546, 120)  # Rough estimate from the original calibration
 
-class HitNetModel:
+class HitNet:
     def __init__(self, model_path, model_type, camera_config, max_dist):
         self.model_type = model_type
         self.camera_config = camera_config

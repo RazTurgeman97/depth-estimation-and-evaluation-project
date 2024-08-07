@@ -56,7 +56,6 @@ RUN apt update && \
         cuda-demo-suite-12-5 \
         cuda-documentation-12-5 \
         cuda-drivers \
-        cuda-drivers-555 \
         cuda-nsight-12-5 \
         cuda-nsight-systems-12-5 \
         cuda-nvvp-12-5 \
@@ -68,7 +67,7 @@ RUN apt update && \
         libcudnn8 \
         libcudnn8-dev \
         libcudnn8-samples \
-        libcudnn9-static-cuda-12 \
+#        libcudnn9-static-cuda-12 \
         nvidia-cuda-dev \
         nvidia-cuda-gdb \
         nvidia-cuda-toolkit \
@@ -85,7 +84,10 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && cd /root/ros2_ws && colco
 # Source the setup file and set RMW implementation in bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
     echo "source /root/ros2_ws/install/setup.bash" >> /root/.bashrc && \
-    echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /root/.bashrc
+    echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /root/.bashrc && \
+    echo "export ROS_DOMAIN_ID=97" >> /root/.bashrc && \
+    echo "export ROS_LOCALHOST_ONLY=0" >> /root/.bashrc && \
+    echo "export CYCLONEDDS_URI=file:///~/cyclonedds.xml" >> /root/.bashrc \
 
 # Source the setup file and list installed packages
 RUN /bin/bash -c "source /root/ros2_ws/install/setup.bash && ros2 pkg list"
