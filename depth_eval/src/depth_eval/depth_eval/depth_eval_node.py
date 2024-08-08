@@ -14,10 +14,10 @@ class DepthEvaluationNode(Node):
         self.cre_depth = None
         self.d455_depth = None
 
-        self.create_subscription(Image, '/left_camera_triangulation/depth_image', self.triangulation_callback, 10)
-        self.create_subscription(Image, '/hitnet/depth', self.hitnet_callback, 10)
-        self.create_subscription(Image, '/cre/depth', self.cre_callback, 10)
-        self.create_subscription(Image, '/camera/depth/image_rect_raw', self.d455_callback, 10)
+        self.create_subscription(Image, '/camera_triangulation/depth_image', self.triangulation_callback, 10)
+        self.create_subscription(Image, '/HITNET/depth', self.hitnet_callback, 10)
+        self.create_subscription(Image, '/CRE/depth', self.cre_callback, 10)
+        self.create_subscription(Image, '/camera/camera/aligned_depth_to_color/image_raw', self.d455_callback, 10)
 
         self.get_logger().info("Depth Evaluation Node has started.")
 
