@@ -1,6 +1,6 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-  "dockerFile": "../Dockerfile.source",
+  "dockerFile": "../Dockerfile",
   "build": {
    "args": {
     "WORKSPACE": "${containerWorkspaceFolder}"
@@ -19,6 +19,7 @@
    "-e", "QT_X11_NO_MITSHM=1",
    "-e", "QT_GRAPHICSSYSTEM=native",
    "--add-host=host.docker.internal:host-gateway",
+   "--gpus=all"
   ],
   "containerEnv": { "DISPLAY": "${localEnv:DISPLAY}" },
   // Set *default* container specific settings.json values on container create.

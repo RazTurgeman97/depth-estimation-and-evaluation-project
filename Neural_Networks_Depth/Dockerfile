@@ -67,7 +67,6 @@ RUN apt update && \
         libcudnn8 \
         libcudnn8-dev \
         libcudnn8-samples \
-#        libcudnn9-static-cuda-12 \
         nvidia-cuda-dev \
         nvidia-cuda-gdb \
         nvidia-cuda-toolkit \
@@ -78,7 +77,7 @@ RUN apt update && \
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 ENV CUDA_HOME=/usr/local/cuda
 
-# Build the workspace and log the output to console
+# Build the workspace
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && cd /root/ros2_ws && colcon build --event-handlers console_cohesion+"
 
 # Source the setup file and set RMW implementation in bashrc
@@ -87,10 +86,7 @@ RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
     echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /root/.bashrc && \
     echo "export ROS_DOMAIN_ID=97" >> /root/.bashrc && \
     echo "export ROS_LOCALHOST_ONLY=0" >> /root/.bashrc && \
-    echo "export CYCLONEDDS_URI=file:///~/cyclonedds.xml" >> /root/.bashrc \
-
-# Source the setup file and list installed packages
-RUN /bin/bash -c "source /root/ros2_ws/install/setup.bash && ros2 pkg list"
+    echo "export CYCLONEDDS_URI=file:///workspaces/depth-estimation-project/Neural_Networks_Depth/src/cyclonedds.xml" >> /root/.bashrc
 
 # Ensure the nvidia-container-toolkit is installed
 RUN apt update && \
@@ -109,4 +105,3 @@ WORKDIR /workspace
 
 # Set default command
 CMD ["bash"]
-

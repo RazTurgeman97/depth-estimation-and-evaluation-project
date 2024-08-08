@@ -6,7 +6,7 @@ import numpy as np
 
 class DepthEvaluationNode(Node):
     def __init__(self):
-        super().__init__('depth_evaluation_node')
+        super().__init__('depth_eval_node')
 
         self.bridge = CvBridge()
         self.triangulation_depth = None
@@ -15,26 +15,26 @@ class DepthEvaluationNode(Node):
         self.d455_depth = None
 
         self.create_subscription(Image, '/camera_triangulation/depth_image', self.triangulation_callback, 10)
-        self.create_subscription(Image, '/HITNET/depth', self.hitnet_callback, 10)
-        self.create_subscription(Image, '/CRE/depth', self.cre_callback, 10)
+        #self.create_subscription(Image, '/HITNET/depth', self.hitnet_callback, 10)
+        #self.create_subscription(Image, '/CRE/depth', self.cre_callback, 10)
         self.create_subscription(Image, '/camera/camera/aligned_depth_to_color/image_raw', self.d455_callback, 10)
 
         self.get_logger().info("Depth Evaluation Node has started.")
 
     def triangulation_callback(self, msg):
-        self.triangulation_depth = self.bridge.imgmsg_to_cv2(msg, '32FC1')
+        self.triangulation_depth = self.bridge.imgmsg_to_cv2(msg, 'passthrough')
         self.evaluate_depth()
 
     def hitnet_callback(self, msg):
-        self.hitnet_depth = self.bridge.imgmsg_to_cv2(msg, '32FC1')
+        self.hitnet_depth = self.bridge.imgmsg_to_cv2(msg, 'passthrough')
         self.evaluate_depth()
 
     def cre_callback(self, msg):
-        self.cre_depth = self.bridge.imgmsg_to_cv2(msg, '32FC1')
+        self.cre_depth = self.bridge.imgmsg_to_cv2(msg, 'passthrough')
         self.evaluate_depth()
 
     def d455_callback(self, msg):
-        self.d455_depth = self.bridge.imgmsg_to_cv2(msg, '32FC1')
+        self.d455_depth = self.bridge.imgmsg_to_cv2(msg, 'passthrough')
         self.evaluate_depth()
 
     def evaluate_depth(self):

@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'depth_eval_node = depth_eval.depth_evaluation_node:main'
+            'depth_eval_node = depth_eval.depth_eval_node:main'
         ],
     },
 )
