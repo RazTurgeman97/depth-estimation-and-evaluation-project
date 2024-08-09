@@ -1,9 +1,12 @@
 # Depth Estimation Project
 My Depth Estimation Project for my B.S.c Degree in Mechanical Engineering at Ben-Gurion University
 
-This project uses stereo cameras with ROS2 to perform depth estimation. The following instructions will help you set up the environment using Docker.
+This project uses stereo cameras with ROS2 to perform depth estimation.
+The following instructions will help you set up the environment using Docker.
 
 ## Enable nvidia runtime after reboot:
+
+If you already conducted the instruction below, perform the following command and you are good to go.
 
 ```bash
 sudo systemctl stop docker
