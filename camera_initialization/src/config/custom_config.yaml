@@ -34,7 +34,7 @@ depth_module.exposure.1: 7500
 depth_module.gain.1: 16
 depth_module.exposure.2: 1
 depth_module.gain.2: 16
-depth_module.emitter_enabled: 0
+depth_module.emitter_enabled: 1
 # depth_module.emitter_on_off: 1
 # depth_module.emitter_frequency: true
 enable_sync: false
@@ -57,11 +57,11 @@ pointcloud.stream_index_filter: 0
 pointcloud.ordered_pc: false
 pointcloud.allow_no_texture_points: false
 align_depth.enable: true
-colorizer.enable: true
+colorizer.enable: false
 decimation_filter.enable: true
 spatial_filter.enable: true
 temporal_filter.enable: false
-disparity_filter.enable: true
+disparity_filter.enable: false
 hole_filling_filter.enable: false
 hdr_merge.enable: true
 wait_for_device_timeout: -1.0

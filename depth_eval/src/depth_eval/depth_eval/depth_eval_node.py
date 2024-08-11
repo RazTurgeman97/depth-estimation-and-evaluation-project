@@ -31,10 +31,10 @@ class DepthEvaluationNode(Node):
             "MSE_D455": []
         }
 
-        self.create_subscription(Image, '/camera_triangulation/depth_image', self.triangulation_callback, 10)
-        self.create_subscription(Image, '/HITNET/depth', self.hitnet_callback, 10)
-        self.create_subscription(Image, '/CRE/depth', self.cre_callback, 10)
-        self.create_subscription(Image, '/camera/camera/aligned_depth_to_color/image_raw', self.d455_callback, 10)
+        self.create_subscription(Image, '/camera_triangulation/raw_depth_map', self.triangulation_callback, 10)
+        self.create_subscription(Image, '/HITNET/raw_depth', self.hitnet_callback, 10)
+        self.create_subscription(Image, '/CRE/raw_depth', self.cre_callback, 10)
+        self.create_subscription(Image, '/camera/camera/depth/image_rect_raw', self.d455_callback, 10)
 
         self.get_logger().info("Depth Evaluation Node has started.")
 
@@ -61,15 +61,42 @@ class DepthEvaluationNode(Node):
         self.cre_depth = cv2.resize(depth_image, (self.frame_size[1], self.frame_size[0]))
         self.evaluate_depth()
 
+    # def d455_callback(self, msg):
+    #     depth_image = self.bridge.imgmsg_to_cv2(msg, 'passthrough')
+    #     self.set_frame_size(depth_image)
+    #     self.d455_depth = cv2.resize(depth_image, (self.frame_size[1], self.frame_size[0]))
+    #     self.evaluate_depth()
+
     def d455_callback(self, msg):
-        depth_image = self.bridge.imgmsg_to_cv2(msg, 'passthrough')
-        self.set_frame_size(depth_image)
-        self.d455_depth = cv2.resize(depth_image, (self.frame_size[1], self.frame_size[0]))
+        # Convert from 16-bit depth to float32 depth
+        depth_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
+        if depth_image.dtype == np.uint16:
+            depth_image = depth_image.astype(np.float32) * 0.001  # Convert to meters
+        self.d455_depth = depth_image
         self.evaluate_depth()
 
     def evaluate_depth(self):
         if self.triangulation_depth is not None and self.hitnet_depth is not None and self.cre_depth is not None and self.d455_depth is not None:
+            
+            # Convert HITNET, CRE, and D455 to single-channel depth maps if they have multiple channels
+            if self.hitnet_depth.ndim == 3 and self.hitnet_depth.shape[2] == 3:
+                self.hitnet_depth = cv2.cvtColor(self.hitnet_depth, cv2.COLOR_BGR2GRAY)
+            
+            if self.cre_depth.ndim == 3 and self.cre_depth.shape[2] == 3:
+                self.cre_depth = cv2.cvtColor(self.cre_depth, cv2.COLOR_BGR2GRAY)
+            
+            if self.d455_depth.ndim == 3 and self.d455_depth.shape[2] == 3:
+                self.d455_depth = cv2.cvtColor(self.d455_depth, cv2.COLOR_BGR2GRAY)
+
+            if self.triangulation_depth.shape != self.d455_depth.shape:
+                # self.get_logger().warning(f"Resizing D455 depth map from {self.d455_depth.shape} to {self.triangulation_depth.shape}.")
+                self.d455_depth = cv2.resize(self.d455_depth, (self.triangulation_depth.shape[1], self.triangulation_depth.shape[0]))
+
+            
             valid_mask = np.isfinite(self.triangulation_depth) & (self.triangulation_depth > 0)
+            # np.isfinite(self.triangulation_depth) - checks if the values in the triangulation_depth map are finite numbers (i.e., not NaN, +inf, or -inf).
+            # self.triangulation_depth > 0 - ensures that only positive depth values are considered valid.
+            # valid_mask - is used to focus the error calculations only on valid depth values, ignoring invalid or undefined areas in the depth map.
 
             metrics = {
                 "MAE_HITNET": self.compute_mae(self.hitnet_depth, self.triangulation_depth, valid_mask),
@@ -83,11 +110,21 @@ class DepthEvaluationNode(Node):
                 "MSE_D455": self.compute_mse(self.d455_depth, self.triangulation_depth, valid_mask)
             }
 
+            # These functions calculate the Mean Absolute Error, Root Mean Squared Error, and Mean Squared Error between the predicted depth
+            # map and the triangulation depth map, only at pixels where the valid_mask is True.
+
             # Accumulate metrics
             for key, value in metrics.items():
                 self.metrics[key].append(value)
 
     def compute_mae(self, predicted, ground_truth, mask):
+        # # Debugging: print shapes
+        # print(f"Predicted shape: {predicted.shape}, Ground truth shape: {ground_truth.shape}")
+        # print(f"Masked predicted shape: {predicted[mask].shape}, Masked ground truth shape: {ground_truth[mask].shape}")
+        
+        # Ensure that both arrays have the same shape after masking
+        assert predicted[mask].shape == ground_truth[mask].shape, "Shape mismatch after applying mask"
+        
         return np.mean(np.abs(predicted[mask] - ground_truth[mask]))
 
     def compute_rmse(self, predicted, ground_truth, mask):

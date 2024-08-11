@@ -21,7 +21,8 @@ class StereoTriangulationNode(Node):
         
         # Publishers
         self.left_depth_publisher = self.create_publisher(Image, '/camera_triangulation/depth_image', 1)
-        
+        self.raw_depth_publisher = self.create_publisher(Image, '/camera_triangulation/raw_depth_map', 1)
+
         self.get_logger().info("Triangulation Node has started.")
 
         self.left_image = None
@@ -172,8 +173,11 @@ class StereoTriangulationNode(Node):
             valid_points = points_left[valid_mask]
             valid_depth = depth[valid_mask]
 
-            # Publish depth image
+            # Publish the color-coded depth image
             self.publish_depth_image(self.left_image, valid_points, valid_depth, self.left_depth_publisher)
+            
+            # Publish the raw depth map
+            self.publish_raw_depth_map(valid_points, valid_depth)
 
     def publish_depth_image(self, image, points, depth, publisher):
         if depth.size > 0:
@@ -190,7 +194,21 @@ class StereoTriangulationNode(Node):
                     cv2.circle(image, (x, y), 5, (0, 0, 0), -1)  # Black for invalid depth
 
             depth_image_msg = self.bridge.cv2_to_imgmsg(image, encoding="bgr8")
-            publisher.publish(depth_image_msg)
+            self.left_depth_publisher.publish(depth_image_msg)
+    
+    def publish_raw_depth_map(self, points, depth):
+        if depth.size > 0:
+            # Create a blank image to store depth values
+            depth_map = np.zeros(self.left_image.shape[:2], dtype=np.float32)
+            
+            for i, (point, d) in enumerate(zip(points, depth)):
+                x, y = int(point[0]), int(point[1])
+                if np.isfinite(d) and d > 0:  # Ensure valid depth values
+                    depth_map[y, x] = d
+            
+            depth_image_msg = self.bridge.cv2_to_imgmsg(depth_map, encoding="32FC1")
+            self.raw_depth_publisher.publish(depth_image_msg)
+
 
 def main(args=None):
     rclpy.init(args=args)

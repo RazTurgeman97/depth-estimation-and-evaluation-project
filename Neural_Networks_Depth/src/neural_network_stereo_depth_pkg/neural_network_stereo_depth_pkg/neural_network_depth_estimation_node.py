@@ -24,6 +24,8 @@ class NeuralNetworkDepthEstimationNode(Node):
         
         self.publisher_hitnet_depth = self.create_publisher(Image, '/HITNET/depth', 10)
         self.publisher_cre_depth = self.create_publisher(Image, '/CRE/depth', 10)
+        self.publisher_hitnet_raw_depth = self.create_publisher(Image, '/HITNET/raw_depth', 10)
+        self.publisher_cre_raw_depth = self.create_publisher(Image, '/CRE/raw_depth', 10)
 
         self.bridge = CvBridge()
         self.load_calibration()
@@ -156,36 +158,43 @@ class NeuralNetworkDepthEstimationNode(Node):
             self.get_logger().info(f'HITNET disparity map range: min {hitnet_disparity.min()}, max {hitnet_disparity.max()}')
             
             hitnet_depth = self.hitnet_model.get_depth_from_disparity(hitnet_disparity, self.hitnet_model.camera_config)
+            hitnet_depth /= 1000.0  # Convert from millimeters to meters
+            
             self.get_logger().info(f'HITNET depth map before normalization range: min {hitnet_depth.min()}, max {hitnet_depth.max()}')
             
             # Clipping values
-            hitnet_depth = np.clip(hitnet_depth, 0, 10000)  # Clip depth values to a reasonable range
-
-            # Post-processing filters
-            #hitnet_depth = cv2.medianBlur(hitnet_depth, 5)
+            hitnet_depth = np.clip(hitnet_depth, 0, 10.0)  # Clip depth values to a reasonable range in meters
+            
+            # Post-processing filters (optional)
+            # hitnet_depth = cv2.medianBlur(hitnet_depth, 5)
             
             end_time = datetime.now()
             duration = end_time - start_time
             self.get_logger().info(f'HITNET inference time: {duration.total_seconds()} seconds')
             self.publish_depth(hitnet_depth, "HITNET")
+            self.publish_raw_depth_map(hitnet_depth, "HITNET")
         except Exception as e:
             self.get_logger().error(f'Error in HITNET model: {e}')
+
 
         # CRE model depth estimation
         try:
             start_time = datetime.now()
             cre_depth = self.cre_model.estimate_depth(self.left_image, self.right_image)
-
+            cre_depth /= 1000.0  # Convert from millimeters to meters
+            
             # Clipping values
-            cre_depth = np.clip(cre_depth, 0, 10000)  # Clip depth values to a reasonable range
-
+            cre_depth = np.clip(cre_depth, 0, 10.0)  # Clip depth values to a reasonable range in meters
+            
             end_time = datetime.now()
             duration = end_time - start_time
             self.get_logger().info(f'CRE inference time: {duration.total_seconds()} seconds')
             self.get_logger().info(f'CRE depth map range: min {cre_depth.min()}, max {cre_depth.max()}')
             self.publish_depth(cre_depth, "CRE")
+            self.publish_raw_depth_map(cre_depth, "CRE")
         except Exception as e:
             self.get_logger().error(f'Error in CRE model: {e}')
+
 
     def publish_depth(self, depth_map, model_type):
         depth_map_normalized = cv2.normalize(depth_map, None, 0, 255, cv2.NORM_MINMAX)
@@ -196,6 +205,19 @@ class NeuralNetworkDepthEstimationNode(Node):
             self.publisher_hitnet_depth.publish(depth_msg)
         elif model_type == "CRE":
             self.publisher_cre_depth.publish(depth_msg)
+
+    def publish_raw_depth_map(self, depth_map, model_type):
+        # Ensure depth_map is in floating-point format with meters as units
+        depth_map_float = depth_map.astype(np.float32)
+        
+        # Publish as single-channel depth map
+        depth_msg = self.bridge.cv2_to_imgmsg(depth_map_float, encoding='32FC1')
+        
+        if model_type == "HITNET":
+            self.publisher_hitnet_raw_depth.publish(depth_msg)
+        elif model_type == "CRE":
+            self.publisher_cre_raw_depth.publish(depth_msg)
+
 
 def main(args=None):
     rclpy.init(args=args)
