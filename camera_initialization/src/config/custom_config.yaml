@@ -36,7 +36,7 @@ depth_module.exposure.2: 1
 depth_module.gain.2: 16
 depth_module.emitter_enabled: 0
 # depth_module.emitter_on_off: 1
-depth_module.emitter_frequency: true
+# depth_module.emitter_frequency: true
 enable_sync: false
 depth_module.inter_cam_sync_mode: 0
 enable_rgbd: false
