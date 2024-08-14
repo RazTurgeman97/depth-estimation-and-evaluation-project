@@ -22,6 +22,7 @@
    "-e", "QT_X11_NO_MITSHM=1",
    "-e", "QT_GRAPHICSSYSTEM=native",
    "--add-host=host.docker.internal:host-gateway",
+   "--volume=/home/student/ros2_ws:/mnt/data",
   ],
   "containerEnv": { "DISPLAY": "${localEnv:DISPLAY}" },
   // Set *default* container specific settings.json values on container create.

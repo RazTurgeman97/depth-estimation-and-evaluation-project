@@ -235,13 +235,13 @@ class DepthEvaluationNode(Node):
         print("RMSE and MSE give more weight to larger errors, with RMSE being in the same units as the depth measurements, while MSE amplifies larger errors even more.")
 
         if best_mae == best_rmse == best_mse:
-            print(f"Overall, {best_mae} is the best-performing depth estimation method across all metrics.")
+            print(f"\nOverall, {best_mae} is the best-performing depth estimation method across all metrics.")
         else:
             print(f"MAE Best: {best_mae} - This method showed the least average error in depth estimation.")
             print(f"RMSE Best: {best_rmse} - This method had the lowest squared error, indicating fewer large deviations.")
             print(f"MSE Best: {best_mse} - This method minimized the squared error the most, reducing the impact of large discrepancies.")
 
-        print("In summary, HITNET was the overall best-performing method, showing the lowest error across all metrics, meaning it consistently produced the most accurate depth estimates with fewer large deviations.")
+        # print("In summary, HITNET was the overall best-performing method, showing the lowest error across all metrics, meaning it consistently produced the most accurate depth estimates with fewer large deviations.")
 
 
 def main(args=None):

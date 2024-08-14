@@ -1,9 +1,11 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.time import Time
 import cv2
 import numpy as np
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
+import message_filters
 
 class StereoTriangulationNode(Node):
     def __init__(self):
@@ -14,11 +16,16 @@ class StereoTriangulationNode(Node):
         self.load_calibration()
         self.get_logger().info("Calibration Data Loaded Successfully.")
 
-        # Subscribers
-        self.create_subscription(Image, '/camera/camera/infra1/image_rect_raw', self.left_image_callback, 10)
-        self.create_subscription(Image, '/camera/camera/infra2/image_rect_raw', self.right_image_callback, 10)
-        self.get_logger().info("Subscriptions set up.")
-        
+        # Subscribers with message filters
+        left_image_sub = message_filters.Subscriber(self, Image, '/camera/camera/infra1/image_rect_raw')
+        right_image_sub = message_filters.Subscriber(self, Image, '/camera/camera/infra2/image_rect_raw')
+
+        # Synchronize the left and right images
+        self.ts = message_filters.ApproximateTimeSynchronizer([left_image_sub, right_image_sub], queue_size=1, slop=0.1)
+        self.ts.registerCallback(self.image_callback)
+
+        self.get_logger().info("Subscriptions and synchronization set up.")
+
         # Publishers
         self.left_depth_publisher = self.create_publisher(Image, '/camera_triangulation/depth_image', 1)
         self.raw_depth_publisher = self.create_publisher(Image, '/camera_triangulation/raw_depth_map', 1)
@@ -133,18 +140,12 @@ class StereoTriangulationNode(Node):
                 return True
         return False
 
-    def left_image_callback(self, msg):
-        self.left_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+    def image_callback(self, left_msg, right_msg):
+        self.left_image = self.bridge.imgmsg_to_cv2(left_msg, 'bgr8')
+        self.right_image = self.bridge.imgmsg_to_cv2(right_msg, 'bgr8')
+
         if self.frame_size_key is None:
             if not self.select_frame_size_key(self.left_image):
-                self.get_logger().error("Frame size not found in calibration data.")
-                return
-        self.process_images()
-
-    def right_image_callback(self, msg):
-        self.right_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
-        if self.frame_size_key is None:
-            if not self.select_frame_size_key(self.right_image):
                 self.get_logger().error("Frame size not found in calibration data.")
                 return
         self.process_images()
@@ -207,6 +208,7 @@ class StereoTriangulationNode(Node):
                     depth_map[y, x] = d
             
             depth_image_msg = self.bridge.cv2_to_imgmsg(depth_map, encoding="32FC1")
+            depth_image_msg.header.stamp = self.get_clock().now().to_msg()
             self.raw_depth_publisher.publish(depth_image_msg)
 
 
