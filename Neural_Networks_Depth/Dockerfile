@@ -12,7 +12,7 @@ RUN apt update && \
     apt install -y software-properties-common && \
     add-apt-repository universe && \
     apt update && \
-    apt install -y curl && \
+    apt install -y curl wget && \
     curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" > /etc/apt/sources.list.d/ros2.list && \
     apt update -y && \
@@ -73,11 +73,11 @@ RUN apt update && \
         nvidia-cuda-toolkit-doc && \
     rm -rf /var/lib/apt/lists/*
 
-# Set CUDA environment variables
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
-ENV CUDA_HOME=/usr/local/cuda
+# Ensure CUPTI is included and set the correct environment variables
+ENV LD_LIBRARY_PATH=/usr/local/cuda-12.5/targets/x86_64-linux/lib:$LD_LIBRARY_PATH
+ENV CUDA_HOME=/usr/local/cuda-12.5
 
-# Build the workspace
+# Build the ROS2 workspace
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && cd /root/ros2_ws && colcon build --event-handlers console_cohesion+"
 
 # Source the setup file and set RMW implementation in bashrc

@@ -5,25 +5,38 @@ import cv2
 import numpy as np
 from cv_bridge import CvBridge
 from datetime import datetime
+import message_filters
 from neural_network_stereo_depth_pkg.hitnet_model import HitNet, ModelType, CameraConfig as HitNetCameraConfig
 from neural_network_stereo_depth_pkg.cre_model import CREStereoModel, CameraConfig as CRECameraConfig
 
 class NeuralNetworkDepthEstimationNode(Node):
     def __init__(self):
         super().__init__('neural_network_depth_estimation_node')
-        self.subscription_left = self.create_subscription(
-            Image,
-            '/camera/camera/infra1/image_rect_raw',
-            self.left_image_callback,
-            10)
-        self.subscription_right = self.create_subscription(
-            Image,
-            '/camera/camera/infra2/image_rect_raw',
-            self.right_image_callback,
-            10)
+        # self.subscription_left = self.create_subscription(
+        #     Image,
+        #     '/camera/camera/infra1/image_rect_raw',
+        #     self.left_image_callback,
+        #     10)
+        # self.subscription_right = self.create_subscription(
+        #     Image,
+        #     '/camera/camera/infra2/image_rect_raw',
+        #     self.right_image_callback,
+        #     10)
+
+        # Subscribers with message filters
+        self.left_image_sub = message_filters.Subscriber(self, Image, '/camera/camera/infra1/image_rect_raw')
+        self.right_image_sub = message_filters.Subscriber(self, Image, '/camera/camera/infra2/image_rect_raw')
+
+        # Synchronize the left and right images
+        self.ts = message_filters.ApproximateTimeSynchronizer([self.left_image_sub, self.right_image_sub], queue_size=1, slop=0.1)
+        self.ts.registerCallback(self.image_callback)
+
+        self.get_logger().info("Subscriptions and synchronization set up.")
         
-        self.publisher_hitnet_depth = self.create_publisher(Image, '/HITNET/depth', 10)
-        self.publisher_cre_depth = self.create_publisher(Image, '/CRE/depth', 10)
+        self.publisher_hitnet_depth = self.create_publisher(Image, '/HITNET/depth', 2)
+        self.publisher_cre_depth = self.create_publisher(Image, '/CRE/depth', 2)
+        self.publisher_hitnet_raw_depth = self.create_publisher(Image, '/HITNET/raw_depth', 2)
+        self.publisher_cre_raw_depth = self.create_publisher(Image, '/CRE/raw_depth', 2)
 
         self.bridge = CvBridge()
         self.load_calibration()
@@ -61,7 +74,7 @@ class NeuralNetworkDepthEstimationNode(Node):
         return False
 
     def initialize_models(self):
-        baseline = self.baseline
+        baseline = self.baseline/1000 # convert to m from mm
         focal_length = self.fx  # Use fx as the focal length
 
         hitnet_model_path = '/root/ros2_ws/src/neural_network_stereo_depth_pkg/models/ONNX-HITNET-Stereo-Depth-estimation/models/middlebury_d400/saved_model_480x640/model_float32.onnx'
@@ -69,7 +82,7 @@ class NeuralNetworkDepthEstimationNode(Node):
         hitnet_camera_config = HitNetCameraConfig(baseline, focal_length)
         self.hitnet_model = HitNet(hitnet_model_path, hitnet_model_type, hitnet_camera_config, max_dist=5)
 
-        cre_model_path = '/root/ros2_ws/src/neural_network_stereo_depth_pkg/models/ONNX-CREStereo-Depth-Estimation/models/crestereo_init_iter10_480x640.onnx'
+        cre_model_path = '/root/ros2_ws/src/neural_network_stereo_depth_pkg/models/ONNX-CREStereo-Depth-Estimation/models/crestereo_combined_iter10_480x640.onnx'
         cre_camera_config = CRECameraConfig(baseline, focal_length)
         self.cre_model = CREStereoModel(cre_model_path, cre_camera_config, max_dist=10)
 
@@ -118,24 +131,39 @@ class NeuralNetworkDepthEstimationNode(Node):
         self.baseline = np.abs(self.calib["baseline"])
         self.R_mat = np.array(self.calib["world2left_rot"])
 
-    def left_image_callback(self, msg):
-        self.left_image = self.bridge.imgmsg_to_cv2(msg, 'mono8')
+    # def left_image_callback(self, msg):
+    #     self.left_image = self.bridge.imgmsg_to_cv2(msg, 'mono8')
+    #     self.get_logger().info(f'Received left image of shape: {self.left_image.shape}')
+    #     if self.frame_size_key is None:
+    #         if not self.select_frame_size_key(self.left_image):
+    #             self.get_logger().error("Frame size not found in calibration data.")
+    #             return
+    #     self.left_image = cv2.cvtColor(self.left_image, cv2.COLOR_GRAY2BGR)
+    #     self.process_images()
+
+    # def right_image_callback(self, msg):
+    #     self.right_image = self.bridge.imgmsg_to_cv2(msg, 'mono8')
+    #     self.get_logger().info(f'Received right image of shape: {self.right_image.shape}')
+    #     if self.frame_size_key is None:
+    #         if not self.select_frame_size_key(self.right_image):
+    #             self.get_logger().error("Frame size not found in calibration data.")
+    #             return
+    #     self.right_image = cv2.cvtColor(self.right_image, cv2.COLOR_GRAY2BGR)
+    #     self.process_images()
+
+    def image_callback(self, left_msg, right_msg):
+        self.left_image = self.bridge.imgmsg_to_cv2(left_msg, 'bgr8')
         self.get_logger().info(f'Received left image of shape: {self.left_image.shape}')
+        self.right_image = self.bridge.imgmsg_to_cv2(right_msg, 'bgr8')
+        self.get_logger().info(f'Received right image of shape: {self.right_image.shape}')
+
         if self.frame_size_key is None:
             if not self.select_frame_size_key(self.left_image):
                 self.get_logger().error("Frame size not found in calibration data.")
                 return
-        self.left_image = cv2.cvtColor(self.left_image, cv2.COLOR_GRAY2BGR)
-        self.process_images()
-
-    def right_image_callback(self, msg):
-        self.right_image = self.bridge.imgmsg_to_cv2(msg, 'mono8')
-        self.get_logger().info(f'Received right image of shape: {self.right_image.shape}')
-        if self.frame_size_key is None:
             if not self.select_frame_size_key(self.right_image):
                 self.get_logger().error("Frame size not found in calibration data.")
                 return
-        self.right_image = cv2.cvtColor(self.right_image, cv2.COLOR_GRAY2BGR)
         self.process_images()
 
     def process_images(self):
@@ -149,6 +177,25 @@ class NeuralNetworkDepthEstimationNode(Node):
         
         self.get_logger().info(f'Processing images of shape: left={self.left_image.shape}, right={self.right_image.shape}')
 
+        # CRE model depth estimation
+        try:
+            start_time = datetime.now()
+            cre_depth = self.cre_model.estimate_depth(self.left_image, self.right_image)
+            #cre_depth /= 1000.0  # Convert from millimeters to meters
+            
+            # Clipping values
+            cre_depth = np.clip(cre_depth, 0, 10.0)  # Clip depth values to a reasonable range in meters
+            
+            end_time = datetime.now()
+            duration = end_time - start_time
+            self.get_logger().info(f'CRE inference time: {duration.total_seconds()} seconds')
+            self.get_logger().info(f'CRE depth map range: min {cre_depth.min()}, max {cre_depth.max()}')
+            self.publish_depth(cre_depth, "CRE")
+            self.publish_raw_depth_map(cre_depth, "CRE")
+        except Exception as e:
+            self.get_logger().error(f'Error in CRE model: {e}')
+
+
         # HITNET model depth estimation
         try:
             start_time = datetime.now()
@@ -156,46 +203,49 @@ class NeuralNetworkDepthEstimationNode(Node):
             self.get_logger().info(f'HITNET disparity map range: min {hitnet_disparity.min()}, max {hitnet_disparity.max()}')
             
             hitnet_depth = self.hitnet_model.get_depth_from_disparity(hitnet_disparity, self.hitnet_model.camera_config)
+            #hitnet_depth /= 1000.0  # Convert from millimeters to meters
+            
             self.get_logger().info(f'HITNET depth map before normalization range: min {hitnet_depth.min()}, max {hitnet_depth.max()}')
             
             # Clipping values
-            hitnet_depth = np.clip(hitnet_depth, 0, 10000)  # Clip depth values to a reasonable range
-
-            # Post-processing filters
-            #hitnet_depth = cv2.medianBlur(hitnet_depth, 5)
+            hitnet_depth = np.clip(hitnet_depth, 0, 10.0)  # Clip depth values to a reasonable range in meters
+            
+            # Post-processing filters (optional)
+            # hitnet_depth = cv2.medianBlur(hitnet_depth, 5)
             
             end_time = datetime.now()
             duration = end_time - start_time
             self.get_logger().info(f'HITNET inference time: {duration.total_seconds()} seconds')
             self.publish_depth(hitnet_depth, "HITNET")
+            self.publish_raw_depth_map(hitnet_depth, "HITNET")
         except Exception as e:
             self.get_logger().error(f'Error in HITNET model: {e}')
 
-        # CRE model depth estimation
-        try:
-            start_time = datetime.now()
-            cre_depth = self.cre_model.estimate_depth(self.left_image, self.right_image)
-
-            # Clipping values
-            cre_depth = np.clip(cre_depth, 0, 10000)  # Clip depth values to a reasonable range
-
-            end_time = datetime.now()
-            duration = end_time - start_time
-            self.get_logger().info(f'CRE inference time: {duration.total_seconds()} seconds')
-            self.get_logger().info(f'CRE depth map range: min {cre_depth.min()}, max {cre_depth.max()}')
-            self.publish_depth(cre_depth, "CRE")
-        except Exception as e:
-            self.get_logger().error(f'Error in CRE model: {e}')
 
     def publish_depth(self, depth_map, model_type):
         depth_map_normalized = cv2.normalize(depth_map, None, 0, 255, cv2.NORM_MINMAX)
         depth_map_colored = cv2.applyColorMap(cv2.convertScaleAbs(depth_map_normalized, 1), cv2.COLORMAP_JET)
         depth_msg = self.bridge.cv2_to_imgmsg(depth_map_colored, encoding='bgr8')
+        depth_msg.header.stamp = self.get_clock().now().to_msg()
         
         if model_type == "HITNET":
             self.publisher_hitnet_depth.publish(depth_msg)
         elif model_type == "CRE":
             self.publisher_cre_depth.publish(depth_msg)
+
+    def publish_raw_depth_map(self, depth_map, model_type):
+        # Ensure depth_map is in floating-point format with meters as units
+        depth_map_float = depth_map.astype(np.float32)
+        
+        # Publish as single-channel depth map
+        depth_msg = self.bridge.cv2_to_imgmsg(depth_map_float, encoding='32FC1')
+        depth_msg.header.stamp = self.get_clock().now().to_msg()
+        
+        if model_type == "HITNET":
+            self.publisher_hitnet_raw_depth.publish(depth_msg)
+        elif model_type == "CRE":
+            self.publisher_cre_raw_depth.publish(depth_msg)
+
 
 def main(args=None):
     rclpy.init(args=args)
