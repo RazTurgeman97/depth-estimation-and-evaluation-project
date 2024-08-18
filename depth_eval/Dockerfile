@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python packages
-RUN pip3 install opencv-python-headless numpy
+RUN pip3 install opencv-python-headless numpy==1.26.4 pandas
 
 # Copy source code
 COPY . /root/ros2_ws
