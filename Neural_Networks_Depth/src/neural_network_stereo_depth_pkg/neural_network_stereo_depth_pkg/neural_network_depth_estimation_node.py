@@ -12,16 +12,6 @@ from neural_network_stereo_depth_pkg.cre_model import CREStereoModel, CameraConf
 class NeuralNetworkDepthEstimationNode(Node):
     def __init__(self):
         super().__init__('neural_network_depth_estimation_node')
-        # self.subscription_left = self.create_subscription(
-        #     Image,
-        #     '/camera/camera/infra1/image_rect_raw',
-        #     self.left_image_callback,
-        #     10)
-        # self.subscription_right = self.create_subscription(
-        #     Image,
-        #     '/camera/camera/infra2/image_rect_raw',
-        #     self.right_image_callback,
-        #     10)
 
         # Subscribers with message filters
         self.left_image_sub = message_filters.Subscriber(self, Image, '/camera/camera/infra1/image_rect_raw')
