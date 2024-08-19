@@ -20,7 +20,6 @@ class NeuralNetworkDepthEstimationNode(Node):
         # Synchronize the left and right images
         self.ts = message_filters.ApproximateTimeSynchronizer([self.left_image_sub, self.right_image_sub], queue_size=1, slop=0.1)
         self.ts.registerCallback(self.image_callback)
-
         self.get_logger().info("Subscriptions and synchronization set up.")
         
         self.publisher_hitnet_depth = self.create_publisher(Image, '/HITNET/depth', 2)
@@ -64,7 +63,7 @@ class NeuralNetworkDepthEstimationNode(Node):
         return False
 
     def initialize_models(self):
-        baseline = self.baseline/1000 # convert to m from mm
+        baseline = self.baseline/1000 # convert mm to m
         focal_length = self.fx  # Use fx as the focal length
 
         hitnet_model_path = '/root/ros2_ws/src/neural_network_stereo_depth_pkg/models/ONNX-HITNET-Stereo-Depth-estimation/models/middlebury_d400/saved_model_480x640/model_float32.onnx'
@@ -121,26 +120,6 @@ class NeuralNetworkDepthEstimationNode(Node):
         self.baseline = np.abs(self.calib["baseline"])
         self.R_mat = np.array(self.calib["world2left_rot"])
 
-    # def left_image_callback(self, msg):
-    #     self.left_image = self.bridge.imgmsg_to_cv2(msg, 'mono8')
-    #     self.get_logger().info(f'Received left image of shape: {self.left_image.shape}')
-    #     if self.frame_size_key is None:
-    #         if not self.select_frame_size_key(self.left_image):
-    #             self.get_logger().error("Frame size not found in calibration data.")
-    #             return
-    #     self.left_image = cv2.cvtColor(self.left_image, cv2.COLOR_GRAY2BGR)
-    #     self.process_images()
-
-    # def right_image_callback(self, msg):
-    #     self.right_image = self.bridge.imgmsg_to_cv2(msg, 'mono8')
-    #     self.get_logger().info(f'Received right image of shape: {self.right_image.shape}')
-    #     if self.frame_size_key is None:
-    #         if not self.select_frame_size_key(self.right_image):
-    #             self.get_logger().error("Frame size not found in calibration data.")
-    #             return
-    #     self.right_image = cv2.cvtColor(self.right_image, cv2.COLOR_GRAY2BGR)
-    #     self.process_images()
-
     def image_callback(self, left_msg, right_msg):
         self.left_image = self.bridge.imgmsg_to_cv2(left_msg, 'bgr8')
         self.get_logger().info(f'Received left image of shape: {self.left_image.shape}')
@@ -171,7 +150,6 @@ class NeuralNetworkDepthEstimationNode(Node):
         try:
             start_time = datetime.now()
             cre_depth = self.cre_model.estimate_depth(self.left_image, self.right_image)
-            #cre_depth /= 1000.0  # Convert from millimeters to meters
             
             # Clipping values
             cre_depth = np.clip(cre_depth, 0, 10.0)  # Clip depth values to a reasonable range in meters
@@ -193,15 +171,11 @@ class NeuralNetworkDepthEstimationNode(Node):
             self.get_logger().info(f'HITNET disparity map range: min {hitnet_disparity.min()}, max {hitnet_disparity.max()}')
             
             hitnet_depth = self.hitnet_model.get_depth_from_disparity(hitnet_disparity, self.hitnet_model.camera_config)
-            #hitnet_depth /= 1000.0  # Convert from millimeters to meters
             
             self.get_logger().info(f'HITNET depth map before normalization range: min {hitnet_depth.min()}, max {hitnet_depth.max()}')
             
             # Clipping values
             hitnet_depth = np.clip(hitnet_depth, 0, 10.0)  # Clip depth values to a reasonable range in meters
-            
-            # Post-processing filters (optional)
-            # hitnet_depth = cv2.medianBlur(hitnet_depth, 5)
             
             end_time = datetime.now()
             duration = end_time - start_time
@@ -224,6 +198,7 @@ class NeuralNetworkDepthEstimationNode(Node):
             self.publisher_cre_depth.publish(depth_msg)
 
     def publish_raw_depth_map(self, depth_map, model_type):
+        
         # Ensure depth_map is in floating-point format with meters as units
         depth_map_float = depth_map.astype(np.float32)
         
