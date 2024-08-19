@@ -7,17 +7,19 @@ import cv2
 import message_filters
 import subprocess
 import matplotlib.pyplot as plt
+import matplotlib
 import os
 import shutil
 import time
 import pandas as pd
 import signal
-import rosbag2_py
 import re
 
 class DepthEvaluationNode(Node):
     def __init__(self):
         super().__init__('depth_eval_node')
+
+        matplotlib.use('Agg')
 
         # Create directory for saving frames
         self.create_frame_analysis_directory()
@@ -28,9 +30,9 @@ class DepthEvaluationNode(Node):
 
         # Initialize the flag
         self.processing_complete = False
-        self.bagfile_path = "/mnt/data/recordings/indoor_recording/indoor_recording_0.db3"
-        self.CRE_topic = "/CRE/raw_depth"
-        self.HITNET_topic = "/HITNET/raw_depth"
+        self.bagfile_path = '/mnt/data/recordings/indoor_recording/indoor_recording_0.db3'
+        self.CRE_topic = '/CRE/raw_depth'
+        self.HITNET_topic = '/HITNET/raw_depth'
 
         self.triangulation_depth = None
         self.hitnet_depth = None
@@ -50,6 +52,9 @@ class DepthEvaluationNode(Node):
         self.rolling_mse = {"HITNET": [], "CRE": [], "D455": []}
         self.rolling_rmse = {"HITNET": [], "CRE": [], "D455": []}
         self.rolling_iou = {"HITNET": [], "CRE": [], "D455": []}
+        self.rolling_epe = {"HITNET": [], "CRE": [], "D455": []}
+        self.rolling_d1 = {"HITNET": [], "CRE": [], "D455": []}
+        # self.runtime = {"HITNET": [], "CRE": [], "D455": []}
 
         # For accumulating metrics
         self.metrics = {
@@ -57,23 +62,25 @@ class DepthEvaluationNode(Node):
             "RMSE_HITNET": [],
             "MSE_HITNET": [],
             "IoU_HITNET": [],
+            "EPE_HITNET": [],
+            "D1_HITNET": [],
             "MAE_CRE": [],
             "RMSE_CRE": [],
             "MSE_CRE": [],
             "IoU_CRE": [],
+            "EPE_CRE": [],
+            "D1_CRE": [],
             "MAE_D455": [],
             "RMSE_D455": [],
             "MSE_D455": [],
-            "IoU_D455": []
+            "IoU_D455": [],
+            "EPE_D455": [],
+            "D1_D455": []
         }
-
-        # Initialize new metrics for all models
-        self.epe = {"HITNET": [], "CRE": [], "D455": []}
-        self.d1 = {"HITNET": [], "CRE": [], "D455": []}
-        # self.runtime = {"HITNET": [], "CRE": [], "D455": []}
 
         # Start playing the ROS bag, stopping any previous instance first
         self.stop_previous_rosbag_playback()
+        self.start_rosbag_playback()
         self.initialize_frame_counts()
 
         # Create message filters subscribers
@@ -186,20 +193,20 @@ class DepthEvaluationNode(Node):
 
             # Calculate EPE, D1, and Runtime for HITNET
             # start_time_hitnet = time.time()
-            self.epe["HITNET"].append(self.compute_epe(self.hitnet_depth, self.triangulation_depth, valid_mask))
-            self.d1["HITNET"].append(self.compute_d1(self.hitnet_depth, self.triangulation_depth, valid_mask))
+            # self.epe["HITNET"].append(self.compute_epe(self.hitnet_depth, self.triangulation_depth, valid_mask))
+            # self.d1["HITNET"].append(self.compute_d1(self.hitnet_depth, self.triangulation_depth, valid_mask))
             # self.runtime["HITNET"].append(time.time() - start_time_hitnet)
 
             # Calculate EPE, D1, and Runtime for CRE
             # start_time_cre = time.time()
-            self.epe["CRE"].append(self.compute_epe(self.cre_depth, self.triangulation_depth, valid_mask))
-            self.d1["CRE"].append(self.compute_d1(self.cre_depth, self.triangulation_depth, valid_mask))
+            # self.epe["CRE"].append(self.compute_epe(self.cre_depth, self.triangulation_depth, valid_mask))
+            # self.d1["CRE"].append(self.compute_d1(self.cre_depth, self.triangulation_depth, valid_mask))
             # self.runtime["CRE"].append(time.time() - start_time_cre)
 
             # Calculate EPE, D1, and Runtime for D455
             # start_time_d455 = time.time()
-            self.epe["D455"].append(self.compute_epe(self.d455_depth, self.triangulation_depth, valid_mask))
-            self.d1["D455"].append(self.compute_d1(self.d455_depth, self.triangulation_depth, valid_mask))
+            # self.epe["D455"].append(self.compute_epe(self.d455_depth, self.triangulation_depth, valid_mask))
+            # self.d1["D455"].append(self.compute_d1(self.d455_depth, self.triangulation_depth, valid_mask))
             # self.runtime["D455"].append(time.time() - start_time_d455)
 
 
@@ -217,7 +224,9 @@ class DepthEvaluationNode(Node):
             self.analyze_model_disagreement(frame_idx)
 
             # Set processing_complete to True after processing the last frame
-            if self.bag_process.poll() is not None and self.last_frame_processed(frame_idx):
+            if self.bag_process.poll() is not None and self.last_frame_processed(frame_idx + 2):
+                self.processing_complete = True
+            elif self.bag_process.poll() is None and self.last_frame_processed(frame_idx + 10):
                 self.processing_complete = True
 
         except Exception as e:
@@ -249,7 +258,13 @@ class DepthEvaluationNode(Node):
             "MSE_D455": self.compute_mse(d455_depth, triangulation_depth, valid_mask),
             "IoU_HITNET": self.compute_iou(hitnet_depth, triangulation_depth, valid_mask),            
             "IoU_CRE": self.compute_iou(cre_depth, triangulation_depth, valid_mask),
-            "IoU_D455": self.compute_iou(d455_depth, triangulation_depth, valid_mask)
+            "IoU_D455": self.compute_iou(d455_depth, triangulation_depth, valid_mask),
+            "EPE_HITNET": self.compute_epe(hitnet_depth, triangulation_depth, valid_mask),            
+            "EPE_CRE": self.compute_epe(cre_depth, triangulation_depth, valid_mask),
+            "EPE_D455": self.compute_epe(d455_depth, triangulation_depth, valid_mask),
+            "D1_HITNET": self.compute_d1(hitnet_depth, triangulation_depth, valid_mask),            
+            "D1_CRE": self.compute_d1(cre_depth, triangulation_depth, valid_mask),
+            "D1_D455": self.compute_d1(d455_depth, triangulation_depth, valid_mask)
         }
 
         for key, value in metrics.items():
@@ -257,11 +272,15 @@ class DepthEvaluationNode(Node):
             if "MAE" in key:
                 self.rolling_mae[key.split('_')[1]].append(value)
             if "MSE" in key:
-                self.rolling_mae[key.split('_')[1]].append(value)
+                self.rolling_mse[key.split('_')[1]].append(value)
             if "RMSE" in key:
-                self.rolling_mae[key.split('_')[1]].append(value)
+                self.rolling_rmse[key.split('_')[1]].append(value)
             if "IoU" in key:
-                self.rolling_mae[key.split('_')[1]].append(value)
+                self.rolling_iou[key.split('_')[1]].append(value)
+            if "EPE" in key:
+                self.rolling_epe[key.split('_')[1]].append(value)
+            if "D1" in key:
+                self.rolling_d1[key.split('_')[1]].append(value)
 
         # Save depth map visualizations
         self.save_depth_map_visualizations(triangulation_depth, hitnet_depth, cre_depth, d455_depth)
@@ -278,25 +297,10 @@ class DepthEvaluationNode(Node):
 
         if frame_idx < min_frame_count:
             return False
-        elif frame_idx == min_frame_count:
+        elif frame_idx >= min_frame_count:
             return True
 
-        return False
-
-    # def count_messages_in_bag(self, bag_file_path, topic_name):
-    #     storage_options = rosbag2_py.StorageOptions(uri=bag_file_path, storage_id="sqlite3")
-    #     converter_options = rosbag2_py.ConverterOptions(input_serialization_format="cdr", output_serialization_format="cdr")
-
-    #     reader = rosbag2_py.SequentialReader()
-    #     reader.open(storage_options, converter_options)
-
-    #     total_messages = 0
-    #     while reader.has_next():
-    #         (topic, data, t) = reader.read_next()
-    #         if topic == topic_name:
-    #             total_messages += 1
-
-    #     return total_messages
+        # return False
 
     def wait_for_first_frame(self):
         """Wait until at least one frame is received."""
@@ -306,15 +310,15 @@ class DepthEvaluationNode(Node):
             time.sleep(0.1)  # Add a small sleep to avoid busy waiting
         self.get_logger().info('First frame received, continuing...')
 
-    def get_total_messages_from_bag(self, bag_file_path, topic_name):
+    def get_total_messages_from_bag(self, topic_name):
         try:
-            self.start_rosbag_playback()
-            # self.wait_for_first_frame()
-            # Run the ros2 bag info command
-            output = subprocess.check_output(['ros2', 'bag', 'info', bag_file_path]).decode('utf-8')
+            # Run the ros2 bag info command and capture the output
+            output = subprocess.check_output(['ros2', 'bag', 'info', '/mnt/data/recordings/indoor_recording/indoor_recording_0.db3']).decode('utf-8')
 
-            # Extract the line with the topic of interest
-            match = re.search(rf'{topic_name}\s+\|\s+\d+\s+\|\s+(\d+)', output)
+            # Use a regular expression to match the line with the topic of interest
+            pattern = rf'\s*Topic:\s+{re.escape(topic_name)}\s+\|\s+Type:\s+\S+\s+\|\s+Count:\s+(\d+)'
+            match = re.search(pattern, output)
+
             if match:
                 total_messages = int(match.group(1))
                 return total_messages
@@ -326,9 +330,11 @@ class DepthEvaluationNode(Node):
             return 0
 
     def initialize_frame_counts(self):
-        self.total_CRE_frames = self.get_total_messages_from_bag(self.bagfile_path, self.CRE_topic)
-        self.total_HITNET_frames = self.get_total_messages_from_bag(self.bagfile_path, self.HITNET_topic)
-    
+        self.total_CRE_frames = self.get_total_messages_from_bag(self.CRE_topic)
+        print(f"Total messages for /CRE/raw_depth: {self.total_CRE_frames}")
+        self.total_HITNET_frames = self.get_total_messages_from_bag(self.HITNET_topic)
+        print(f"Total messages for /CRE/raw_depth: {self.total_HITNET_frames}")
+            
 
     def compute_mae(self, predicted, ground_truth, mask):
         assert predicted[mask].shape == ground_truth[mask].shape, "Shape mismatch after applying mask"
@@ -354,7 +360,6 @@ class DepthEvaluationNode(Node):
         error = np.abs(predicted[mask] - ground_truth[mask])
         return np.mean(error > threshold) * 100
     
-
     def calculate_averages(self):
         averages = {}
         for key, values in self.metrics.items():
@@ -371,10 +376,16 @@ class DepthEvaluationNode(Node):
         mae_values = {'HITNET': averages["MAE_HITNET"], 'CRE': averages["MAE_CRE"], 'D455': averages["MAE_D455"]}
         rmse_values = {'HITNET': averages["RMSE_HITNET"], 'CRE': averages["RMSE_CRE"], 'D455': averages["RMSE_D455"]}
         mse_values = {'HITNET': averages["MSE_HITNET"], 'CRE': averages["MSE_CRE"], 'D455': averages["MSE_D455"]}
+        iou_values = {'HITNET': averages["IoU_HITNET"], 'CRE': averages["IoU_CRE"], 'D455': averages["IoU_D455"]}
+        epe_values = {'HITNET': averages["EPE_HITNET"], 'CRE': averages["EPE_CRE"], 'D455': averages["EPE_D455"]}
+        d1_values = {'HITNET': averages["D1_HITNET"], 'CRE': averages["D1_CRE"], 'D455': averages["D1_D455"]}
 
         best_mae = min(mae_values, key=mae_values.get)
         best_rmse = min(rmse_values, key=rmse_values.get)
         best_mse = min(mse_values, key=mse_values.get)
+        best_iou = max(iou_values, key=iou_values.get)
+        best_epe = min(epe_values, key=epe_values.get)
+        best_d1 = min(d1_values, key=d1_values.get)
 
         print("\nConclusion:")
         print(f"Total frames processed:")
@@ -387,12 +398,15 @@ class DepthEvaluationNode(Node):
         print("\nMAE is the average of the absolute differences between predicted and actual depth values, providing a measure of overall accuracy.")
         print("\nRMSE and MSE give more weight to larger errors, with RMSE being in the same units as the depth measurements, while MSE amplifies larger errors even more.")
 
-        if best_mae == best_rmse == best_mse:
+        if best_mae == best_rmse == best_mse == best_iou == best_epe == best_d1:
             print(f"\nOverall, {best_mae} is the best-performing depth estimation method across all metrics, meaning it consistently produced the most accurate depth estimates with fewer large deviations.\n")
         else:
             print(f"MAE Best: {best_mae} - This method showed the least average error in depth estimation.")
             print(f"RMSE Best: {best_rmse} - This method had the lowest squared error, indicating fewer large deviations.")
             print(f"MSE Best: {best_mse} - This method minimized the squared error the most, reducing the impact of large discrepancies.")
+            print(f"Iou Best: {best_iou} - This method ***Enter Promt***.")
+            print(f"EPE Best: {best_epe} - This method ***Enter Promt***.")
+            print(f"D1 Best: {best_d1} - This method ***Enter Promt***.")
 
     def plot_metrics(self):
         frames = range(1, len(self.metrics["MAE_HITNET"]) + 1)
@@ -401,7 +415,7 @@ class DepthEvaluationNode(Node):
             plt.figure(figsize=(14, 8))
 
             # Plot MAE
-            plt.subplot(4, 1, 1)
+            plt.subplot(6, 1, 1)
             plt.plot(frames[:idx+1], self.metrics["MAE_HITNET"][:idx+1], label='MAE HITNET', color='red')
             plt.plot(frames[:idx+1], self.metrics["MAE_CRE"][:idx+1], label='MAE CRE', color='blue')
             plt.plot(frames[:idx+1], self.metrics["MAE_D455"][:idx+1], label='MAE D455', color='green')
@@ -410,7 +424,7 @@ class DepthEvaluationNode(Node):
             plt.title(f'Error as a function of frame {idx+1}')
 
             # Plot RMSE
-            plt.subplot(4, 1, 2)
+            plt.subplot(6, 1, 2)
             plt.plot(frames[:idx+1], self.metrics["RMSE_HITNET"][:idx+1], label='RMSE HITNET', color='red')
             plt.plot(frames[:idx+1], self.metrics["RMSE_CRE"][:idx+1], label='RMSE CRE', color='blue')
             plt.plot(frames[:idx+1], self.metrics["RMSE_D455"][:idx+1], label='RMSE D455', color='green')
@@ -418,7 +432,7 @@ class DepthEvaluationNode(Node):
             plt.legend()
 
             # Plot MSE
-            plt.subplot(4, 1, 3)
+            plt.subplot(6, 1, 3)
             plt.plot(frames[:idx+1], self.metrics["MSE_HITNET"][:idx+1], label='MSE HITNET', color='red')
             plt.plot(frames[:idx+1], self.metrics["MSE_CRE"][:idx+1], label='MSE CRE', color='blue')
             plt.plot(frames[:idx+1], self.metrics["MSE_D455"][:idx+1], label='MSE D455', color='green')
@@ -426,11 +440,27 @@ class DepthEvaluationNode(Node):
             plt.legend()
 
             # Plot IoU
-            plt.subplot(4, 1, 4)
+            plt.subplot(6, 1, 4)
             plt.plot(frames[:idx+1], self.metrics["IoU_HITNET"][:idx+1], label='IoU HITNET', color='red')
             plt.plot(frames[:idx+1], self.metrics["IoU_CRE"][:idx+1], label='IoU CRE', color='blue')
             plt.plot(frames[:idx+1], self.metrics["IoU_D455"][:idx+1], label='IoU D455', color='green')
             plt.ylabel('IoU')
+            plt.legend()
+
+            # Plot EPE
+            plt.subplot(6, 1, 5)
+            plt.plot(frames[:idx+1], self.metrics["EPE_HITNET"][:idx+1], label='EPE HITNET', color='red')
+            plt.plot(frames[:idx+1], self.metrics["EPE_CRE"][:idx+1], label='EPE CRE', color='blue')
+            plt.plot(frames[:idx+1], self.metrics["EPE_D455"][:idx+1], label='EPE D455', color='green')
+            plt.ylabel('EPE')
+            plt.legend()
+
+            # Plot D1
+            plt.subplot(6, 1, 6)
+            plt.plot(frames[:idx+1], self.metrics["D1_HITNET"][:idx+1], label='D1 HITNET', color='red')
+            plt.plot(frames[:idx+1], self.metrics["D1_CRE"][:idx+1], label='D1 CRE', color='blue')
+            plt.plot(frames[:idx+1], self.metrics["D1_D455"][:idx+1], label='D1 D455', color='green')
+            plt.ylabel('D1')
             plt.legend()
 
             plt.xlabel('Frame')
@@ -486,8 +516,8 @@ class DepthEvaluationNode(Node):
             'RMSE': [averages['RMSE_HITNET'], averages['RMSE_CRE'], averages['RMSE_D455']],
             'MSE': [averages['MSE_HITNET'], averages['MSE_CRE'], averages['MSE_D455']],
             'IoU': [averages['IoU_HITNET'], averages['IoU_CRE'], averages['IoU_D455']],
-            'EPE': [np.mean(self.epe['HITNET']), np.mean(self.epe['CRE']), np.mean(self.epe['D455'])],
-            'D1 (%)': [np.mean(self.d1['HITNET']), np.mean(self.d1['CRE']), np.mean(self.d1['D455'])],
+            'EPE': [averages['EPE_HITNET'], averages['EPE_CRE'], averages['EPE_D455']],
+            'D1 (%)': [averages['D1_HITNET'], averages['D1_CRE'], averages['D1_D455']],
             # 'Runtime (s)': [np.mean(self.runtime['HITNET']), np.mean(self.runtime['CRE']), np.mean(self.runtime['D455'])]
         }
         df = pd.DataFrame(data, index=['HITNET', 'CRE', 'D455'])
@@ -534,17 +564,17 @@ class DepthEvaluationNode(Node):
         # EPE Analysis
         report.append("\n5. End-Point Error (EPE):\n")
         report.append("   - EPE measures the average disparity error in pixels between the predicted and ground truth depth maps.\n")
-        report.append(f"   - HITNET EPE: {np.mean(self.epe['HITNET']):.4f} pixels\n")
-        report.append(f"   - CRE EPE: {np.mean(self.epe['CRE']):.4f} pixels\n")
-        report.append(f"   - D455 EPE: {np.mean(self.epe['D455']):.4f} pixels\n")
+        report.append(f"   - HITNET EPE: {averages['EPE_HITNET']:.4f} pixels\n")
+        report.append(f"   - CRE EPE: {averages['EPE_CRE']:.4f} pixels\n")
+        report.append(f"   - D455 EPE: {averages['EPE_D455']:.4f} pixels\n")
         report.append("   A lower EPE value indicates that the depth estimation model is more accurate in predicting the depth values, which is critical for applications where precision is key.\n")
-
+        
         # D1 Analysis
         report.append("\n6. Percentage of Erroneous Pixels (D1):\n")
         report.append("   - D1 calculates the percentage of pixels where the disparity error exceeds a threshold (e.g., 3 pixels).\n")
-        report.append(f"   - HITNET D1: {np.mean(self.d1['HITNET']):.2f}%\n")
-        report.append(f"   - CRE D1: {np.mean(self.d1['CRE']):.2f}%\n")
-        report.append(f"   - D455 D1: {np.mean(self.d1['D455']):.2f}%\n")
+        report.append(f"   - HITNET D1: {averages['D1_HITNET']:.2f}%\n")
+        report.append(f"   - CRE D1: {averages['D1_CRE']:.2f}%\n")
+        report.append(f"   - D455 D1: {averages['D1_D455']:.2f}%\n")
         report.append("   A lower D1 percentage means fewer significant errors, indicating a more reliable depth estimation model, especially in real-world scenarios where accuracy is crucial.\n")
 
         # # Runtime Analysis
@@ -562,8 +592,8 @@ class DepthEvaluationNode(Node):
         best_rmse = min(['HITNET', 'CRE', 'D455'], key=lambda x: averages[f"RMSE_{x}"])
         best_mse = min(['HITNET', 'CRE', 'D455'], key=lambda x: averages[f"MSE_{x}"])
         best_iou = max(['HITNET', 'CRE', 'D455'], key=lambda x: averages[f"IoU_{x}"])
-        best_epe = min(['HITNET', 'CRE', 'D455'], key=lambda x: np.mean(self.epe[x]))
-        best_d1 = min(['HITNET', 'CRE', 'D455'], key=lambda x: np.mean(self.d1[x]))
+        best_epe = min(['HITNET', 'CRE', 'D455'], key=lambda x: averages[f"EPE_{x}"])
+        best_d1 = min(['HITNET', 'CRE', 'D455'], key=lambda x: averages[f"D1_{x}"])
         # best_runtime = min(['HITNET', 'CRE', 'D455'], key=lambda x: np.mean(self.runtime[x]))
 
         report.append(f"   - {best_mae} had the best overall performance in terms of average accuracy (lowest MAE).\n")
@@ -605,7 +635,7 @@ class DepthEvaluationNode(Node):
 
     def analyze_frame_content_correlation(self, frame_idx):
         """Basic analysis of correlation between frame content and errors."""
-        # For simplicity, let’s assume regions of interest (ROI) based on distance.
+        # assuming regions of interest (ROI) based on distance.
         depth_ranges = [0, 1, 2, 5]  # Example depth ranges in meters
         hitnet_error = np.abs(self.hitnet_depth - self.triangulation_depth)
         cre_error = np.abs(self.cre_depth - self.triangulation_depth)
@@ -621,6 +651,7 @@ class DepthEvaluationNode(Node):
             }
         for roi, errors in roi_errors.items():
             self.get_logger().info(f"ROI {roi}m - HITNET: {errors['HITNET']}, CRE: {errors['CRE']}, D455: {errors['D455']}")
+
 
     def track_error_progression(self):
         plt.figure(figsize=(10, 6))
@@ -663,6 +694,26 @@ class DepthEvaluationNode(Node):
         plt.ylabel("IoU")
         plt.legend()
         plt.savefig("frame_analysis/error_progression/IoU_error_progression_over_time.png")
+        plt.close()
+
+        plt.plot(self.metrics['EPE_HITNET'], label='EPE HITNET')
+        plt.plot(self.metrics['EPE_CRE'], label='EPE CRE')
+        plt.plot(self.metrics['EPE_D455'], label='EPE D455')
+        plt.title("EPE Error Progression Over Time")
+        plt.xlabel("Frame Index")
+        plt.ylabel("EPE")
+        plt.legend()
+        plt.savefig("frame_analysis/error_progression/EPE_error_progression_over_time.png")
+        plt.close()
+
+        plt.plot(self.metrics['D1_HITNET'], label='D1 HITNET')
+        plt.plot(self.metrics['D1_CRE'], label='D1 CRE')
+        plt.plot(self.metrics['D1_D455'], label='D1 D455')
+        plt.title("D1 Error Progression Over Time")
+        plt.xlabel("Frame Index")
+        plt.ylabel("D1")
+        plt.legend()
+        plt.savefig("frame_analysis/error_progression/D1_error_progression_over_time.png")
         plt.close()
 
         self.get_logger().info("Error progression over time plot saved.\n")
@@ -806,8 +857,6 @@ class DepthEvaluationNode(Node):
         self.get_logger().info(f"Overlay visualizations saved for frame {frame_idx}.")
 
 
-
-
     def generate_summary_report(self):
         with open("frame_analysis/summary_report.txt", "w") as report_file:
             report_file.write("Depth Estimation Analysis Report\n")
@@ -841,7 +890,6 @@ class DepthEvaluationNode(Node):
         print("Summary report generated in frame_analysis/summary_report.txt")
 
 
-
 def main(args=None):
     rclpy.init(args=args)
     node = DepthEvaluationNode()
@@ -851,7 +899,7 @@ def main(args=None):
             rclpy.spin_once(node, timeout_sec=0.1)
 
             # Check if the ROS bag playback has finished and processing is complete
-            if node.bag_process.poll() is not None and node.processing_complete:
+            if node.processing_complete:
                 print("ROS bag playback has ended. Starting evaluation...\n")
                 node.print_averages()
                 node.generate_analysis_report()
@@ -864,6 +912,7 @@ def main(args=None):
 
     except KeyboardInterrupt:
         pass
+
     finally:
         node.destroy_node()
         rclpy.shutdown()
