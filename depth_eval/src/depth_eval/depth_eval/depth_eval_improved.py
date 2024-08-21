@@ -638,24 +638,31 @@ class DepthEvaluationNode(Node):
 
         self.get_logger().info(f"Error distribution saved for frame {frame_idx}.")
 
-    def analyze_frame_content_correlation(self, frame_idx):
-        """Basic analysis of correlation between frame content and errors."""
-        # assuming regions of interest (ROI) based on distance.
-        depth_ranges = [0, 1, 2, 5]  # Example depth ranges in meters
+    def analyze_error_distribution(self, frame_idx):
+        """Analyze the error distribution for a specific frame."""
         hitnet_error = np.abs(self.hitnet_depth - self.triangulation_depth)
         cre_error = np.abs(self.cre_depth - self.triangulation_depth)
         d455_error = np.abs(self.d455_depth - self.triangulation_depth)
 
-        roi_errors = {}
-        for start, end in zip(depth_ranges[:-1], depth_ranges[1:]):
-            mask = (self.triangulation_depth >= start) & (self.triangulation_depth < end)
-            roi_errors[f"{start}-{end}m"] = {
-                "HITNET": np.mean(hitnet_error[mask]),
-                "CRE": np.mean(cre_error[mask]),
-                "D455": np.mean(d455_error[mask]),
-            }
-        for roi, errors in roi_errors.items():
-            self.get_logger().info(f"ROI {roi}m - HITNET: {errors['HITNET']}, CRE: {errors['CRE']}, D455: {errors['D455']}")
+        plt.figure(figsize=(10, 6))
+        plt.hist(hitnet_error.ravel(), bins=50, alpha=0.5, label='HITNET')
+        plt.hist(cre_error.ravel(), bins=50, alpha=0.5, label='CRE')
+        plt.hist(d455_error.ravel(), bins=50, alpha=0.5, label='D455')
+        plt.legend()
+        plt.title(f"Error Distribution for Frame {frame_idx}")
+        plt.xlabel("Error")
+        plt.ylabel("Frequency")
+        plt.savefig(f"frame_analysis_outdoor/error_distribution/error_distribution_frame_{frame_idx}.png")
+        plt.close()
+
+        # Save analysis to the summary report
+        with open("frame_analysis_outdoor/summary_report.txt", "a") as report_file:
+            report_file.write(f"\nFrame {frame_idx} - Error Distribution Analysis:\n")
+            report_file.write(f"HITNET Mean Error: {np.mean(hitnet_error):.4f}\n")
+            report_file.write(f"CRE Mean Error: {np.mean(cre_error):.4f}\n")
+            report_file.write(f"D455 Mean Error: {np.mean(d455_error):.4f}\n")
+
+        self.get_logger().info(f"Error distribution saved for frame {frame_idx}.")
 
 
     def track_error_progression(self):
@@ -725,7 +732,7 @@ class DepthEvaluationNode(Node):
 
     def analyze_error_localization(self, frame_idx):
         """Analyze how errors vary across different regions of the image."""
-    
+        
         height, width = self.triangulation_depth.shape
         center_y, center_x = height // 2, width // 2
         
@@ -738,13 +745,19 @@ class DepthEvaluationNode(Node):
         periphery_region = np.copy(self.triangulation_depth)
         periphery_region[center_y-height//4:center_y+height//4, center_x-width//4:center_x+width//4] = 0
 
-        # Now, calculate the errors for these regions
+        # Calculate the errors for these regions
         center_error = np.abs(self.hitnet_depth - center_region)
         periphery_error = np.abs(self.hitnet_depth - periphery_region)
 
-        # Log or save the error statistics
+        # Log the error statistics to the terminal
         self.get_logger().info(f"Center error for frame {frame_idx}: {np.mean(center_error)}")
         self.get_logger().info(f"Periphery error for frame {frame_idx}: {np.mean(periphery_error)}")
+
+        # Save the error statistics to the summary report
+        with open("frame_analysis_outdoor/summary_report.txt", "a") as report_file:
+            report_file.write(f"\nFrame {frame_idx} - Error Localization Analysis:\n")
+            report_file.write(f"Center error: {np.mean(center_error):.4f}\n")
+            report_file.write(f"Periphery error: {np.mean(periphery_error):.4f}\n")
 
 
     def compare_model_outputs(self, frame_idx):
