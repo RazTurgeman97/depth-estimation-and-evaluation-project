@@ -216,7 +216,7 @@ class DepthEvaluationNode(Node):
         self.evaluate_depth(self.triangulation_depth, self.hitnet_depth, self.cre_depth, self.d455_depth)
 
         # Perform analysis on the current frame
-        frame_idx = self.frame_count["Triangulation"]
+        frame_idx = self.frame_count["CRE"]
 
         self.visualize_and_save_frame(frame_idx, "frame_analysis_outdoor")
         self.analyze_error_distribution(frame_idx)
@@ -226,17 +226,13 @@ class DepthEvaluationNode(Node):
         self.analyze_model_disagreement(frame_idx)
 
         # Set processing_complete to True after processing the last frame
-        if self.bag_process.poll() is None and self.last_frame_processed(frame_idx + 2):
+        if self.bag_process.poll() is None and self.last_frame_processed(frame_idx):
+            self.processing_complete = True        
+        elif self.last_frame_processed(frame_idx):
             self.processing_complete = True
-        elif self.bag_process.poll() is not None and self.last_frame_processed(frame_idx + 15):
+        elif self.bag_process.poll() is not None:
+            print(f"Attention! only {frame_idx} out of {self.min_frame_count} frames were processed")
             self.processing_complete = True
-        else:
-            # Check the parameter value to decide whether to stop processing
-            stop_processing = self.get_parameter('stop_processing').get_parameter_value().bool_value
-            if stop_processing:
-                self.processing_complete = True
-            else:
-                self.processing_complete = False  # Continue processing
 
         # except Exception as e:
         #     self.get_logger().error(f"Error in callback: {e}")
@@ -302,11 +298,11 @@ class DepthEvaluationNode(Node):
             return
 
     def last_frame_processed(self, frame_idx):
-        min_frame_count = min(self.total_CRE_frames, self.total_HITNET_frames)
+        self.min_frame_count = min(self.total_CRE_frames, self.total_HITNET_frames)
 
-        if frame_idx < min_frame_count:
+        if frame_idx < self.min_frame_count:
             return False
-        elif frame_idx >= min_frame_count:
+        elif frame_idx >= self.min_frame_count:
             return True
 
         # return False
