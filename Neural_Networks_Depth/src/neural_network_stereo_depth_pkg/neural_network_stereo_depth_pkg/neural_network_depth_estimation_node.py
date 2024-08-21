@@ -16,9 +16,10 @@ class NeuralNetworkDepthEstimationNode(Node):
         # Subscribers with message filters
         self.left_image_sub = message_filters.Subscriber(self, Image, '/camera/camera/infra1/image_rect_raw')
         self.right_image_sub = message_filters.Subscriber(self, Image, '/camera/camera/infra2/image_rect_raw')
+        self.depth_image_sub = message_filters.Subscriber(self, Image, '/camera/camera/depth/image_rect_raw')
 
         # Synchronize the left and right images
-        self.ts = message_filters.ApproximateTimeSynchronizer([self.left_image_sub, self.right_image_sub], queue_size=1, slop=0.1)
+        self.ts = message_filters.ApproximateTimeSynchronizer([self.left_image_sub, self.right_image_sub, self.depth_image_sub], queue_size=1, slop=0.1)
         self.ts.registerCallback(self.image_callback)
         self.get_logger().info("Subscriptions and synchronization set up.")
         
@@ -120,7 +121,7 @@ class NeuralNetworkDepthEstimationNode(Node):
         self.baseline = np.abs(self.calib["baseline"])
         self.R_mat = np.array(self.calib["world2left_rot"])
 
-    def image_callback(self, left_msg, right_msg):
+    def image_callback(self, left_msg, right_msg, depth_img):
         self.left_image = self.bridge.imgmsg_to_cv2(left_msg, 'bgr8')
         self.get_logger().info(f'Received left image of shape: {self.left_image.shape}')
         self.right_image = self.bridge.imgmsg_to_cv2(right_msg, 'bgr8')
@@ -133,9 +134,12 @@ class NeuralNetworkDepthEstimationNode(Node):
             if not self.select_frame_size_key(self.right_image):
                 self.get_logger().error("Frame size not found in calibration data.")
                 return
-        self.process_images()
+            
+        # Use the timestamp from the left_msg (which is synchronized)
+        timestamp = left_msg.header.stamp
+        self.process_images(timestamp)
 
-    def process_images(self):
+    def process_images(self, timestamp):
         if self.hitnet_model is None or self.cre_model is None:
             self.get_logger().error("Models not initialized.")
             return
@@ -158,8 +162,8 @@ class NeuralNetworkDepthEstimationNode(Node):
             duration = end_time - start_time
             self.get_logger().info(f'CRE inference time: {duration.total_seconds()} seconds')
             self.get_logger().info(f'CRE depth map range: min {cre_depth.min()}, max {cre_depth.max()}')
-            self.publish_depth(cre_depth, "CRE")
-            self.publish_raw_depth_map(cre_depth, "CRE")
+            self.publish_depth(cre_depth, "CRE", timestamp)
+            self.publish_raw_depth_map(cre_depth, "CRE", timestamp)
         except Exception as e:
             self.get_logger().error(f'Error in CRE model: {e}')
 
@@ -180,31 +184,31 @@ class NeuralNetworkDepthEstimationNode(Node):
             end_time = datetime.now()
             duration = end_time - start_time
             self.get_logger().info(f'HITNET inference time: {duration.total_seconds()} seconds')
-            self.publish_depth(hitnet_depth, "HITNET")
-            self.publish_raw_depth_map(hitnet_depth, "HITNET")
+            self.publish_depth(hitnet_depth, "HITNET", timestamp)
+            self.publish_raw_depth_map(hitnet_depth, "HITNET", timestamp)
         except Exception as e:
             self.get_logger().error(f'Error in HITNET model: {e}')
 
 
-    def publish_depth(self, depth_map, model_type):
+    def publish_depth(self, depth_map, model_type, timestamp):
         depth_map_normalized = cv2.normalize(depth_map, None, 0, 255, cv2.NORM_MINMAX)
         depth_map_colored = cv2.applyColorMap(cv2.convertScaleAbs(depth_map_normalized, 1), cv2.COLORMAP_JET)
         depth_msg = self.bridge.cv2_to_imgmsg(depth_map_colored, encoding='bgr8')
-        depth_msg.header.stamp = self.get_clock().now().to_msg()
+        depth_msg.header.stamp = timestamp
         
         if model_type == "HITNET":
             self.publisher_hitnet_depth.publish(depth_msg)
         elif model_type == "CRE":
             self.publisher_cre_depth.publish(depth_msg)
 
-    def publish_raw_depth_map(self, depth_map, model_type):
+    def publish_raw_depth_map(self, depth_map, model_type, timestamp):
         
         # Ensure depth_map is in floating-point format with meters as units
         depth_map_float = depth_map.astype(np.float32)
         
         # Publish as single-channel depth map
         depth_msg = self.bridge.cv2_to_imgmsg(depth_map_float, encoding='32FC1')
-        depth_msg.header.stamp = self.get_clock().now().to_msg()
+        depth_msg.header.stamp = timestamp
         
         if model_type == "HITNET":
             self.publisher_hitnet_raw_depth.publish(depth_msg)

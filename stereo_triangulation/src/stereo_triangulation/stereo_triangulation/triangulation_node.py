@@ -19,9 +19,10 @@ class StereoTriangulationNode(Node):
         # Subscribers with message filters
         left_image_sub = message_filters.Subscriber(self, Image, '/camera/camera/infra1/image_rect_raw')
         right_image_sub = message_filters.Subscriber(self, Image, '/camera/camera/infra2/image_rect_raw')
+        depth_image_sub = message_filters.Subscriber(self, Image, '/camera/camera/depth/image_rect_raw')
 
         # Synchronize the left and right images
-        self.ts = message_filters.ApproximateTimeSynchronizer([left_image_sub, right_image_sub], queue_size=1, slop=0.1)
+        self.ts = message_filters.ApproximateTimeSynchronizer([left_image_sub, right_image_sub, depth_image_sub], queue_size=1, slop=0.1)
         self.ts.registerCallback(self.image_callback)
 
         self.get_logger().info("Subscriptions and synchronization set up.")
@@ -140,7 +141,7 @@ class StereoTriangulationNode(Node):
                 return True
         return False
 
-    def image_callback(self, left_msg, right_msg):
+    def image_callback(self, left_msg, right_msg, depth_msg):
         self.left_image = self.bridge.imgmsg_to_cv2(left_msg, 'bgr8')
         self.right_image = self.bridge.imgmsg_to_cv2(right_msg, 'bgr8')
 
@@ -148,9 +149,12 @@ class StereoTriangulationNode(Node):
             if not self.select_frame_size_key(self.left_image):
                 self.get_logger().error("Frame size not found in calibration data.")
                 return
-        self.process_images()
 
-    def process_images(self):
+        # Use the timestamp from the left_msg (which is synchronized)
+        timestamp = left_msg.header.stamp
+        self.process_images(timestamp)
+
+    def process_images(self, timestamp):
         if self.left_image is not None and self.right_image is not None:
             orb = cv2.ORB.create()
             kp1, des1 = orb.detectAndCompute(self.left_image, None)
@@ -175,12 +179,12 @@ class StereoTriangulationNode(Node):
             valid_depth = depth[valid_mask]
 
             # Publish the color-coded depth image
-            self.publish_depth_image(self.left_image, valid_points, valid_depth, self.left_depth_publisher)
+            self.publish_depth_image(self.left_image, valid_points, valid_depth, self.left_depth_publisher, timestamp)
             
             # Publish the raw depth map
-            self.publish_raw_depth_map(valid_points, valid_depth)
+            self.publish_raw_depth_map(valid_points, valid_depth, timestamp)
 
-    def publish_depth_image(self, image, points, depth, publisher):
+    def publish_depth_image(self, image, points, depth, publisher, timestamp):
         if depth.size > 0:
             depth_min, depth_max = np.min(depth), np.max(depth)
             if depth_max == depth_min:  # Avoid division by zero
@@ -195,9 +199,10 @@ class StereoTriangulationNode(Node):
                     cv2.circle(image, (x, y), 5, (0, 0, 0), -1)  # Black for invalid depth
 
             depth_image_msg = self.bridge.cv2_to_imgmsg(image, encoding="bgr8")
+            depth_image_msg.header.stamp = timestamp  # Apply the synchronized timestamp
             self.left_depth_publisher.publish(depth_image_msg)
     
-    def publish_raw_depth_map(self, points, depth):
+    def publish_raw_depth_map(self, points, depth, timestamp):
         if depth.size > 0:
             # Create a blank image to store depth values
             depth_map = np.zeros(self.left_image.shape[:2], dtype=np.float32)
@@ -208,7 +213,7 @@ class StereoTriangulationNode(Node):
                     depth_map[y, x] = d
             
             depth_image_msg = self.bridge.cv2_to_imgmsg(depth_map, encoding="32FC1")
-            depth_image_msg.header.stamp = self.get_clock().now().to_msg()
+            depth_image_msg.header.stamp = timestamp  # Apply the synchronized timestamp
             self.raw_depth_publisher.publish(depth_image_msg)
 
 
