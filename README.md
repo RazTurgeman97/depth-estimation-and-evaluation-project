@@ -9,12 +9,9 @@ The following instructions will help you set up the environment using Docker.
 If you already conducted the instruction below, perform the following command and you are good to go.
 
 ```bash
-sudo systemctl stop docker
 sudo systemctl stop docker.socket
 
 sudo systemctl start docker
-
-sudo systemctl restart docker
 
 docker info | grep -i runtime
 ```
