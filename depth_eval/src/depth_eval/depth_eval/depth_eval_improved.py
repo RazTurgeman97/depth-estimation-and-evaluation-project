@@ -32,7 +32,7 @@ class DepthEvaluationNode(Node):
 
         # Initialize the flag
         self.processing_complete = False
-        self.bagfile_path = '/mnt/data/recordings_proc/outdoor_recording/outdoor_recording_0.db3'
+        self.bagfile_path = '/mnt/data/recordings/indoor_recording/indoor_recording_0.db3'
         self.CRE_topic = '/CRE/raw_depth'
         self.HITNET_topic = '/HITNET/raw_depth'
 
@@ -103,25 +103,25 @@ class DepthEvaluationNode(Node):
 
     def create_frame_analysis_directory(self):
         # Check if the directory "frame_analysis" exists
-        if os.path.exists("frame_analysis_outdoor"):
+        if os.path.exists("frame_analysis"):
             # Remove the existing directory and its contents
-            shutil.rmtree("frame_analysis_outdoor")
-            self.get_logger().info("Removed existing 'frame_analysis_outdoor' directory.")
+            shutil.rmtree("frame_analysis")
+            self.get_logger().info("Removed existing 'frame_analysis' directory.")
 
         # Create a new directory
-        os.makedirs("frame_analysis_outdoor") # models_difference
+        os.makedirs("frame_analysis") # models_difference
         self.get_logger().info("Created new 'frame_analysis' directory.")
-        os.makedirs("frame_analysis_outdoor/Visual_Inspection")
+        os.makedirs("frame_analysis/Visual_Inspection")
         self.get_logger().info("Created new 'Visual_Inspection' directory.")
-        os.makedirs("frame_analysis_outdoor/depth_comparison")
+        os.makedirs("frame_analysis/depth_comparison")
         self.get_logger().info("Created new 'depth_comparison' directory.")
-        os.makedirs("frame_analysis_outdoor/error_distribution")
+        os.makedirs("frame_analysis/error_distribution")
         self.get_logger().info("Created new 'error_distribution' directory.")
-        os.makedirs("frame_analysis_outdoor/error_progression")
+        os.makedirs("frame_analysis/error_progression")
         self.get_logger().info("Created new 'error_progression' directory.")
-        os.makedirs("frame_analysis_outdoor/models_difference")
+        os.makedirs("frame_analysis/models_difference")
         self.get_logger().info("Created new 'models_difference' directory.")
-        os.makedirs("frame_analysis_outdoor/disagreement_maps")
+        os.makedirs("frame_analysis/disagreement_maps")
         self.get_logger().info("Created new 'disagreement_maps' directory.")
 
     def stop_previous_rosbag_playback(self):
@@ -129,7 +129,7 @@ class DepthEvaluationNode(Node):
             # Find all processes with 'ros2 bag play' in the command line
             output = subprocess.check_output(['ps', 'aux'], universal_newlines=True)
             for line in output.splitlines():
-                if 'ros2 bag play' in line and '/mnt/data/recordings_proc/outdoor_recording/outdoor_recording_0.db3' in line:
+                if 'ros2 bag play' in line and '/mnt/data/recordings/indoor_recording/indoor_recording_0.db3' in line:
                     # Extract the process ID (PID)
                     pid = int(line.split()[1])
                     self.get_logger().info(f'Stopping existing ROS bag playback process with PID {pid}...')
@@ -142,7 +142,7 @@ class DepthEvaluationNode(Node):
         try:
             self.get_logger().info('Starting ROS bag playback...')
             self.bag_process = subprocess.Popen(
-                ['ros2', 'bag', 'play', '/mnt/data/recordings_proc/outdoor_recording/outdoor_recording_0.db3']
+                ['ros2', 'bag', 'play', '/mnt/data/recordings/indoor_recording/indoor_recording_0.db3']
             )
             self.get_logger().info('ROS bag playback started.')
         except Exception as e:
@@ -154,88 +154,60 @@ class DepthEvaluationNode(Node):
 
     def callback(self, triangulation_msg, hitnet_msg, cre_msg, d455_msg):
 
-        # try:
-        self.get_logger().info("Synchronized messages received.")
+        try:
+            self.get_logger().info("Synchronized messages received.")
 
-        # Convert the ROS Image messages to OpenCV images
-        self.triangulation_depth = self.bridge.imgmsg_to_cv2(triangulation_msg, 'passthrough')
-        self.hitnet_depth = self.bridge.imgmsg_to_cv2(hitnet_msg, 'passthrough')
-        self.cre_depth = self.bridge.imgmsg_to_cv2(cre_msg, 'passthrough')
-        self.d455_depth = self.bridge.imgmsg_to_cv2(d455_msg, 'passthrough')
+            # Convert the ROS Image messages to OpenCV images
+            self.triangulation_depth = self.bridge.imgmsg_to_cv2(triangulation_msg, 'passthrough')
+            self.hitnet_depth = self.bridge.imgmsg_to_cv2(hitnet_msg, 'passthrough')
+            self.cre_depth = self.bridge.imgmsg_to_cv2(cre_msg, 'passthrough')
+            self.d455_depth = self.bridge.imgmsg_to_cv2(d455_msg, 'passthrough')
 
-        # Set frame size if not set already
-        self.set_frame_size(self.triangulation_depth)
+            # Set frame size if not set already
+            self.set_frame_size(self.triangulation_depth)
 
-        # Resize depth maps to match the triangulation depth map's size
-        self.triangulation_depth = cv2.resize(self.triangulation_depth, (self.frame_size[1], self.frame_size[0]))
-        self.hitnet_depth = cv2.resize(self.hitnet_depth, (self.frame_size[1], self.frame_size[0]))
-        self.cre_depth = cv2.resize(self.cre_depth, (self.frame_size[1], self.frame_size[0]))
-        self.d455_depth = cv2.resize(self.d455_depth, (self.frame_size[1], self.frame_size[0]))
+            # Resize depth maps to match the triangulation depth map's size
+            self.triangulation_depth = cv2.resize(self.triangulation_depth, (self.frame_size[1], self.frame_size[0]))
+            self.hitnet_depth = cv2.resize(self.hitnet_depth, (self.frame_size[1], self.frame_size[0]))
+            self.cre_depth = cv2.resize(self.cre_depth, (self.frame_size[1], self.frame_size[0]))
+            self.d455_depth = cv2.resize(self.d455_depth, (self.frame_size[1], self.frame_size[0]))
 
-        # Convert D455 depth image to meters if in 16UC1 format
-        if self.d455_depth.dtype == np.uint16:
-            self.d455_depth = self.d455_depth.astype(np.float32) * 0.001  # Convert to meters
+            # Convert D455 depth image to meters if in 16UC1 format
+            if self.d455_depth.dtype == np.uint16:
+                self.d455_depth = self.d455_depth.astype(np.float32) * 0.001  # Convert to meters
 
-        self.triangulation_updated = True
-        self.hitnet_updated = True
-        self.cre_updated = True
-        self.d455_updated = True
+            self.triangulation_updated = True
+            self.hitnet_updated = True
+            self.cre_updated = True
+            self.d455_updated = True
 
-        # Ensure that depth images are single-channel
-        self.triangulation_depth = self.ensure_single_channel(self.triangulation_depth)
-        self.hitnet_depth = self.ensure_single_channel(self.hitnet_depth)
-        self.cre_depth = self.ensure_single_channel(self.cre_depth)
-        self.d455_depth = self.ensure_single_channel(self.d455_depth)
+            # Ensure that depth images are single-channel
+            self.triangulation_depth = self.ensure_single_channel(self.triangulation_depth)
+            self.hitnet_depth = self.ensure_single_channel(self.hitnet_depth)
+            self.cre_depth = self.ensure_single_channel(self.cre_depth)
+            self.d455_depth = self.ensure_single_channel(self.d455_depth)
 
-        # Mask to apply metrics only on valid triangulation points
-        valid_mask = np.isfinite(self.triangulation_depth) & (self.triangulation_depth > 0)
+            # Mask to apply metrics only on valid triangulation points
+            valid_mask = np.isfinite(self.triangulation_depth) & (self.triangulation_depth > 0)
 
-        # Ensure the mask is resized to match the dimensions of the depth maps
-        valid_mask = cv2.resize(valid_mask.astype(np.uint8), (self.frame_size[1], self.frame_size[0])).astype(bool)
+            # Ensure the mask is resized to match the dimensions of the depth maps
+            valid_mask = cv2.resize(valid_mask.astype(np.uint8), (self.frame_size[1], self.frame_size[0])).astype(bool)
 
-        # Calculate EPE, D1, and Runtime for HITNET
-        # start_time_hitnet = time.time()
-        # self.epe["HITNET"].append(self.compute_epe(self.hitnet_depth, self.triangulation_depth, valid_mask))
-        # self.d1["HITNET"].append(self.compute_d1(self.hitnet_depth, self.triangulation_depth, valid_mask))
-        # self.runtime["HITNET"].append(time.time() - start_time_hitnet)
+            self.get_logger().info("Processing synchronized depth maps.")
+            self.evaluate_depth(self.triangulation_depth, self.hitnet_depth, self.cre_depth, self.d455_depth)
 
-        # Calculate EPE, D1, and Runtime for CRE
-        # start_time_cre = time.time()
-        # self.epe["CRE"].append(self.compute_epe(self.cre_depth, self.triangulation_depth, valid_mask))
-        # self.d1["CRE"].append(self.compute_d1(self.cre_depth, self.triangulation_depth, valid_mask))
-        # self.runtime["CRE"].append(time.time() - start_time_cre)
+            # Perform analysis on the current frame
+            frame_idx = self.frame_count["CRE"]
 
-        # Calculate EPE, D1, and Runtime for D455
-        # start_time_d455 = time.time()
-        # self.epe["D455"].append(self.compute_epe(self.d455_depth, self.triangulation_depth, valid_mask))
-        # self.d1["D455"].append(self.compute_d1(self.d455_depth, self.triangulation_depth, valid_mask))
-        # self.runtime["D455"].append(time.time() - start_time_d455)
+            self.visualize_and_save_frame(frame_idx, "frame_analysis")
+            self.analyze_error_distribution(frame_idx)
+            self.analyze_frame_content_correlation(frame_idx)
+            self.analyze_error_localization(frame_idx)
+            self.compare_model_outputs(frame_idx)
+            self.analyze_model_disagreement(frame_idx)
 
-
-        self.get_logger().info("Processing synchronized depth maps.")
-        self.evaluate_depth(self.triangulation_depth, self.hitnet_depth, self.cre_depth, self.d455_depth)
-
-        # Perform analysis on the current frame
-        frame_idx = self.frame_count["CRE"]
-
-        self.visualize_and_save_frame(frame_idx, "frame_analysis_outdoor")
-        self.analyze_error_distribution(frame_idx)
-        self.analyze_frame_content_correlation(frame_idx)
-        self.analyze_error_localization(frame_idx)
-        self.compare_model_outputs(frame_idx)
-        self.analyze_model_disagreement(frame_idx)
-
-        # Set processing_complete to True after processing the last frame
-        if self.bag_process.poll() is None and self.last_frame_processed(frame_idx):
-            self.processing_complete = True        
-        elif self.last_frame_processed(frame_idx):
-            self.processing_complete = True
-        elif self.bag_process.poll() is not None:
-            print(f"Attention! only {frame_idx} out of {self.min_frame_count} frames were processed")
-            self.processing_complete = True
-
-        # except Exception as e:
-        #     self.get_logger().error(f"Error in callback: {e}")
+        except Exception as e:
+            self.get_logger().error(f"Error in callback: {e}")
 
     def ensure_single_channel(self, depth_image):
         if depth_image.ndim == 3:
@@ -297,15 +269,15 @@ class DepthEvaluationNode(Node):
             self.generate_analysis_report()
             return
 
-    def last_frame_processed(self, frame_idx):
+    def last_frame_processed(self, frame_idx, margin):
         self.min_frame_count = min(self.total_CRE_frames, self.total_HITNET_frames)
 
         if frame_idx < self.min_frame_count:
             return False
-        elif frame_idx >= self.min_frame_count:
+        elif frame_idx >= (self.min_frame_count - margin):
             return True
-
-        # return False
+        else:
+            return False
 
     def wait_for_first_frame(self):
         """Wait until at least one frame is received."""
@@ -318,7 +290,7 @@ class DepthEvaluationNode(Node):
     def get_total_messages_from_bag(self, topic_name):
         try:
             # Run the ros2 bag info command and capture the output
-            output = subprocess.check_output(['ros2', 'bag', 'info', '/mnt/data/recordings_proc/outdoor_recording/outdoor_recording_0.db3']).decode('utf-8')
+            output = subprocess.check_output(['ros2', 'bag', 'info', '/mnt/data/recordings/indoor_recording/indoor_recording_0.db3']).decode('utf-8')
 
             # Use a regular expression to match the line with the topic of interest
             pattern = rf'\s*Topic:\s+{re.escape(topic_name)}\s+\|\s+Type:\s+\S+\s+\|\s+Count:\s+(\d+)'
@@ -356,7 +328,7 @@ class DepthEvaluationNode(Node):
         union = np.sum((predicted[mask] > threshold) | (ground_truth[mask] > threshold))
         return intersection / union if union != 0 else 0
     
-    def compute_epe(self, predicted, ground_truth, mask):
+    def compute_epe(self, predicted, ground_truth, mask): #########################################################################################
         """Compute End-Point Error (EPE)."""
         return np.mean(np.abs(predicted[mask] - ground_truth[mask]))
 
@@ -373,24 +345,35 @@ class DepthEvaluationNode(Node):
 
     def print_averages(self):
         averages = self.calculate_averages()
-        print("Averaged Metrics:")
-        for key, value in averages.items():
-            if value is not None:
-                print(f"{key}: {value:.4f}")
+        with open("frame_analysis/summary_report.txt", "a") as report_file:
+            report_file.write("\nAveraged Metrics:\n")
+            for key, value in averages.items():
+                if value is not None:
+                    report_file.write(f"{key}: {value:.4f}\n")
+                    print(f"{key}: {value:.4f}")
 
-        mae_values = {'HITNET': averages["MAE_HITNET"], 'CRE': averages["MAE_CRE"], 'D455': averages["MAE_D455"]}
-        rmse_values = {'HITNET': averages["RMSE_HITNET"], 'CRE': averages["RMSE_CRE"], 'D455': averages["RMSE_D455"]}
-        mse_values = {'HITNET': averages["MSE_HITNET"], 'CRE': averages["MSE_CRE"], 'D455': averages["MSE_D455"]}
-        iou_values = {'HITNET': averages["IoU_HITNET"], 'CRE': averages["IoU_CRE"], 'D455': averages["IoU_D455"]}
-        epe_values = {'HITNET': averages["EPE_HITNET"], 'CRE': averages["EPE_CRE"], 'D455': averages["EPE_D455"]}
-        d1_values = {'HITNET': averages["D1_HITNET"], 'CRE': averages["D1_CRE"], 'D455': averages["D1_D455"]}
+            mae_values = {'HITNET': averages["MAE_HITNET"], 'CRE': averages["MAE_CRE"], 'D455': averages["MAE_D455"]}
+            rmse_values = {'HITNET': averages["RMSE_HITNET"], 'CRE': averages["RMSE_CRE"], 'D455': averages["RMSE_D455"]}
+            mse_values = {'HITNET': averages["MSE_HITNET"], 'CRE': averages["MSE_CRE"], 'D455': averages["MSE_D455"]}
+            iou_values = {'HITNET': averages["IoU_HITNET"], 'CRE': averages["IoU_CRE"], 'D455': averages["IoU_D455"]}
+            epe_values = {'HITNET': averages["EPE_HITNET"], 'CRE': averages["EPE_CRE"], 'D455': averages["EPE_D455"]}
+            d1_values = {'HITNET': averages["D1_HITNET"], 'CRE': averages["D1_CRE"], 'D455': averages["D1_D455"]}
 
-        best_mae = min(mae_values, key=mae_values.get)
-        best_rmse = min(rmse_values, key=rmse_values.get)
-        best_mse = min(mse_values, key=mse_values.get)
-        best_iou = max(iou_values, key=iou_values.get)
-        best_epe = min(epe_values, key=epe_values.get)
-        best_d1 = min(d1_values, key=d1_values.get)
+            best_mae = min(mae_values, key=mae_values.get)
+            best_rmse = min(rmse_values, key=rmse_values.get)
+            best_mse = min(mse_values, key=mse_values.get)
+            best_iou = max(iou_values, key=iou_values.get)
+            best_epe = min(epe_values, key=epe_values.get)
+            best_d1 = min(d1_values, key=d1_values.get)
+
+            report_file.write("\nConclusion:\n")
+            report_file.write(f"Best MAE: {best_mae}\n")
+            report_file.write(f"Best RMSE: {best_rmse}\n")
+            report_file.write(f"Best MSE: {best_mse}\n")
+            report_file.write(f"Best IoU: {best_iou}\n")
+            report_file.write(f"Best EPE: {best_epe}\n")
+            report_file.write(f"Best D1: {best_d1}\n")
+
 
         print("\nConclusion:")
         print(f"Total frames processed:")
@@ -412,6 +395,7 @@ class DepthEvaluationNode(Node):
             print(f"Iou Best: {best_iou} - This method ***Enter Promt***.")
             print(f"EPE Best: {best_epe} - This method ***Enter Promt***.")
             print(f"D1 Best: {best_d1} - This method ***Enter Promt***.")
+
 
     def plot_metrics(self):
         frames = range(1, len(self.metrics["MAE_HITNET"]) + 1)
@@ -472,7 +456,7 @@ class DepthEvaluationNode(Node):
             plt.tight_layout()
 
             # Save the figure
-            plt.savefig(f'frame_analysis_outdoor/error_progression/error_comp_plot_frame_{idx+1}.png')
+            plt.savefig(f'frame_analysis/error_progression/error_comp_plot_frame_{idx+1}.png')
             plt.close()
 
 
@@ -508,7 +492,7 @@ class DepthEvaluationNode(Node):
         plt.title('D455 Depth')
         plt.colorbar()
 
-        plt.savefig(f'frame_analysis_outdoor/depth_comparison/depth_comparison_frame_{self.frame_count["Triangulation"]}.png')
+        plt.savefig(f'frame_analysis/depth_comparison/depth_comparison_frame_{self.frame_count["Triangulation"]}.png')
         plt.close()
 
     def generate_analysis_report(self):
@@ -528,7 +512,7 @@ class DepthEvaluationNode(Node):
         df = pd.DataFrame(data, index=['HITNET', 'CRE', 'D455'])
 
         # Save the DataFrame to a CSV file for easy access
-        df.to_csv("frame_analysis_outdoor/metrics_summary.csv")
+        df.to_csv("frame_analysis/metrics_summary.csv")
 
         
         report = []
@@ -611,7 +595,7 @@ class DepthEvaluationNode(Node):
 
         # Print and save the table as a part of the report
         print(df)
-        with open("frame_analysis_outdoor/summary_report.txt", "a") as report_file:
+        with open("frame_analysis/summary_report.txt", "a") as report_file:
             report_file.write("\n\nMetrics Summary Table:\n")
             report_file.write(df.to_string())
             report_file.write("\n\n")
@@ -633,7 +617,7 @@ class DepthEvaluationNode(Node):
         plt.title(f"Error Distribution for Frame {frame_idx}")
         plt.xlabel("Error")
         plt.ylabel("Frequency")
-        plt.savefig(f"frame_analysis_outdoor/error_distribution/error_distribution_frame_{frame_idx}.png")
+        plt.savefig(f"frame_analysis/error_distribution/error_distribution_frame_{frame_idx}.png")
         plt.close()
 
         self.get_logger().info(f"Error distribution saved for frame {frame_idx}.")
@@ -652,17 +636,41 @@ class DepthEvaluationNode(Node):
         plt.title(f"Error Distribution for Frame {frame_idx}")
         plt.xlabel("Error")
         plt.ylabel("Frequency")
-        plt.savefig(f"frame_analysis_outdoor/error_distribution/error_distribution_frame_{frame_idx}.png")
+        plt.savefig(f"frame_analysis/error_distribution/error_distribution_frame_{frame_idx}.png")
         plt.close()
 
         # Save analysis to the summary report
-        with open("frame_analysis_outdoor/summary_report.txt", "a") as report_file:
+        with open("frame_analysis/summary_report.txt", "a") as report_file:
             report_file.write(f"\nFrame {frame_idx} - Error Distribution Analysis:\n")
             report_file.write(f"HITNET Mean Error: {np.mean(hitnet_error):.4f}\n")
             report_file.write(f"CRE Mean Error: {np.mean(cre_error):.4f}\n")
             report_file.write(f"D455 Mean Error: {np.mean(d455_error):.4f}\n")
 
         self.get_logger().info(f"Error distribution saved for frame {frame_idx}.")
+
+    def analyze_frame_content_correlation(self, frame_idx):
+        """Basic analysis of correlation between frame content and errors."""
+        # Regions of interest (ROI) based on distance.
+        depth_ranges = [0, 1, 2, 5]  # Example depth ranges in meters
+        hitnet_error = np.abs(self.hitnet_depth - self.triangulation_depth)
+        cre_error = np.abs(self.cre_depth - self.triangulation_depth)
+        d455_error = np.abs(self.d455_depth - self.triangulation_depth)
+
+        roi_errors = {}
+        for start, end in zip(depth_ranges[:-1], depth_ranges[1:]):
+            mask = (self.triangulation_depth >= start) & (self.triangulation_depth < end)
+            roi_errors[f"{start}-{end}m"] = {
+                "HITNET": np.mean(hitnet_error[mask]),
+                "CRE": np.mean(cre_error[mask]),
+                "D455": np.mean(d455_error[mask]),
+            }
+        
+        # Save ROI errors to summary report
+        with open("frame_analysis/summary_report.txt", "a") as report_file:
+            report_file.write(f"\nFrame {frame_idx} - ROI Error Analysis:\n")
+            for roi, errors in roi_errors.items():
+                report_file.write(f"ROI {roi}m - HITNET: {errors['HITNET']:.4f}, CRE: {errors['CRE']:.4f}, D455: {errors['D455']:.4f}\n")
+                self.get_logger().info(f"ROI {roi}m - HITNET: {errors['HITNET']}, CRE: {errors['CRE']}, D455: {errors['D455']}")
 
 
     def track_error_progression(self):
@@ -675,7 +683,7 @@ class DepthEvaluationNode(Node):
         plt.xlabel("Frame Index")
         plt.ylabel("MAE")
         plt.legend()
-        plt.savefig("frame_analysis_outdoor/error_progression/MAE_error_progression_over_time.png")
+        plt.savefig("frame_analysis/error_progression/MAE_error_progression_over_time.png")
         plt.close()
 
         plt.plot(self.metrics['MSE_HITNET'], label='MSE HITNET')
@@ -685,7 +693,7 @@ class DepthEvaluationNode(Node):
         plt.xlabel("Frame Index")
         plt.ylabel("MSE")
         plt.legend()
-        plt.savefig("frame_analysis_outdoor/error_progression/MSE_error_progression_over_time.png")
+        plt.savefig("frame_analysis/error_progression/MSE_error_progression_over_time.png")
         plt.close()
 
         plt.plot(self.metrics['RMSE_HITNET'], label='RMSE HITNET')
@@ -695,7 +703,7 @@ class DepthEvaluationNode(Node):
         plt.xlabel("Frame Index")
         plt.ylabel("RMSE")
         plt.legend()
-        plt.savefig("frame_analysis_outdoor/error_progression/RMSE_error_progression_over_time.png")
+        plt.savefig("frame_analysis/error_progression/RMSE_error_progression_over_time.png")
         plt.close()
 
         plt.plot(self.metrics['IoU_HITNET'], label='IoU HITNET')
@@ -705,7 +713,7 @@ class DepthEvaluationNode(Node):
         plt.xlabel("Frame Index")
         plt.ylabel("IoU")
         plt.legend()
-        plt.savefig("frame_analysis_outdoor/error_progression/IoU_error_progression_over_time.png")
+        plt.savefig("frame_analysis/error_progression/IoU_error_progression_over_time.png")
         plt.close()
 
         plt.plot(self.metrics['EPE_HITNET'], label='EPE HITNET')
@@ -715,7 +723,7 @@ class DepthEvaluationNode(Node):
         plt.xlabel("Frame Index")
         plt.ylabel("EPE")
         plt.legend()
-        plt.savefig("frame_analysis_outdoor/error_progression/EPE_error_progression_over_time.png")
+        plt.savefig("frame_analysis/error_progression/EPE_error_progression_over_time.png")
         plt.close()
 
         plt.plot(self.metrics['D1_HITNET'], label='D1 HITNET')
@@ -725,7 +733,7 @@ class DepthEvaluationNode(Node):
         plt.xlabel("Frame Index")
         plt.ylabel("D1")
         plt.legend()
-        plt.savefig("frame_analysis_outdoor/error_progression/D1_error_progression_over_time.png")
+        plt.savefig("frame_analysis/error_progression/D1_error_progression_over_time.png")
         plt.close()
 
         self.get_logger().info("Error progression over time plot saved.\n")
@@ -754,7 +762,7 @@ class DepthEvaluationNode(Node):
         self.get_logger().info(f"Periphery error for frame {frame_idx}: {np.mean(periphery_error)}")
 
         # Save the error statistics to the summary report
-        with open("frame_analysis_outdoor/summary_report.txt", "a") as report_file:
+        with open("frame_analysis/summary_report.txt", "a") as report_file:
             report_file.write(f"\nFrame {frame_idx} - Error Localization Analysis:\n")
             report_file.write(f"Center error: {np.mean(center_error):.4f}\n")
             report_file.write(f"Periphery error: {np.mean(periphery_error):.4f}\n")
@@ -789,10 +797,18 @@ class DepthEvaluationNode(Node):
         plt.title(f"Difference between CRE and D455 at frame {frame_idx}")
 
         plt.tight_layout()
-        plt.savefig(f"frame_analysis_outdoor/models_difference/difference_models_frame_{frame_idx}.png")
+        plt.savefig(f"frame_analysis/models_difference/difference_models_frame_{frame_idx}.png")
         plt.close()
 
+        # Save summary to the report
+        with open("frame_analysis/summary_report.txt", "a") as report_file:
+            report_file.write(f"\nFrame {frame_idx} - Model Output Comparison:\n")
+            report_file.write(f"Average difference between HITNET and CRE: {np.mean(diff_hitnet_cre):.4f}\n")
+            report_file.write(f"Average difference between HITNET and D455: {np.mean(diff_hitnet_d455):.4f}\n")
+            report_file.write(f"Average difference between CRE and D455: {np.mean(diff_cre_d455):.4f}\n")
+
         self.get_logger().info(f"Cross-model comparison plots saved for frame {frame_idx}.")
+
 
     def analyze_model_disagreement(self, frame_idx):
         """Quantify disagreement between models for a specific frame."""
@@ -807,8 +823,13 @@ class DepthEvaluationNode(Node):
         plt.imshow(disagreement_map, cmap='hot', interpolation='nearest')
         plt.colorbar()
         plt.title(f"Model Disagreement at frame {frame_idx}")
-        plt.savefig(f"frame_analysis_outdoor/disagreement_maps/disagreement_map_frame_{frame_idx}.png")
+        plt.savefig(f"frame_analysis/disagreement_maps/disagreement_map_frame_{frame_idx}.png")
         plt.close()
+
+        # Save disagreement statistics to the report
+        with open("frame_analysis/summary_report.txt", "a") as report_file:
+            report_file.write(f"\nFrame {frame_idx} - Model Disagreement Analysis:\n")
+            report_file.write(f"Average disagreement (variance) among models: {np.mean(disagreement_map):.4f}\n")
 
         self.get_logger().info(f"Model disagreement analysis saved for frame {frame_idx}.")
 
@@ -825,12 +846,12 @@ class DepthEvaluationNode(Node):
 
     def print_statistics(self):
         statistics = self.calculate_statistics()
-        print("Metrics Statistics:")
-
-        for key, stats in statistics.items():
-            if stats['average'] is not None:
-                print(f"{key} - Average: {stats['average']:.4f}, Median: {stats['median']:.4f}, Std Dev: {stats['std_dev']:.4f}")
-        print("\n")
+        with open("frame_analysis/summary_report.txt", "a") as report_file:
+            report_file.write("\nMetrics Statistics:\n")
+            for key, stats in statistics.items():
+                if stats['average'] is not None:
+                    report_file.write(f"{key} - Average: {stats['average']:.4f}, Median: {stats['median']:.4f}, Std Dev: {stats['std_dev']:.4f}\n")
+                    print(f"{key} - Average: {stats['average']:.4f}, Median: {stats['median']:.4f}, Std Dev: {stats['std_dev']:.4f}")
 
     def compare_segments(self):
         # Define segments
@@ -843,10 +864,12 @@ class DepthEvaluationNode(Node):
             first_segment_metrics[key] = np.mean(values[:segment_size])
             second_segment_metrics[key] = np.mean(values[segment_size:])
 
-        print("Segment Comparison:")
-        for key in first_segment_metrics:
-            print(f"{key} - First Segment: {first_segment_metrics[key]:.4f}, Second Segment: {second_segment_metrics[key]:.4f}")
-        print("\n")
+        with open("frame_analysis/summary_report.txt", "a") as report_file:
+            report_file.write("\nSegment Comparison:\n")
+            for key in first_segment_metrics:
+                report_file.write(f"{key} - First Segment: {first_segment_metrics[key]:.4f}, Second Segment: {second_segment_metrics[key]:.4f}\n")
+                print(f"{key} - First Segment: {first_segment_metrics[key]:.4f}, Second Segment: {second_segment_metrics[key]:.4f}")
+
 
     def visualize_and_save_frame(self, frame_idx, metric_name):
         """Visualize the frame with the largest error and save the overlay image."""
@@ -868,15 +891,15 @@ class DepthEvaluationNode(Node):
         overlay_d455 = cv2.addWeighted(triangulation, 0.5, d455, 0.5, 0)
 
         # Save these overlay images
-        cv2.imwrite(f"frame_analysis_outdoor/Visual_Inspection/{metric_name}_hitnet_overlay_frame_{frame_idx}.png", overlay_hitnet)
-        cv2.imwrite(f"frame_analysis_outdoor/Visual_Inspection/{metric_name}_cre_overlay_frame_{frame_idx}.png", overlay_cre)
-        cv2.imwrite(f"frame_analysis_outdoor/Visual_Inspection/{metric_name}_d455_overlay_frame_{frame_idx}.png", overlay_d455)
+        cv2.imwrite(f"frame_analysis/Visual_Inspection/{metric_name}_hitnet_overlay_frame_{frame_idx}.png", overlay_hitnet)
+        cv2.imwrite(f"frame_analysis/Visual_Inspection/{metric_name}_cre_overlay_frame_{frame_idx}.png", overlay_cre)
+        cv2.imwrite(f"frame_analysis/Visual_Inspection/{metric_name}_d455_overlay_frame_{frame_idx}.png", overlay_d455)
 
         self.get_logger().info(f"Overlay visualizations saved for frame {frame_idx}.")
 
 
     def generate_summary_report(self):
-        with open("frame_analysis_outdoor/summary_report.txt", "w") as report_file:
+        with open("frame_analysis/summary_report.txt", "a") as report_file:
             report_file.write("Depth Estimation Analysis Report\n")
             report_file.write("="*50 + "\n")
 
@@ -897,13 +920,13 @@ class DepthEvaluationNode(Node):
                 second_segment_metrics[key] = np.mean(values[segment_size:])
                 report_file.write(f"{key} - First Segment: {first_segment_metrics[key]:.4f}, Second Segment: {second_segment_metrics[key]:.4f}\n")
 
-            # Write spike analysis
-            report_file.write("\nSpike Analysis:\n")
-            spike_threshold = 1.5
-            for metric_name, metric_values in self.metrics.items():
-                spikes = [i for i, value in enumerate(metric_values) if value > spike_threshold * np.mean(metric_values)]
-                if spikes:
-                    report_file.write(f"Spikes detected in {metric_name} at frames: {spikes}\n")
+            # # Write spike analysis
+            # report_file.write("\nSpike Analysis:\n")
+            # spike_threshold = 1.5
+            # for metric_name, metric_values in self.metrics.items():
+            #     spikes = [i for i, value in enumerate(metric_values) if value > spike_threshold * np.mean(metric_values)]
+            #     if spikes:
+            #         report_file.write(f"Spikes detected in {metric_name} at frames: {spikes}\n")
 
         print("Summary report generated in frame_analysis/summary_report.txt")
 
@@ -917,6 +940,16 @@ def main(args=None):
             rclpy.spin_once(node, timeout_sec=10)
 
             # Check if the ROS bag playback has finished and processing is complete
+            frame_idx = node.frame_count["CRE"]
+            # Set processing_complete to True after processing the last frame
+            if node.bag_process.poll() is None and node.last_frame_processed(frame_idx, 0):
+                node.processing_complete = True        
+            elif node.bag_process.poll() is not None and node.last_frame_processed(frame_idx, 100):
+                node.processing_complete = True
+            elif node.bag_process.poll() is not None:
+                print(f"Attention! only {frame_idx} out of {node.min_frame_count} frames were processed")
+                node.processing_complete = True
+
             if node.processing_complete:
                 print("ROS bag playback has ended. Starting evaluation...\n")
                 node.print_averages()
