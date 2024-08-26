@@ -1,0 +1,1245 @@
+
+Frame 1 - Error Distribution Analysis:
+HITNET Mean Error: 6.1136
+CRE Mean Error: 6.3097
+D455 Mean Error: 7.9891
+
+Frame 0 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 6.1161, CRE: 6.3117, D455: 7.9909
+ROI 1-2mm - HITNET: 4.5277, CRE: 5.0640, D455: 4.7461
+ROI 2-5mm - HITNET: 0.7478, CRE: 3.5686, D455: 0.7081
+
+Frame 0 - Error Localization Analysis:
+Center error: 6.1158
+Periphery error: 6.1150
+
+Frame 1 - Model Output Comparison:
+Average difference between HITNET and CRE: 8.5825
+Average difference between HITNET and D455: 12.3537
+Average difference between CRE and D455: 13.0746
+
+Frame 0 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 6.1402
+
+Frame 2 - Error Distribution Analysis:
+HITNET Mean Error: 6.1025
+CRE Mean Error: 6.3050
+D455 Mean Error: 8.0300
+
+Frame 1 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 6.1041, CRE: 6.3063, D455: 8.0302
+ROI 1-2mm - HITNET: 3.6897, CRE: 4.0635, D455: 3.7208
+ROI 2-5mm - HITNET: 2.5452, CRE: 3.4408, D455: 9.7186
+
+Frame 1 - Error Localization Analysis:
+Center error: 6.1045
+Periphery error: 6.1032
+
+Frame 2 - Model Output Comparison:
+Average difference between HITNET and CRE: 9.2934
+Average difference between HITNET and D455: 11.7777
+Average difference between CRE and D455: 12.6131
+
+Frame 1 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 5.4039
+
+Frame 3 - Error Distribution Analysis:
+HITNET Mean Error: 6.0581
+CRE Mean Error: 6.1565
+D455 Mean Error: 7.6818
+
+Frame 2 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 6.0599, CRE: 6.1583, D455: 7.6824
+ROI 1-2mm - HITNET: 3.9364, CRE: 4.1298, D455: 4.0644
+ROI 2-5mm - HITNET: 2.1375, CRE: 3.1479, D455: 7.0022
+
+Frame 2 - Error Localization Analysis:
+Center error: 6.0612
+Periphery error: 6.0583
+
+Frame 3 - Model Output Comparison:
+Average difference between HITNET and CRE: 6.8627
+Average difference between HITNET and D455: 10.1338
+Average difference between CRE and D455: 12.2217
+
+Frame 2 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 4.2937
+
+Frame 4 - Error Distribution Analysis:
+HITNET Mean Error: 5.8380
+CRE Mean Error: 5.9193
+D455 Mean Error: 7.5220
+
+Frame 3 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.8395, CRE: 5.9207, D455: 7.5231
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 3.6313, CRE: 4.3145, D455: 8.6677
+
+Frame 3 - Error Localization Analysis:
+Center error: 5.8411
+Periphery error: 5.8382
+
+Frame 4 - Model Output Comparison:
+Average difference between HITNET and CRE: 5.9359
+Average difference between HITNET and D455: 11.2817
+Average difference between CRE and D455: 11.8165
+
+Frame 3 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 5.0038
+
+Frame 5 - Error Distribution Analysis:
+HITNET Mean Error: 5.6895
+CRE Mean Error: 5.7782
+D455 Mean Error: 7.3531
+
+Frame 4 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.6912, CRE: 5.7798, D455: 7.3531
+ROI 1-2mm - HITNET: 8.8179, CRE: 8.8179, D455: 22.1129
+ROI 2-5mm - HITNET: 2.5120, CRE: 2.9829, D455: 6.9333
+
+Frame 4 - Error Localization Analysis:
+Center error: 5.6926
+Periphery error: 5.6899
+
+Frame 5 - Model Output Comparison:
+Average difference between HITNET and CRE: 5.9029
+Average difference between HITNET and D455: 11.1335
+Average difference between CRE and D455: 11.5024
+
+Frame 4 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 4.9078
+
+Frame 6 - Error Distribution Analysis:
+HITNET Mean Error: 5.6479
+CRE Mean Error: 5.7410
+D455 Mean Error: 7.2917
+
+Frame 5 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.6494, CRE: 5.7423, D455: 7.2939
+ROI 1-2mm - HITNET: 5.7822, CRE: 7.1929, D455: 4.7814
+ROI 2-5mm - HITNET: 1.5681, CRE: 3.2104, D455: 1.6411
+
+Frame 5 - Error Localization Analysis:
+Center error: 5.6506
+Periphery error: 5.6483
+
+Frame 6 - Model Output Comparison:
+Average difference between HITNET and CRE: 5.7568
+Average difference between HITNET and D455: 10.6259
+Average difference between CRE and D455: 11.5943
+
+Frame 5 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 4.7298
+
+Frame 7 - Error Distribution Analysis:
+HITNET Mean Error: 5.3071
+CRE Mean Error: 5.3533
+D455 Mean Error: 7.1262
+
+Frame 6 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.3081, CRE: 5.3542, D455: 7.1249
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 2.1180, CRE: 2.7527, D455: 6.3956
+
+Frame 6 - Error Localization Analysis:
+Center error: 5.3094
+Periphery error: 5.3074
+
+Frame 7 - Model Output Comparison:
+Average difference between HITNET and CRE: 4.3369
+Average difference between HITNET and D455: 10.8215
+Average difference between CRE and D455: 12.0871
+
+Frame 6 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 5.0877
+
+Frame 8 - Error Distribution Analysis:
+HITNET Mean Error: 5.2126
+CRE Mean Error: 5.2488
+D455 Mean Error: 7.0166
+
+Frame 7 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.2141, CRE: 5.2500, D455: 7.0151
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.4209, CRE: 2.2951, D455: 6.4497
+
+Frame 7 - Error Localization Analysis:
+Center error: 5.2149
+Periphery error: 5.2132
+
+Frame 8 - Model Output Comparison:
+Average difference between HITNET and CRE: 5.1903
+Average difference between HITNET and D455: 10.9943
+Average difference between CRE and D455: 11.8709
+
+Frame 7 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 5.3588
+
+Frame 9 - Error Distribution Analysis:
+HITNET Mean Error: 5.3900
+CRE Mean Error: 5.4945
+D455 Mean Error: 7.5010
+
+Frame 8 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.3909, CRE: 5.4952, D455: 7.4971
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 3.4920, CRE: 4.5716, D455: 20.6911
+
+Frame 8 - Error Localization Analysis:
+Center error: 5.3921
+Periphery error: 5.3907
+
+Frame 9 - Model Output Comparison:
+Average difference between HITNET and CRE: 6.9079
+Average difference between HITNET and D455: 11.0440
+Average difference between CRE and D455: 13.4291
+
+Frame 8 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 5.4370
+
+Frame 10 - Error Distribution Analysis:
+HITNET Mean Error: 5.5480
+CRE Mean Error: 5.7170
+D455 Mean Error: 7.6355
+
+Frame 9 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.5496, CRE: 5.7181, D455: 7.6363
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.6048, CRE: 3.6097, D455: 6.4411
+
+Frame 9 - Error Localization Analysis:
+Center error: 5.5499
+Periphery error: 5.5486
+
+Frame 10 - Model Output Comparison:
+Average difference between HITNET and CRE: 7.6754
+Average difference between HITNET and D455: 12.9586
+Average difference between CRE and D455: 13.9197
+
+Frame 9 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 6.4514
+
+Frame 11 - Error Distribution Analysis:
+HITNET Mean Error: 5.6163
+CRE Mean Error: 5.8304
+D455 Mean Error: 7.6767
+
+Frame 10 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.6176, CRE: 5.8314, D455: 7.6746
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 2.7248, CRE: 3.9752, D455: 15.0590
+
+Frame 10 - Error Localization Analysis:
+Center error: 5.6183
+Periphery error: 5.6169
+
+Frame 11 - Model Output Comparison:
+Average difference between HITNET and CRE: 9.1889
+Average difference between HITNET and D455: 11.4776
+Average difference between CRE and D455: 13.0306
+
+Frame 10 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 5.4281
+
+Frame 12 - Error Distribution Analysis:
+HITNET Mean Error: 5.7270
+CRE Mean Error: 5.9358
+D455 Mean Error: 7.6570
+
+Frame 11 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.7285, CRE: 5.9371, D455: 7.6580
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.8188, CRE: 2.8786, D455: 5.2512
+
+Frame 11 - Error Localization Analysis:
+Center error: 5.7287
+Periphery error: 5.7276
+
+Frame 12 - Model Output Comparison:
+Average difference between HITNET and CRE: 9.9273
+Average difference between HITNET and D455: 12.3838
+Average difference between CRE and D455: 13.8599
+
+Frame 11 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 5.8181
+
+Frame 13 - Error Distribution Analysis:
+HITNET Mean Error: 5.7014
+CRE Mean Error: 5.9557
+D455 Mean Error: 7.4714
+
+Frame 12 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.7032, CRE: 5.9570, D455: 7.4731
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.5907, CRE: 3.3671, D455: 3.7312
+
+Frame 12 - Error Localization Analysis:
+Center error: 5.7031
+Periphery error: 5.7022
+
+Frame 13 - Model Output Comparison:
+Average difference between HITNET and CRE: 11.0229
+Average difference between HITNET and D455: 11.9349
+Average difference between CRE and D455: 12.6188
+
+Frame 12 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 5.1132
+
+Frame 14 - Error Distribution Analysis:
+HITNET Mean Error: 5.6988
+CRE Mean Error: 5.9775
+D455 Mean Error: 7.3382
+
+Frame 13 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.7008, CRE: 5.9793, D455: 7.3398
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.7742, CRE: 2.7421, D455: 3.7651
+
+Frame 13 - Error Localization Analysis:
+Center error: 5.7005
+Periphery error: 5.6995
+
+Frame 14 - Model Output Comparison:
+Average difference between HITNET and CRE: 11.3074
+Average difference between HITNET and D455: 12.1927
+Average difference between CRE and D455: 12.4079
+
+Frame 13 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 5.5824
+
+Frame 15 - Error Distribution Analysis:
+HITNET Mean Error: 5.5940
+CRE Mean Error: 5.9425
+D455 Mean Error: 7.1061
+
+Frame 14 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.5964, CRE: 5.9443, D455: 7.1070
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.1170, CRE: 3.2672, D455: 4.6468
+
+Frame 14 - Error Localization Analysis:
+Center error: 5.5958
+Periphery error: 5.5948
+
+Frame 15 - Model Output Comparison:
+Average difference between HITNET and CRE: 12.4257
+Average difference between HITNET and D455: 12.8380
+Average difference between CRE and D455: 13.5984
+
+Frame 14 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 5.4493
+
+Frame 16 - Error Distribution Analysis:
+HITNET Mean Error: 5.6325
+CRE Mean Error: 5.9951
+D455 Mean Error: 7.3835
+
+Frame 15 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.6350, CRE: 5.9968, D455: 7.3847
+ROI 1-2mm - HITNET: 3.8150, CRE: 5.8628, D455: 3.6305
+ROI 2-5mm - HITNET: 0.7363, CRE: 3.1293, D455: 1.3899
+
+Frame 15 - Error Localization Analysis:
+Center error: 5.6340
+Periphery error: 5.6336
+
+Frame 16 - Model Output Comparison:
+Average difference between HITNET and CRE: 12.3418
+Average difference between HITNET and D455: 15.2035
+Average difference between CRE and D455: 16.2417
+
+Frame 15 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 7.0963
+
+Frame 17 - Error Distribution Analysis:
+HITNET Mean Error: 5.4884
+CRE Mean Error: 5.8767
+D455 Mean Error: 7.5286
+
+Frame 16 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.4903, CRE: 5.8781, D455: 7.5303
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 0.8652, CRE: 2.7406, D455: 1.1714
+
+Frame 16 - Error Localization Analysis:
+Center error: 5.4896
+Periphery error: 5.4893
+
+Frame 17 - Model Output Comparison:
+Average difference between HITNET and CRE: 13.0476
+Average difference between HITNET and D455: 15.3690
+Average difference between CRE and D455: 16.6570
+
+Frame 16 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 7.7338
+
+Frame 18 - Error Distribution Analysis:
+HITNET Mean Error: 5.3496
+CRE Mean Error: 5.8368
+D455 Mean Error: 7.6218
+
+Frame 17 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.3521, CRE: 5.8391, D455: 7.6251
+ROI 1-2mm - HITNET: 6.4468, CRE: 7.2593, D455: 11.9552
+ROI 2-5mm - HITNET: 0.5199, CRE: 1.4782, D455: 0.4574
+
+Frame 17 - Error Localization Analysis:
+Center error: 5.3510
+Periphery error: 5.3508
+
+Frame 18 - Model Output Comparison:
+Average difference between HITNET and CRE: 16.1193
+Average difference between HITNET and D455: 15.4017
+Average difference between CRE and D455: 17.0479
+
+Frame 17 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 7.9844
+
+Frame 19 - Error Distribution Analysis:
+HITNET Mean Error: 5.5333
+CRE Mean Error: 5.8038
+D455 Mean Error: 7.5814
+
+Frame 18 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.5358, CRE: 5.8055, D455: 7.5809
+ROI 1-2mm - HITNET: 3.3992, CRE: 3.7136, D455: 3.5952
+ROI 2-5mm - HITNET: 1.0028, CRE: 2.8911, D455: 1.5265
+
+Frame 18 - Error Localization Analysis:
+Center error: 5.5349
+Periphery error: 5.5345
+
+Frame 19 - Model Output Comparison:
+Average difference between HITNET and CRE: 11.8792
+Average difference between HITNET and D455: 14.8647
+Average difference between CRE and D455: 16.7978
+
+Frame 18 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 7.7671
+
+Frame 20 - Error Distribution Analysis:
+HITNET Mean Error: 5.2653
+CRE Mean Error: 5.6058
+D455 Mean Error: 7.3545
+
+Frame 19 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.2671, CRE: 5.6070, D455: 7.3556
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.3351, CRE: 3.1034, D455: 1.7340
+
+Frame 19 - Error Localization Analysis:
+Center error: 5.2670
+Periphery error: 5.2659
+
+Frame 20 - Model Output Comparison:
+Average difference between HITNET and CRE: 12.4187
+Average difference between HITNET and D455: 13.2517
+Average difference between CRE and D455: 15.2181
+
+Frame 19 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 7.0241
+
+Frame 21 - Error Distribution Analysis:
+HITNET Mean Error: 4.4914
+CRE Mean Error: 4.7229
+D455 Mean Error: 7.2386
+
+Frame 20 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.4909, CRE: 4.7229, D455: 7.2400
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 2.0869, CRE: 2.2812, D455: 1.4030
+
+Frame 20 - Error Localization Analysis:
+Center error: 4.4906
+Periphery error: 4.4911
+
+Frame 21 - Model Output Comparison:
+Average difference between HITNET and CRE: 13.2285
+Average difference between HITNET and D455: 14.9873
+Average difference between CRE and D455: 15.3681
+
+Frame 20 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 6.1728
+
+Frame 22 - Error Distribution Analysis:
+HITNET Mean Error: 5.2274
+CRE Mean Error: 5.5696
+D455 Mean Error: 7.3332
+
+Frame 21 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.2280, CRE: 5.5703, D455: 7.3343
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 2.0140, CRE: 3.3446, D455: 7.4902
+
+Frame 21 - Error Localization Analysis:
+Center error: 5.2277
+Periphery error: 5.2278
+
+Frame 22 - Model Output Comparison:
+Average difference between HITNET and CRE: 12.5926
+Average difference between HITNET and D455: 14.0849
+Average difference between CRE and D455: 14.5292
+
+Frame 21 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 6.8606
+
+Frame 23 - Error Distribution Analysis:
+HITNET Mean Error: 5.3201
+CRE Mean Error: 5.6286
+D455 Mean Error: 7.4881
+
+Frame 22 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.3212, CRE: 5.6290, D455: 7.4878
+ROI 1-2mm - HITNET: 3.2983, CRE: 3.5497, D455: 3.2111
+ROI 2-5mm - HITNET: 2.0775, CRE: 4.1303, D455: 8.2130
+
+Frame 22 - Error Localization Analysis:
+Center error: 5.3212
+Periphery error: 5.3209
+
+Frame 23 - Model Output Comparison:
+Average difference between HITNET and CRE: 11.4026
+Average difference between HITNET and D455: 15.2225
+Average difference between CRE and D455: 15.4133
+
+Frame 22 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 7.4093
+
+Frame 24 - Error Distribution Analysis:
+HITNET Mean Error: 5.4208
+CRE Mean Error: 5.7588
+D455 Mean Error: 7.8668
+
+Frame 23 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.4225, CRE: 5.7596, D455: 7.8698
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.6012, CRE: 3.8050, D455: 1.6351
+
+Frame 23 - Error Localization Analysis:
+Center error: 5.4216
+Periphery error: 5.4221
+
+Frame 24 - Model Output Comparison:
+Average difference between HITNET and CRE: 13.2496
+Average difference between HITNET and D455: 17.8627
+Average difference between CRE and D455: 18.9715
+
+Frame 23 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 8.5574
+
+Frame 25 - Error Distribution Analysis:
+HITNET Mean Error: 0.7208
+CRE Mean Error: 2.9101
+D455 Mean Error: 7.8262
+
+Frame 24 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 0.7169, CRE: 2.9083, D455: 7.8270
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 3.4624, CRE: 3.4490, D455: 6.9648
+
+Frame 24 - Error Localization Analysis:
+Center error: 0.7202
+Periphery error: 0.7173
+
+Frame 25 - Model Output Comparison:
+Average difference between HITNET and CRE: 55.9673
+Average difference between HITNET and D455: 29.6793
+Average difference between CRE and D455: 26.5950
+
+Frame 24 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 12.6228
+
+Frame 26 - Error Distribution Analysis:
+HITNET Mean Error: 5.4949
+CRE Mean Error: 5.9956
+D455 Mean Error: 8.0462
+
+Frame 25 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.4975, CRE: 5.9975, D455: 8.0484
+ROI 1-2mm - HITNET: 5.6572, CRE: 5.6758, D455: 33.4329
+ROI 2-5mm - HITNET: 0.5835, CRE: 2.4612, D455: 0.7996
+
+Frame 25 - Error Localization Analysis:
+Center error: 5.4954
+Periphery error: 5.4969
+
+Frame 26 - Model Output Comparison:
+Average difference between HITNET and CRE: 16.1532
+Average difference between HITNET and D455: 19.3059
+Average difference between CRE and D455: 20.9732
+
+Frame 25 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 9.8206
+
+Frame 27 - Error Distribution Analysis:
+HITNET Mean Error: 5.4319
+CRE Mean Error: 5.9621
+D455 Mean Error: 7.9385
+
+Frame 26 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.4334, CRE: 5.9629, D455: 7.9393
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.9654, CRE: 3.9746, D455: 2.2306
+
+Frame 26 - Error Localization Analysis:
+Center error: 5.4324
+Periphery error: 5.4337
+
+Frame 27 - Model Output Comparison:
+Average difference between HITNET and CRE: 16.7791
+Average difference between HITNET and D455: 20.2879
+Average difference between CRE and D455: 21.9655
+
+Frame 26 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 10.3016
+
+Frame 28 - Error Distribution Analysis:
+HITNET Mean Error: 0.9666
+CRE Mean Error: 2.6985
+D455 Mean Error: 8.1382
+
+Frame 27 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 0.9643, CRE: 2.6981, D455: 8.1401
+ROI 1-2mm - HITNET: 0.5394, CRE: 2.0981, D455: 0.6853
+ROI 2-5mm - HITNET: 2.7989, CRE: 1.5967, D455: 2.6070
+
+Frame 27 - Error Localization Analysis:
+Center error: 0.9662
+Periphery error: 0.9648
+
+Frame 28 - Model Output Comparison:
+Average difference between HITNET and CRE: 48.6356
+Average difference between HITNET and D455: 29.9850
+Average difference between CRE and D455: 24.6927
+
+Frame 27 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 12.9052
+
+Frame 29 - Error Distribution Analysis:
+HITNET Mean Error: 5.1596
+CRE Mean Error: 5.5928
+D455 Mean Error: 8.1511
+
+Frame 28 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.1607, CRE: 5.5935, D455: 8.1518
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 0.8222, CRE: 2.7501, D455: 2.2598
+
+Frame 28 - Error Localization Analysis:
+Center error: 5.1603
+Periphery error: 5.1603
+
+Frame 29 - Model Output Comparison:
+Average difference between HITNET and CRE: 14.0830
+Average difference between HITNET and D455: 18.1431
+Average difference between CRE and D455: 19.3235
+
+Frame 28 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 9.5233
+
+Frame 30 - Error Distribution Analysis:
+HITNET Mean Error: 5.0959
+CRE Mean Error: 5.4743
+D455 Mean Error: 8.0110
+
+Frame 29 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 5.0968, CRE: 5.4748, D455: 8.0121
+ROI 1-2mm - HITNET: 5.1641, CRE: 8.5764, D455: 1.7652
+ROI 2-5mm - HITNET: 1.2491, CRE: 2.8645, D455: 1.7260
+
+Frame 29 - Error Localization Analysis:
+Center error: 5.0962
+Periphery error: 5.0969
+
+Frame 30 - Model Output Comparison:
+Average difference between HITNET and CRE: 12.5222
+Average difference between HITNET and D455: 18.3605
+Average difference between CRE and D455: 19.2964
+
+Frame 29 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 9.7448
+
+Frame 31 - Error Distribution Analysis:
+HITNET Mean Error: 2.1112
+CRE Mean Error: 5.6702
+D455 Mean Error: 7.9535
+
+Frame 30 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 2.1094, CRE: 5.6713, D455: 7.9552
+ROI 1-2mm - HITNET: 0.4139, CRE: 7.9648, D455: 8.0200
+ROI 2-5mm - HITNET: 2.1148, CRE: 3.0514, D455: 0.9424
+
+Frame 30 - Error Localization Analysis:
+Center error: 2.1110
+Periphery error: 2.1092
+
+Frame 31 - Model Output Comparison:
+Average difference between HITNET and CRE: 98.8086
+Average difference between HITNET and D455: 27.0421
+Average difference between CRE and D455: 24.3415
+
+Frame 30 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 13.4873
+
+Frame 32 - Error Distribution Analysis:
+HITNET Mean Error: 4.8615
+CRE Mean Error: 5.3161
+D455 Mean Error: 8.1301
+
+Frame 31 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.8632, CRE: 5.3171, D455: 8.1315
+ROI 1-2mm - HITNET: 4.8149, CRE: 8.1764, D455: 1.7186
+ROI 2-5mm - HITNET: 0.8058, CRE: 2.7344, D455: 1.7043
+
+Frame 31 - Error Localization Analysis:
+Center error: 4.8618
+Periphery error: 4.8632
+
+Frame 32 - Model Output Comparison:
+Average difference between HITNET and CRE: 14.5650
+Average difference between HITNET and D455: 19.7008
+Average difference between CRE and D455: 21.2413
+
+Frame 31 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 11.5255
+
+Frame 33 - Error Distribution Analysis:
+HITNET Mean Error: 4.7593
+CRE Mean Error: 5.1039
+D455 Mean Error: 8.3475
+
+Frame 32 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.7606, CRE: 5.1043, D455: 8.3480
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.0638, CRE: 3.3767, D455: 1.0965
+
+Frame 32 - Error Localization Analysis:
+Center error: 4.7597
+Periphery error: 4.7605
+
+Frame 33 - Model Output Comparison:
+Average difference between HITNET and CRE: 11.3778
+Average difference between HITNET and D455: 20.6551
+Average difference between CRE and D455: 21.7490
+
+Frame 32 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 12.5525
+
+Frame 34 - Error Distribution Analysis:
+HITNET Mean Error: 4.6715
+CRE Mean Error: 5.0029
+D455 Mean Error: 7.9413
+
+Frame 33 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.6726, CRE: 5.0030, D455: 7.9406
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.6369, CRE: 4.1972, D455: 3.5598
+
+Frame 33 - Error Localization Analysis:
+Center error: 4.6723
+Periphery error: 4.6726
+
+Frame 34 - Model Output Comparison:
+Average difference between HITNET and CRE: 11.0420
+Average difference between HITNET and D455: 20.5674
+Average difference between CRE and D455: 21.8200
+
+Frame 33 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 12.4628
+
+Frame 35 - Error Distribution Analysis:
+HITNET Mean Error: 4.6964
+CRE Mean Error: 4.9598
+D455 Mean Error: 8.3698
+
+Frame 34 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.6975, CRE: 4.9601, D455: 8.3691
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.7425, CRE: 3.7051, D455: 5.9452
+
+Frame 34 - Error Localization Analysis:
+Center error: 4.6976
+Periphery error: 4.6969
+
+Frame 35 - Model Output Comparison:
+Average difference between HITNET and CRE: 9.3231
+Average difference between HITNET and D455: 22.8926
+Average difference between CRE and D455: 22.9232
+
+Frame 34 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 15.1678
+
+Frame 36 - Error Distribution Analysis:
+HITNET Mean Error: 4.6103
+CRE Mean Error: 4.8395
+D455 Mean Error: 8.0272
+
+Frame 35 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.6110, CRE: 4.8398, D455: 8.0250
+ROI 1-2mm - HITNET: 8.8249, CRE: 8.8249, D455: 13.1989
+ROI 2-5mm - HITNET: 1.2015, CRE: 2.9708, D455: 3.7408
+
+Frame 35 - Error Localization Analysis:
+Center error: 4.6113
+Periphery error: 4.6107
+
+Frame 36 - Model Output Comparison:
+Average difference between HITNET and CRE: 8.1288
+Average difference between HITNET and D455: 21.9662
+Average difference between CRE and D455: 22.7860
+
+Frame 35 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 14.4290
+
+Frame 37 - Error Distribution Analysis:
+HITNET Mean Error: 4.4695
+CRE Mean Error: 4.6861
+D455 Mean Error: 8.2923
+
+Frame 36 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.4702, CRE: 4.6863, D455: 8.2926
+ROI 1-2mm - HITNET: 8.7728, CRE: 8.7728, D455: 23.3188
+ROI 2-5mm - HITNET: 1.1597, CRE: 2.9220, D455: 1.4197
+
+Frame 36 - Error Localization Analysis:
+Center error: 4.4703
+Periphery error: 4.4701
+
+Frame 37 - Model Output Comparison:
+Average difference between HITNET and CRE: 8.2147
+Average difference between HITNET and D455: 19.6836
+Average difference between CRE and D455: 21.3878
+
+Frame 36 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 13.4480
+
+Frame 38 - Error Distribution Analysis:
+HITNET Mean Error: 4.4194
+CRE Mean Error: 4.6236
+D455 Mean Error: 8.3083
+
+Frame 37 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.4198, CRE: 4.6234, D455: 8.3101
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 1.2973, CRE: 3.0341, D455: 1.6451
+
+Frame 37 - Error Localization Analysis:
+Center error: 4.4201
+Periphery error: 4.4201
+
+Frame 38 - Model Output Comparison:
+Average difference between HITNET and CRE: 7.8527
+Average difference between HITNET and D455: 20.7028
+Average difference between CRE and D455: 21.4964
+
+Frame 37 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 13.0819
+
+Frame 39 - Error Distribution Analysis:
+HITNET Mean Error: 4.3206
+CRE Mean Error: 4.6243
+D455 Mean Error: 8.4056
+
+Frame 38 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.3213, CRE: 4.6243, D455: 8.4067
+ROI 1-2mm - HITNET: 5.3596, CRE: 5.4150, D455: 10.9043
+ROI 2-5mm - HITNET: 1.1045, CRE: 3.5422, D455: 4.2221
+
+Frame 38 - Error Localization Analysis:
+Center error: 4.3214
+Periphery error: 4.3211
+
+Frame 39 - Model Output Comparison:
+Average difference between HITNET and CRE: 10.0843
+Average difference between HITNET and D455: 19.9075
+Average difference between CRE and D455: 21.7579
+
+Frame 38 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 13.4155
+
+Frame 40 - Error Distribution Analysis:
+HITNET Mean Error: 4.3128
+CRE Mean Error: 4.5431
+D455 Mean Error: 8.4348
+
+Frame 39 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.3126, CRE: 4.5425, D455: 8.4326
+ROI 1-2mm - HITNET: 8.8062, CRE: 8.8062, D455: 6.5125
+ROI 2-5mm - HITNET: 3.3908, CRE: 4.6142, D455: 13.8656
+
+Frame 39 - Error Localization Analysis:
+Center error: 4.3136
+Periphery error: 4.3134
+
+Frame 40 - Model Output Comparison:
+Average difference between HITNET and CRE: 8.8001
+Average difference between HITNET and D455: 22.7731
+Average difference between CRE and D455: 22.0227
+
+Frame 39 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 15.4743
+
+Frame 41 - Error Distribution Analysis:
+HITNET Mean Error: 1.9120
+CRE Mean Error: 1.9746
+D455 Mean Error: 8.7674
+
+Frame 40 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 1.9097, CRE: 1.9724, D455: 8.7651
+ROI 1-2mm - HITNET: 0.6077, CRE: 1.2972, D455: 4.9814
+ROI 2-5mm - HITNET: 1.2476, CRE: 1.1387, D455: 13.0231
+
+Frame 40 - Error Localization Analysis:
+Center error: 1.9114
+Periphery error: 1.9107
+
+Frame 41 - Model Output Comparison:
+Average difference between HITNET and CRE: 12.8696
+Average difference between HITNET and D455: 28.5261
+Average difference between CRE and D455: 28.4018
+
+Frame 40 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 17.7731
+
+Frame 42 - Error Distribution Analysis:
+HITNET Mean Error: 4.4295
+CRE Mean Error: 4.5679
+D455 Mean Error: 8.9066
+
+Frame 41 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.4299, CRE: 4.5682, D455: 8.8966
+ROI 1-2mm - HITNET: 3.4340, CRE: 4.2142, D455: 6.1541
+ROI 2-5mm - HITNET: 4.3713, CRE: 4.6858, D455: 17.6600
+
+Frame 41 - Error Localization Analysis:
+Center error: 4.4311
+Periphery error: 4.4309
+
+Frame 42 - Model Output Comparison:
+Average difference between HITNET and CRE: 6.0872
+Average difference between HITNET and D455: 21.8330
+Average difference between CRE and D455: 22.3543
+
+Frame 41 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 13.4781
+
+Frame 43 - Error Distribution Analysis:
+HITNET Mean Error: 4.5437
+CRE Mean Error: 4.7051
+D455 Mean Error: 9.2752
+
+Frame 42 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.5427, CRE: 4.7039, D455: 9.2747
+ROI 1-2mm - HITNET: nan, CRE: nan, D455: nan
+ROI 2-5mm - HITNET: 2.9541, CRE: 3.8225, D455: 5.6616
+
+Frame 42 - Error Localization Analysis:
+Center error: 4.5445
+Periphery error: 4.5435
+
+Frame 43 - Model Output Comparison:
+Average difference between HITNET and CRE: 6.0855
+Average difference between HITNET and D455: 24.5511
+Average difference between CRE and D455: 24.6413
+
+Frame 42 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 17.3522
+
+Frame 44 - Error Distribution Analysis:
+HITNET Mean Error: 4.5238
+CRE Mean Error: 4.6252
+D455 Mean Error: 9.3530
+
+Frame 43 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.5230, CRE: 4.6242, D455: 9.3517
+ROI 1-2mm - HITNET: 8.2646, CRE: 8.2646, D455: 40.1721
+ROI 2-5mm - HITNET: 3.6933, CRE: 4.1006, D455: 17.2949
+
+Frame 43 - Error Localization Analysis:
+Center error: 4.5250
+Periphery error: 4.5237
+
+Frame 44 - Model Output Comparison:
+Average difference between HITNET and CRE: 4.6192
+Average difference between HITNET and D455: 22.8336
+Average difference between CRE and D455: 22.9726
+
+Frame 43 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 14.3452
+
+Frame 45 - Error Distribution Analysis:
+HITNET Mean Error: 4.4990
+CRE Mean Error: 4.5883
+D455 Mean Error: 9.4388
+
+Frame 44 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.4978, CRE: 4.5871, D455: 9.4376
+ROI 1-2mm - HITNET: 6.0040, CRE: 6.0215, D455: 11.6983
+ROI 2-5mm - HITNET: 2.9859, CRE: 3.5400, D455: 2.7278
+
+Frame 44 - Error Localization Analysis:
+Center error: 4.5003
+Periphery error: 4.4984
+
+Frame 45 - Model Output Comparison:
+Average difference between HITNET and CRE: 4.2937
+Average difference between HITNET and D455: 25.4661
+Average difference between CRE and D455: 26.9421
+
+Frame 44 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 18.7886
+
+Frame 46 - Error Distribution Analysis:
+HITNET Mean Error: 4.4677
+CRE Mean Error: 4.5629
+D455 Mean Error: 9.1539
+
+Frame 45 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.4673, CRE: 4.5621, D455: 9.1529
+ROI 1-2mm - HITNET: 5.7304, CRE: 5.7276, D455: 5.0829
+ROI 2-5mm - HITNET: 2.2212, CRE: 4.1408, D455: 1.9182
+
+Frame 45 - Error Localization Analysis:
+Center error: 4.4687
+Periphery error: 4.4681
+
+Frame 46 - Model Output Comparison:
+Average difference between HITNET and CRE: 4.4999
+Average difference between HITNET and D455: 22.9932
+Average difference between CRE and D455: 25.1740
+
+Frame 45 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 16.3672
+
+Frame 47 - Error Distribution Analysis:
+HITNET Mean Error: 4.4570
+CRE Mean Error: 4.5658
+D455 Mean Error: 9.3589
+
+Frame 46 - ROI Error Analysis:
+ROI 0-1mm - HITNET: 4.4557, CRE: 4.5644, D455: 9.3543
+ROI 1-2mm - HITNET: 6.2638, CRE: 6.2832, D455: 37.9563
+ROI 2-5mm - HITNET: 3.1379, CRE: 3.7895, D455: 27.5285
+
+Frame 46 - Error Localization Analysis:
+Center error: 4.4576
+Periphery error: 4.4570
+
+Frame 47 - Model Output Comparison:
+Average difference between HITNET and CRE: 4.7808
+Average difference between HITNET and D455: 23.2710
+Average difference between CRE and D455: 24.0955
+
+Frame 46 - Model Disagreement Analysis:
+Average disagreement (variance) among models: 15.1094
+
+Averaged Metrics:
+MAE_HITNET: 3.8248
+RMSE_HITNET: 7.1936
+MSE_HITNET: 56.1915
+IoU_HITNET: 0.9498
+EPE_HITNET: 3.8248
+D1_HITNET: 38.1505
+MAE_CRE: 4.5290
+RMSE_CRE: 7.4753
+MSE_CRE: 59.7090
+IoU_CRE: 0.9680
+EPE_CRE: 4.5290
+D1_CRE: 50.0446
+MAE_D455: 8.1356
+RMSE_D455: 16.6160
+MSE_D455: 304.1541
+IoU_D455: 0.9119
+EPE_D455: 8.1356
+D1_D455: 39.2749
+
+Conclusion:
+Best MAE: HITNET
+Best RMSE: HITNET
+Best MSE: HITNET
+Best IoU: CRE
+Best EPE: HITNET
+Best D1: HITNET
+
+
+Metrics Summary Table:
+             MAE       RMSE         MSE       IoU       EPE     D1 (%)
+HITNET  3.824844   7.193609   56.191536  0.949772  3.824844  38.150518
+CRE     4.529043   7.475297   59.709015  0.968005  4.529043  50.044602
+D455    8.135561  16.615973  304.154053  0.911899  8.135561  39.274852
+
+Summary of Depth Estimation Results:
+
+1. Mean Absolute Error (MAE):
+
+   - MAE represents the average error between the predicted depth and the actual depth.
+
+   - HITNET MAE: 3.8248
+
+   - CRE MAE: 4.5290
+
+   - D455 MAE: 8.1356
+
+   The lower the MAE, the better the model is at estimating depth accurately.
+
+
+2. Root Mean Squared Error (RMSE):
+
+   - RMSE is similar to MAE but gives more weight to larger errors.
+
+   - HITNET RMSE: 7.1936
+
+   - CRE RMSE: 7.4753
+
+   - D455 RMSE: 16.6160
+
+   Lower RMSE values indicate fewer large discrepancies in depth estimation.
+
+
+3. Mean Squared Error (MSE):
+
+   - MSE is similar to RMSE but doesn't convert back to original units.
+
+   - HITNET MSE: 56.1915
+
+   - CRE MSE: 59.7090
+
+   - D455 MSE: 304.1541
+
+   Like RMSE, lower MSE values indicate better performance.
+
+
+4. Intersection over Union (IoU):
+
+   - IoU measures how well the predicted depth overlaps with the ground truth.
+
+   - HITNET IoU: 0.9498
+
+   - CRE IoU: 0.9680
+
+   - D455 IoU: 0.9119
+
+   Higher IoU values indicate better spatial agreement between the prediction and ground truth.
+
+
+5. End-Point Error (EPE):
+
+   - EPE measures the average disparity error in pixels between the predicted and ground truth depth maps.
+
+   - HITNET EPE: 3.8248 pixels
+
+   - CRE EPE: 4.5290 pixels
+
+   - D455 EPE: 8.1356 pixels
+
+   A lower EPE value indicates that the depth estimation model is more accurate in predicting the depth values, which is critical for applications where precision is key.
+
+
+6. Percentage of Erroneous Pixels (D1):
+
+   - D1 calculates the percentage of pixels where the disparity error exceeds a threshold (e.g., 3 pixels).
+
+   - HITNET D1: 38.15%
+
+   - CRE D1: 50.04%
+
+   - D455 D1: 39.27%
+
+   A lower D1 percentage means fewer significant errors, indicating a more reliable depth estimation model, especially in real-world scenarios where accuracy is crucial.
+
+
+Conclusion:
+
+   - HITNET had the best overall performance in terms of average accuracy (lowest MAE).
+
+   - HITNET was the most consistent, with the lowest squared errors (lowest RMSE).
+
+   - HITNET minimized large errors the most (lowest MSE).
+
+   - CRE had the best spatial overlap with the ground truth (highest IoU).
+
+   - HITNET showed the most precise disparity predictions (lowest EPE).
+
+   - HITNET had the fewest significant errors (lowest D1 percentage).
+
+Metrics Statistics:
+MAE_HITNET - Average: 3.8248, Median: 3.5094, Std Dev: 1.3119
+RMSE_HITNET - Average: 7.1936, Median: 7.0549, Std Dev: 2.1080
+MSE_HITNET - Average: 56.1915, Median: 49.7720, Std Dev: 34.4546
+IoU_HITNET - Average: 0.9498, Median: 0.9679, Std Dev: 0.1230
+EPE_HITNET - Average: 3.8248, Median: 3.5094, Std Dev: 1.3119
+D1_HITNET - Average: 38.1505, Median: 34.1463, Std Dev: 13.9730
+MAE_CRE - Average: 4.5290, Median: 4.3641, Std Dev: 1.0326
+RMSE_CRE - Average: 7.4753, Median: 7.3093, Std Dev: 1.9568
+MSE_CRE - Average: 59.7090, Median: 53.4255, Std Dev: 33.2817
+IoU_CRE - Average: 0.9680, Median: 0.9701, Std Dev: 0.0184
+EPE_CRE - Average: 4.5290, Median: 4.3641, Std Dev: 1.0326
+D1_CRE - Average: 50.0446, Median: 49.1803, Std Dev: 9.1071
+MAE_D455 - Average: 8.1356, Median: 6.7682, Std Dev: 3.9378
+RMSE_D455 - Average: 16.6160, Median: 15.2154, Std Dev: 5.2975
+MSE_D455 - Average: 304.1541, Median: 231.5072, Std Dev: 206.5241
+IoU_D455 - Average: 0.9119, Median: 0.9204, Std Dev: 0.0460
+EPE_D455 - Average: 8.1356, Median: 6.7682, Std Dev: 3.9378
+D1_D455 - Average: 39.2749, Median: 37.6569, Std Dev: 12.3986
+
+Segment Comparison:
+MAE_HITNET - First Segment: 3.2747, Second Segment: 4.3521
+RMSE_HITNET - First Segment: 6.4590, Second Segment: 7.8976
+MSE_HITNET - First Segment: 44.1477, Second Segment: 67.7335
+IoU_HITNET - First Segment: 0.9808, Second Segment: 0.9200
+EPE_HITNET - First Segment: 3.2747, Second Segment: 4.3521
+D1_HITNET - First Segment: 33.9756, Second Segment: 42.1515
+MAE_CRE - First Segment: 3.9452, Second Segment: 5.0886
+RMSE_CRE - First Segment: 6.7767, Second Segment: 8.1448
+MSE_CRE - First Segment: 47.8628, Second Segment: 71.0616
+IoU_CRE - First Segment: 0.9800, Second Segment: 0.9565
+EPE_CRE - First Segment: 3.9452, Second Segment: 5.0886
+D1_CRE - First Segment: 46.6888, Second Segment: 53.2606
+MAE_D455 - First Segment: 6.7827, Second Segment: 9.4321
+RMSE_D455 - First Segment: 14.8249, Second Segment: 18.3324
+MSE_D455 - First Segment: 234.4008, Second Segment: 371.0009
+IoU_D455 - First Segment: 0.9334, Second Segment: 0.8913
+EPE_D455 - First Segment: 6.7827, Second Segment: 9.4321
+D1_D455 - First Segment: 36.8150, Second Segment: 41.6322
+Depth Estimation Analysis Report
+==================================================
+
+Metrics Statistics:
+MAE_HITNET - Average: 3.8248, Median: 3.5094, Std Dev: 1.3119
+RMSE_HITNET - Average: 7.1936, Median: 7.0549, Std Dev: 2.1080
+MSE_HITNET - Average: 56.1915, Median: 49.7720, Std Dev: 34.4546
+IoU_HITNET - Average: 0.9498, Median: 0.9679, Std Dev: 0.1230
+EPE_HITNET - Average: 3.8248, Median: 3.5094, Std Dev: 1.3119
+D1_HITNET - Average: 38.1505, Median: 34.1463, Std Dev: 13.9730
+MAE_CRE - Average: 4.5290, Median: 4.3641, Std Dev: 1.0326
+RMSE_CRE - Average: 7.4753, Median: 7.3093, Std Dev: 1.9568
+MSE_CRE - Average: 59.7090, Median: 53.4255, Std Dev: 33.2817
+IoU_CRE - Average: 0.9680, Median: 0.9701, Std Dev: 0.0184
+EPE_CRE - Average: 4.5290, Median: 4.3641, Std Dev: 1.0326
+D1_CRE - Average: 50.0446, Median: 49.1803, Std Dev: 9.1071
+MAE_D455 - Average: 8.1356, Median: 6.7682, Std Dev: 3.9378
+RMSE_D455 - Average: 16.6160, Median: 15.2154, Std Dev: 5.2975
+MSE_D455 - Average: 304.1541, Median: 231.5072, Std Dev: 206.5241
+IoU_D455 - Average: 0.9119, Median: 0.9204, Std Dev: 0.0460
+EPE_D455 - Average: 8.1356, Median: 6.7682, Std Dev: 3.9378
+D1_D455 - Average: 39.2749, Median: 37.6569, Std Dev: 12.3986
+
+Segment Comparison:
+MAE_HITNET - First Segment: 3.2747, Second Segment: 4.3521
+RMSE_HITNET - First Segment: 6.4590, Second Segment: 7.8976
+MSE_HITNET - First Segment: 44.1477, Second Segment: 67.7335
+IoU_HITNET - First Segment: 0.9808, Second Segment: 0.9200
+EPE_HITNET - First Segment: 3.2747, Second Segment: 4.3521
+D1_HITNET - First Segment: 33.9756, Second Segment: 42.1515
+MAE_CRE - First Segment: 3.9452, Second Segment: 5.0886
+RMSE_CRE - First Segment: 6.7767, Second Segment: 8.1448
+MSE_CRE - First Segment: 47.8628, Second Segment: 71.0616
+IoU_CRE - First Segment: 0.9800, Second Segment: 0.9565
+EPE_CRE - First Segment: 3.9452, Second Segment: 5.0886
+D1_CRE - First Segment: 46.6888, Second Segment: 53.2606
+MAE_D455 - First Segment: 6.7827, Second Segment: 9.4321
+RMSE_D455 - First Segment: 14.8249, Second Segment: 18.3324
+MSE_D455 - First Segment: 234.4008, Second Segment: 371.0009
+IoU_D455 - First Segment: 0.9334, Second Segment: 0.8913
+EPE_D455 - First Segment: 6.7827, Second Segment: 9.4321
+D1_D455 - First Segment: 36.8150, Second Segment: 41.6322

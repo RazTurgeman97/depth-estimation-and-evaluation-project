@@ -22,7 +22,7 @@ class StereoTriangulationNode(Node):
         depth_image_sub = message_filters.Subscriber(self, Image, '/camera/camera/depth/image_rect_raw')
 
         # Synchronize the left and right images
-        self.ts = message_filters.ApproximateTimeSynchronizer([left_image_sub, right_image_sub, depth_image_sub], queue_size=1, slop=0.1)
+        self.ts = message_filters.ApproximateTimeSynchronizer([left_image_sub, right_image_sub, depth_image_sub], queue_size=200, slop=0.1)
         self.ts.registerCallback(self.image_callback)
 
         self.get_logger().info("Subscriptions and synchronization set up.")
@@ -179,12 +179,12 @@ class StereoTriangulationNode(Node):
             valid_depth = depth[valid_mask]
 
             # Publish the color-coded depth image
-            self.publish_depth_image(self.left_image, valid_points, valid_depth, self.left_depth_publisher, timestamp)
+            self.publish_depth_image(self.left_image, valid_points, valid_depth, timestamp)
             
             # Publish the raw depth map
             self.publish_raw_depth_map(valid_points, valid_depth, timestamp)
 
-    def publish_depth_image(self, image, points, depth, publisher, timestamp):
+    def publish_depth_image(self, image, points, depth, timestamp):
         if depth.size > 0:
             depth_min, depth_max = np.min(depth), np.max(depth)
             if depth_max == depth_min:  # Avoid division by zero
