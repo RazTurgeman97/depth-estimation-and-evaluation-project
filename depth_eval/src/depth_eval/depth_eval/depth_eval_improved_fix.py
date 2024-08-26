@@ -32,7 +32,7 @@ class DepthEvaluationNode(Node):
         self.declare_parameter('stop_processing', False)
 
         # Set mother directory
-        self.motherdir = 'frame_analysis_test'
+        self.motherdir = 'frame_analysis_outdoor'
 
         # Create directory for saving frames
         self.create_frame_analysis_directory()
@@ -43,8 +43,8 @@ class DepthEvaluationNode(Node):
         # self.bagfile_path = '/mnt/data/recordings_proc/indoor_recording/indoor_recording_synchronized/indoor_recording_synchronized_0.db3'
         # self.bagfile_path = '/mnt/data/recordings/indoor_recording/indoor_recording_0.db3'
         # self.bagfile_path = '/mnt/data/recordings_proc/indoor_recording/indoor_recording_0.db3'
-        # self.bagfile_path = '/mnt/data/recordings_proc/outdoor_recording/outdoor_recording_0.db3'
-        self.bagfile_path = '/mnt/data/recordings_trimmed/outdoor_recording/outdoor_recording_0_trimmed.db3'
+        self.bagfile_path = '/mnt/data/recordings_proc/outdoor_recording/outdoor_recording_0.db3'
+        # self.bagfile_path = '/mnt/data/recordings_trimmed/outdoor_recording/outdoor_recording_0_trimmed.db3'
         # self.CRE_topic = '/CRE/raw_depth_'
         # self.HITNET_topic = '/HITNET/raw_depth_'
         self.CRE_topic = '/CRE/raw_depth'
@@ -127,7 +127,7 @@ class DepthEvaluationNode(Node):
         # Synchronize the topics using ApproximateTimeSynchronizer
         self.ts = message_filters.ApproximateTimeSynchronizer(
             [self.triangulation_sub, self.hitnet_sub, self.cre_sub, self.d455_sub, self.left_image_sub, self.right_image_sub],
-            queue_size=200,
+            queue_size=100,
             slop=0.2
         )
         self.ts.registerCallback(self.callback)
@@ -207,9 +207,9 @@ class DepthEvaluationNode(Node):
             self.hitnet_depth = self.bridge.imgmsg_to_cv2(hitnet_msg, 'passthrough')
             self.cre_depth = self.bridge.imgmsg_to_cv2(cre_msg, 'passthrough')
             self.d455_depth = self.bridge.imgmsg_to_cv2(d455_msg, 'passthrough')
-            # self.triangulation_dots = self.bridge.imgmsg_to_cv2(dots_msg, 'passthrough')
             self.left_image = self.bridge.imgmsg_to_cv2(left_msg, 'passthrough')
             self.right_image = self.bridge.imgmsg_to_cv2(right_msg, 'passthrough')
+            # self.triangulation_dots = self.bridge.imgmsg_to_cv2(dots_msg, 'passthrough')
 
             # Set frame size if not set already
             self.set_frame_size(self.triangulation_depth)
@@ -566,7 +566,7 @@ class DepthEvaluationNode(Node):
         return False
 
     def save_depth_map_visualizations(self, hitnet_depth, cre_depth, d455_depth):
-        plt.figure()
+        plt.figure(figsize=(10, 6))
 
         overlay_infra = cv2.addWeighted(self.left_image, 0.5, self.right_image, 0.5, 0)
         plt.subplot(221)
@@ -990,20 +990,6 @@ class DepthEvaluationNode(Node):
                 report_file.write(f"{key} - First Segment: {first_segment_metrics[key]:.4f}, Second Segment: {second_segment_metrics[key]:.4f}\n")
 
         print(f"Summary report generated in {self.motherdir}/summary_report.txt")
-
-    # def monitor_messages(self):
-    #     if self.prev_message_time and self.curr_message_time:
-    #         # Calculate the time difference between the current and previous message
-    #         elapsed_time = ((self.curr_message_time.sec) - self.prev_message_time.sec) # + \
-    #                     # (self.curr_message_time.nanosec - self.prev_message_time.nanosec) / 1e9
-
-    #         if elapsed_time > self.timeout_seconds:
-    #             self.get_logger().warn('Time between messages exceeded the timeout period.')
-    #             self.msg_stopped = True
-    #         else:
-    #             self.msg_stopped = False
-    #     else:
-    #         self.msg_stopped = False
 
 
     def check_message_timeout(self):
