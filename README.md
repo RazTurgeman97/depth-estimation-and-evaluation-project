@@ -6,7 +6,7 @@ The following instructions will help you set up the environment using Docker.
 
 ## Enable nvidia runtime after reboot:
 
-If you already conducted the instruction below, perform the following command and you are good to go.
+If you already conducted the instruction below and for some reason you do not want to create a custom systemd service, run the following commands and you are good to go.
 
 ```bash
 sudo systemctl stop docker.socket
@@ -352,6 +352,57 @@ Enable Docker to start on boot:
 ```bash
 sudo systemctl enable docker
 ```
+### Startup command execution
+
+to make sure you are good to go without any command to perform you can create a custom systemd service to execute these commands automatically on system reboot.
+
+#### 1. Create a new systemd service file:
+
+```bash
+sudo nano /etc/systemd/system/docker-nvidia-runtime.service
+```
+Add the following content to the file:
+
+```ini
+
+[Unit]
+Description=Restart Docker with NVIDIA runtime
+After=network.target docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'systemctl stop docker && systemctl stop docker.socket && systemctl start docker && systemctl restart docker'
+
+[Install]
+WantedBy=multi-user.target
+```
+Save and close the file (press Ctrl + X, then Y, then Enter).
+
+#### 2. Reload the systemd daemon to recognize the new service:
+
+```bash
+sudo systemctl daemon-reload
+```
+
+#### 3. Enable the service to start on boot:
+
+```bash
+sudo systemctl enable docker-nvidia-runtime.service
+```
+
+Start the service to verify it works:
+
+```bash
+sudo systemctl start docker-nvidia-runtime.service
+```
+
+Check the status of the service to ensure it's running correctly:
+
+```bash
+sudo systemctl status docker-nvidia-runtime.service
+```
+
+This custom systemd service will ensure that your Docker runtime is configured with NVIDIA support every time your system reboots.
 
 ### Reboot and Verify
 
