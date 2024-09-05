@@ -81,7 +81,7 @@ class StereoTriangulationNode(Node):
                 [0.006, 0.001, 1.000]
             ]
         }
-        self.baseline = np.array([self.calib["baseline"], 0, 0])
+        self.baseline = np.abs(np.array([self.calib["baseline"], 0, 0]))
         self.R_mat = np.array(self.calib["world2left_rot"])
 
         ## Extracted d455 Intel realsense camera parameters using pyrealsense2 pipeline
