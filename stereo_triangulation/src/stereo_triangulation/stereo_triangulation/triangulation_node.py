@@ -172,8 +172,8 @@ class StereoTriangulationNode(Node):
             depth = points_4d[2]
 
             # Filter out invalid depths
-            min_depth_threshold = 0.1
-            max_depth_threshold = 100.0
+            min_depth_threshold = 0.05
+            max_depth_threshold = 15.0
             valid_mask = (depth > min_depth_threshold) & (depth < max_depth_threshold)
             valid_points = points_left[valid_mask]
             valid_depth = depth[valid_mask]
