@@ -742,8 +742,8 @@ class DepthEvaluationNode(Node):
         with open(f"{self.motherdir}/summary_report.txt", "a") as report_file:
             report_file.write(f"\nFrame {frame_idx+1} - ROI Error Analysis:\n")
             for roi, errors in roi_errors.items():
-                report_file.write(f"ROI {roi}m - HITNET: {errors['HITNET']:.4f}, CRE: {errors['CRE']:.4f}, D455: {errors['D455']:.4f}\n")
-                self.get_logger().info(f"ROI {roi}m - HITNET: {errors['HITNET']}, CRE: {errors['CRE']}, D455: {errors['D455']}")
+                report_file.write(f"ROI {roi} - HITNET: {errors['HITNET']:.4f}, CRE: {errors['CRE']:.4f}, D455: {errors['D455']:.4f}\n")
+                self.get_logger().info(f"ROI {roi} - HITNET: {errors['HITNET']}, CRE: {errors['CRE']}, D455: {errors['D455']}")
 
 
     def track_error_progression(self):
