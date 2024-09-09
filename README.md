@@ -35,6 +35,7 @@ The system leverages advanced computer vision techniques and neural networks to 
     <img src="documents/media/depth_comparison_frame_97.png" style="width: 45%;">
     <img src="documents/media/indoor_gif.gif" style="width: 45%; text-align: center;" alt="Indoor Visual Comparison">
     <p><strong>Figure 1:</strong> Indoor Visual Comparison</p>
+    <br clear="left"/>
   </div>
 </div>
 
@@ -43,6 +44,7 @@ The system leverages advanced computer vision techniques and neural networks to 
     <img src="documents/media/depth_comparison_frame_35.png" style="width: 45%;">
     <img src="documents/media/outdoor_gif.gif" style="width: 45%; text-align: center;" alt="Outdoor Visual Comparison">
     <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
+    <br clear="right"/>
   </div>
 </div>
 
