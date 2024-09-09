@@ -33,7 +33,7 @@ The system leverages advanced computer vision techniques and neural networks to 
 </table>
 -->
 
-<table class="images" width="100%"  style="border:0px; width:100%;">
+<table class="images" width="100%"  style="border:0; width:100%;">
     <tr style="border: 0px;">
         <td width="50%" style="border:0px; width:50%">
             <img src="documents/media/depth_comparison_frame_97.png"/>
