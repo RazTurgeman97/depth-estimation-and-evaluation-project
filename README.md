@@ -1,8 +1,55 @@
 # Depth Estimation Project
-My Depth Estimation Project for my B.S.c Degree in Mechanical Engineering at Ben-Gurion University
+This repository contains the work for my Bachelor of Science (B.Sc.) degree in Mechanical Engineering at Ben-Gurion University of the Negev. The project focuses on developing and evaluating algorithms for depth estimation using stereo cameras integrated with ROS2.
 
-This project uses stereo cameras with ROS2 to perform depth estimation.
-The following instructions will help you set up the environment using Docker.
+The system leverages advanced computer vision techniques and neural networks to estimate depth from stereo camera inputs, offering valuable insights for applications in robotics and autonomous systems. This repository includes detailed instructions for setting up the project environment using Docker to ensure compatibility and ease of deployment.
+
+## Table of Contents
+- [Requirements for Project Setup](#requirements-for-project-setup)
+  - [NVIDIA Container Runtime](#nvidia-container-runtime)
+  - [CUDA Toolkit](#cuda-toolkit)
+  - [cuDNN](#cudnn)
+  - [Docker](#docker)
+  - [ROS Wrapper for Intel® RealSense™ cameras](#ros-wrapper-for-intel-realsense-cameras)
+- [Post-Installation Instructions](#post-installation-instructions)
+  - [Enable NVIDIA Runtime After Reboot](#enable-nvidia-runtime-after-reboot)
+  - [To Use NVIDIA Runtime](#to-use-nvidia-runtime)
+    - [Check `daemon.json`](#check-daemonjson)
+    - [Check `config.toml`](#check-configtoml)
+    - [Reload and Restart Docker](#reload-and-restart-docker)
+  - [Startup Command Execution](#startup-command-execution)
+- [Common Errors](#common-errors)
+
+# Requirements for Project Setup:
+
+## NVIDIA Container Runtime:
+
+Ensure you have the NVIDIA container runtime installed to enable GPU acceleration in Docker containers.
+Install guide: [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+
+## CUDA Toolkit:
+
+CUDA is required for GPU computing with your neural network models.
+Download and install from: [NVIDIA CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit)
+
+## cuDNN:
+
+CUDA Deep Neural Network library (cuDNN) is required for accelerating deep learning networks.
+Download and install from: [NVIDIA cuDNN](https://developer.nvidia.com/cudnn)
+
+### for whole Nvidia CUDA guide follow the instruction from: [NVIDIA CUDA Installation Guide for Linux](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/)
+
+
+## Docker:
+
+Install Docker to run your containerized application.
+Installation guide: [Docker Installation](https://docs.docker.com/engine/install/ubuntu/)
+
+ROS Wrapper for Intel® RealSense™ cameras:
+
+To use Intel RealSense cameras with ROS, install the necessary ROS package for your version.
+Installation guide: [Intel® RealSense™ ROS Wrapper](https://dev.intelrealsense.com/docs/ros2-wrapper)
+
+# Post-Instalition Instructions:
 
 ## Enable nvidia runtime after reboot:
 
