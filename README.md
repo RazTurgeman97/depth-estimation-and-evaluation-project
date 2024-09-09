@@ -48,13 +48,13 @@ The system leverages advanced computer vision techniques and neural networks to 
 
 <div style="display: flex; justify-content: space-between; align-items: center;">
 
-  <div style="text-align: center; width: 48%;">
+  <div style="text-align: center; width: 45%;" align="left">
     <img src="documents/media/depth_comparison_frame_97.png" style="width: 45%;" alt="Depth Comparison Frame 97">
     <img src="documents/media/indoor_gif.gif" style="width: 45%;" alt="Indoor Visual Comparison">
     <p><strong>Figure 1:</strong> Indoor Visual Comparison</p>
   </div>
 
-  <div style="text-align: center; width: 48%;">
+  <div style="text-align: center; width: 45%;" align="right">
     <img src="documents/media/depth_comparison_frame_35.png" style="width: 45%;" alt="Depth Comparison Frame 35">
     <img src="documents/media/outdoor_gif.gif" style="width: 45%;" alt="Outdoor Visual Comparison">
     <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
