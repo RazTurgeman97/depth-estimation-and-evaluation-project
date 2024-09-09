@@ -5,11 +5,11 @@ The system leverages advanced computer vision techniques and neural networks to 
 
 <div style="display: flex; justify-content: space-between;">
   <div style="flex: 1; text-align: center; margin-right: 10px;">
-    <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" style="width: 90%;" />
+    <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" style="width: 48%;" />
     <p><strong>Figure 1:</strong> Indoor Visual Comparison</p>
   </div>
   <div style="flex: 1; text-align: center;">
-    <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" style="width: 90%;" />
+    <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" style="width: 48%;" />
     <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
   </div>
 </div>
