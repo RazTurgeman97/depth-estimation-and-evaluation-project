@@ -16,6 +16,7 @@ The system leverages advanced computer vision techniques and neural networks to 
 </div>
 -->
 
+<!--
 <table style="border: none; width: 100%;">
   <tr style="border: none;">
     <td style="text-align: center; border: none; vertical-align: top; width: 50%;">
@@ -29,6 +30,20 @@ The system leverages advanced computer vision techniques and neural networks to 
       <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
     </td>
   </tr>
+</table>
+-->
+
+<table class="images" width="100%"  style="border:0px solid white; width:100%;">
+    <tr style="border: 0px;">
+        <td width="50%" style="border:0px; width:50%">
+            <img src="documents/media/depth_comparison_frame_97.png"/>
+            <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" alt="Indoor Visual Comparison"/>
+        </td>
+        <td width="50%" style="border:0px; width:50%">
+            <img src="documents/media/depth_comparison_frame_35.png"/>
+            <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison"/>
+        </td>
+    </tr>
 </table>
 
 
