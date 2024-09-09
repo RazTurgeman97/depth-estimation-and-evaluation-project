@@ -17,14 +17,14 @@ The system leverages advanced computer vision techniques and neural networks to 
 -->
 
 
-<td style="text-align: center; border: none; vertical-align: top; width: 45%; align: left;">
-  <img src="documents/media/depth_comparison_frame_97.png" style="width: 45%; lign: left;">
-  <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" alt="Indoor Visual Comparison" style="width: 45%; lign: left;">
+<td style="text-align: center; border: none; vertical-align: top; width: 45%;" align="left">
+  <img src="documents/media/depth_comparison_frame_97.png" style="width: 45%;" align="left">
+  <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" alt="Indoor Visual Comparison" style="width: 45%;" align="left">
   <p><strong>Figure 1:</strong> Indoor Visual Comparison</p>
 </td>
-<td style="text-align: center; border: none; vertical-align: top; width: 45%; align: right;">
-  <img src="documents/media/depth_comparison_frame_35.png" style="width: 45%; align: right;">
-  <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" style="width: 45%; align: right;">
+<td style="text-align: center; border: none; vertical-align: top; width: 45%;" align="right">
+  <img src="documents/media/depth_comparison_frame_35.png" style="width: 45%;" align="right">
+  <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" style="width: 45%;" align="right">
   <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
 </td>
 
