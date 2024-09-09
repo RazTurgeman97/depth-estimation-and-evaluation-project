@@ -20,6 +20,7 @@ The system leverages advanced computer vision techniques and neural networks to 
     - [Reload and Restart Docker](#reload-and-restart-docker)
   - [Startup Command Execution](#startup-command-execution)
 - [Common Errors](#common-errors)
+- [Credits](#credits)
 
 ## Requirements for Project Setup:
 
@@ -400,3 +401,27 @@ Check Docker info again:
 ```bash
 docker info | grep -i runtime
 ```
+
+
+## Credits
+
+### Neural Network Algorithms
+This project’s neural network algorithms are based on the following repositories:
+- [ONNX-CREStereo-Depth-Estimation](https://github.com/ibaiGorordo/ONNX-CREStereo-Depth-Estimation)
+- [ONNX-HITNET-Stereo-Depth-estimation](https://github.com/ibaiGorordo/ONNX-HITNET-Stereo-Depth-estimation)
+
+### ONNX Models
+The ONNX models used in this project were converted from the original PyTorch implementations by [PINTO0309](https://github.com/PINTO0309). You can download the models using the script in his repository.
+
+- License of the models: [Apache-2.0 License](https://github.com/megvii-research/CREStereo/blob/master/LICENSE)
+
+### References
+Here are the original sources and references for the models and datasets used in this project:
+
+- [CREStereo Model](https://github.com/megvii-research/CREStereo)
+- [HITNET Model](https://github.com/google-research/google-research/tree/master/hitnet)
+- [PINTO0309's Model Zoo](https://github.com/PINTO0309/PINTO_model_zoo)
+- [PINTO0309's Model Conversion Tool](https://github.com/PINTO0309/openvino2tensorflow)
+- [Driving Stereo Dataset](https://drivingstereo-dataset.github.io/)
+- [Original CREStereo Paper](https://arxiv.org/abs/2203.11483)
+- [Original HITNET Paper](https://arxiv.org/abs/2007.12140)
