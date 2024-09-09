@@ -33,6 +33,11 @@ The system leverages advanced computer vision techniques and neural networks to 
 </table>
 -->
 
+<p align="center">
+      <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" alt="Indoor Visual Comparison" width="45%" align="left">
+      <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" alt="Outdoor Visual Comparison" width="45%" align="right">
+</p>
+
 <table class="images" width="100%"  style="border:0; width:100%;">
     <tr style="border: 0px;">
         <td width="50%" style="border:0px; width:50%">
@@ -45,11 +50,6 @@ The system leverages advanced computer vision techniques and neural networks to 
         </td>
     </tr>
 </table>
-
-<p align="center">
-      <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" alt="Indoor Visual Comparison" width="45%" align="left">
-      <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" alt="Outdoor Visual Comparison" width="45%" align="right">
-</p>
 
 
 
