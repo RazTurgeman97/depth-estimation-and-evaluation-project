@@ -16,28 +16,32 @@ The system leverages advanced computer vision techniques and neural networks to 
 </div>
 -->
 
-<!--
+
 <table style="border: none; width: 100%;">
   <tr style="border: none;">
-    <td style="text-align: center; border: none; vertical-align: top; width: 50%;">
+    <td style="text-align: center; border: none; vertical-align: top; width: 45%;">
       <img src="documents/media/depth_comparison_frame_97.png" style="width: 100%;">
       <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" alt="Indoor Visual Comparison" style="width: 100%;">
       <p><strong>Figure 1:</strong> Indoor Visual Comparison</p>
     </td>
-    <td style="text-align: center; border: none; vertical-align: top; width: 50%;">
+    <td style="text-align: center; border: none; vertical-align: top; width: 45%;">
       <img src="documents/media/depth_comparison_frame_35.png" style="width: 100%;">
       <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" style="width: 100%;">
       <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
     </td>
   </tr>
 </table>
--->
 
+
+<!--
 <p align="center">
       <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" alt="Indoor Visual Comparison" width="45%" align="left">
       <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" alt="Outdoor Visual Comparison" width="45%" align="right">
 </p>
+-->
 
+
+<!--
 <table class="images" width="100%"  style="border:0; width:100%;">
     <tr style="border: 0px;">
         <td width="50%" style="border:0px; width:50%">
@@ -50,7 +54,7 @@ The system leverages advanced computer vision techniques and neural networks to 
         </td>
     </tr>
 </table>
-
+-->
 
 
 
