@@ -49,6 +49,19 @@ Installation guide: [Docker Installation](https://docs.docker.com/engine/install
 To use Intel RealSense cameras with ROS, install the necessary ROS package for your version.  
 Installation guide: [Intel® RealSense™ ROS Wrapper](https://dev.intelrealsense.com/docs/ros2-wrapper)
 
+### Additional Requirements:
+
+```bash
+git clone https://github.com/RazTurgeman97/depth-estimation-project.git
+cd depth-estimation-project
+pip install -r requirements.txt
+```
+
+#### ONNX Runtime
+
+For Nvidia GPU computers: ```pip install onnxruntime-gpu```
+
+Otherwise: ```pip install onnxruntime```
 
 
 # Post-Instalition Instructions:
