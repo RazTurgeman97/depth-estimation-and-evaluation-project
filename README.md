@@ -47,8 +47,8 @@ The system leverages advanced computer vision techniques and neural networks to 
 </table>
 
 <p align="center">
-      <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" alt="Indoor Visual Comparison" align="left">
-      <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" alt="Outdoor Visual Comparison" align="right">
+      <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" alt="Indoor Visual Comparison" width="45%" align="left">
+      <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" alt="Outdoor Visual Comparison" width="45%" align="right">
 </p>
 
 
