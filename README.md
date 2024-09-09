@@ -3,17 +3,18 @@ This repository contains the work for my Bachelor of Science (B.Sc.) degree in M
 
 The system leverages advanced computer vision techniques and neural networks to estimate depth from stereo camera inputs, offering valuable insights for applications in robotics and autonomous systems. This repository includes detailed instructions for setting up the project environment using Docker to ensure compatibility and ease of deployment.
 
-<div style="text-align: center;">
-  <div style="display: inline-block; width: 45%; margin-right: 5%;">
-    <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" style="width: 100%;" />
-    <p><strong>Figure 1:</strong> Indoor Visual Comparison</p>
-  </div>
-  <div style="display: inline-block; width: 45%;">
-    <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" style="width: 100%;" />
-    <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
-  </div>
-</div>
-
+<table>
+  <tr>
+    <td style="text-align: center;">
+      <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" style="width: 100%;">
+      <p><strong>Figure 1:</strong> Indoor Visual Comparison</p>
+    </td>
+    <td style="text-align: center;">
+      <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" style="width: 100%;">
+      <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
+    </td>
+  </tr>
+</table>
 
 
 
