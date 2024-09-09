@@ -29,7 +29,7 @@ The system leverages advanced computer vision techniques and neural networks to 
 </td>
 -->
 
-<div style="display: flex; justify-content: space-between; align-items: flex-start; width: 45%;">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
   <div style="width: 45%; text-align: center;">
     <img src="documents/media/depth_comparison_frame_97.png" style="width: 45%;" align="left">
     <img src="documents/media/indoor_gif.gif" style="width: 45%;" alt="Indoor Visual Comparison" align="left">
