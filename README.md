@@ -19,35 +19,37 @@ The system leverages advanced computer vision techniques and neural networks to 
   - [Startup Command Execution](#startup-command-execution)
 - [Common Errors](#common-errors)
 
-# Requirements for Project Setup:
+## Requirements for Project Setup:
 
-## NVIDIA Container Runtime:
+### NVIDIA Container Runtime:
 
-Ensure you have the NVIDIA container runtime installed to enable GPU acceleration in Docker containers.
+Ensure you have the NVIDIA container runtime installed to enable GPU acceleration in Docker containers.  
 Install guide: [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
 
-## CUDA Toolkit:
+### CUDA Toolkit:
 
-CUDA is required for GPU computing with your neural network models.
+CUDA is required for GPU computing with your neural network models.  
 Download and install from: [NVIDIA CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit)
 
-## cuDNN:
+### cuDNN:
 
-CUDA Deep Neural Network library (cuDNN) is required for accelerating deep learning networks.
+CUDA Deep Neural Network library (cuDNN) is required for accelerating deep learning networks.  
 Download and install from: [NVIDIA cuDNN](https://developer.nvidia.com/cudnn)
 
-### for whole Nvidia CUDA guide follow the instruction from: [NVIDIA CUDA Installation Guide for Linux](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/)
+#### for whole Nvidia CUDA guide follow the instruction from: [NVIDIA CUDA Installation Guide for Linux](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/)
 
 
-## Docker:
+### Docker:
 
-Install Docker to run your containerized application.
+Install Docker to run your containerized application.  
 Installation guide: [Docker Installation](https://docs.docker.com/engine/install/ubuntu/)
 
-ROS Wrapper for Intel® RealSense™ cameras:
+### ROS Wrapper for Intel® RealSense™ cameras:
 
-To use Intel RealSense cameras with ROS, install the necessary ROS package for your version.
+To use Intel RealSense cameras with ROS, install the necessary ROS package for your version.  
 Installation guide: [Intel® RealSense™ ROS Wrapper](https://dev.intelrealsense.com/docs/ros2-wrapper)
+
+
 
 # Post-Instalition Instructions:
 
