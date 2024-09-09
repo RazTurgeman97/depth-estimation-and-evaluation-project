@@ -219,6 +219,7 @@ After rebooting, check Docker runtime settings again:
 docker info | grep -i runtime
 ```
 
+# Common Errors
 
 ## If you get "chown: cannot access '/var/run/docker.sock': No such file or directory"
 
@@ -256,6 +257,130 @@ sudo systemctl start docker
 ```
 
 Check Docker info to see if the NVIDIA runtime is now the default:
+
+```bash
+docker info | grep -i runtime
+```
+
+## Troubleshooting nvidia runtime:
+
+### Check Permissions:
+
+```bash
+ls -l /usr/bin/nvidia-container-runtime
+```
+
+You should see something like this:
+
+```bash
+-rwxr-xr-x 1 root root 3163080 Jul 18  2023 /usr/bin/nvidia-container-runtime
+```
+
+If the permissions are not correct, set them to 755:
+
+```bash
+sudo chmod 755 /usr/bin/nvidia-container-runtime
+```
+
+### Applying changes:
+
+1. ensure the Docker service is stopped.
+
+```bash
+sudo systemctl stop docker
+```
+
+Now, run the Docker daemon manually to check for configuration errors:
+
+
+```bash
+sudo dockerd --config-file /etc/docker/daemon.json --config-file /etc/docker/daemon-nvidia.json
+```
+
+If the Docker daemon is still running manually in your terminal, stop it by pressing Ctrl+C.
+
+2. Start Docker Service.
+
+```bash
+sudo systemctl start docker
+```
+
+3. Check Docker info to see if the NVIDIA runtime is now the default:
+
+```bash
+sudo docker info | grep -i runtime
+```
+
+You should see:
+
+```bash
+Runtimes: nvidia runc io.containerd.runc.v2
+Default Runtime: nvidia
+```
+
+### If you get an ERROR: Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+
+Start Docker Service.
+
+```bash
+sudo systemctl start docker
+```
+
+ Enable Docker to Start on Boot (Optional)
+
+ ```bash
+sudo systemctl enable docker
+```
+
+Verify Docker Service Status
+
+ ```bash
+sudo systemctl status docker
+```
+
+Check Docker info to see if the NVIDIA runtime is now the default:
+
+```bash
+sudo docker info | grep -i runtime
+```
+
+### Check Docker Group Membership
+
+Ensure your user is part of the docker group. This will allow you to run Docker commands without needing sudo.
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+### Check Docker Socket Permissions
+
+Verify the permissions on the Docker socket:
+
+```bash
+ls -l /var/run/docker.sock
+```
+
+The output should look like this:
+
+```bash
+srw-rw---- 1 root docker 0 Jul 14 17:11 /var/run/docker.sock
+```
+
+If the permissions are not correct, you can adjust them:
+
+```bash
+sudo chmod 660 /var/run/docker.sock
+sudo chown root:docker /var/run/docker.sock
+```
+
+Restart the Docker service to ensure all changes take effect:
+
+```bash
+sudo systemctl restart docker
+```
+
+Check Docker info again:
+
 
 ```bash
 docker info | grep -i runtime
