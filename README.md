@@ -10,6 +10,8 @@ The system leverages advanced computer vision techniques and neural networks to 
   - [cuDNN](#cudnn)
   - [Docker](#docker)
   - [ROS Wrapper for Intel® RealSense™ cameras](#ros-wrapper-for-intel-realsense-cameras)
+  - [Additional Requirements](#additional-requirements)
+  - [ONNX Runtime](#onnx-runtime)
 - [Post-Installation Instructions](#post-installation-instructions)
   - [Enable NVIDIA Runtime After Reboot](#enable-nvidia-runtime-after-reboot)
   - [To Use NVIDIA Runtime](#to-use-nvidia-runtime)
