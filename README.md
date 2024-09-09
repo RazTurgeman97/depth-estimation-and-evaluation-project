@@ -46,19 +46,22 @@ The system leverages advanced computer vision techniques and neural networks to 
 
 
 
-<div style="display: flex; justify-content: space-between; width: 100%;">
-  <div style="flex: 1; text-align: center; margin-right: 10px;">
-    <img src="documents/media/depth_comparison_frame_97.png" style="width: 45%;" alt="Indoor Visual Comparison">
-    <img src="documents/media/indoor_gif.gif" style="width: 45%;" alt="Indoor Visual Comparison">
+<div style="display: flex; justify-content: space-between; align-items: center;">
+
+  <div style="text-align: center; width: 48%;">
+    <img src="documents/media/depth_comparison_frame_97.png" style="width: 100%;" alt="Depth Comparison Frame 97">
+    <img src="documents/media/indoor_gif.gif" style="width: 100%;" alt="Indoor Visual Comparison">
     <p><strong>Figure 1:</strong> Indoor Visual Comparison</p>
   </div>
-  
-  <div style="flex: 1; text-align: center; margin-left: 10px;">
-    <img src="documents/media/depth_comparison_frame_35.png" style="width: 45%;" alt="Outdoor Visual Comparison">
-    <img src="documents/media/outdoor_gif.gif" style="width: 45%;" alt="Outdoor Visual Comparison">
+
+  <div style="text-align: center; width: 48%;">
+    <img src="documents/media/depth_comparison_frame_35.png" style="width: 100%;" alt="Depth Comparison Frame 35">
+    <img src="documents/media/outdoor_gif.gif" style="width: 100%;" alt="Outdoor Visual Comparison">
     <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
   </div>
+
 </div>
+
 
 
 <!--
