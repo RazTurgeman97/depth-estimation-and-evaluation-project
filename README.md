@@ -33,16 +33,20 @@ The system leverages advanced computer vision techniques and neural networks to 
 <img src="documents/media/combined_gif.gif" style="width: 100%;">
 
 
+<div style="display: flex; justify-content: space-between; align-items: center;">
 
-<div style="display: flex; justify-content: space-between;">
-  <img src="documents/media/depth_comparison_frame_97.png" style="width: 45%;">
-  <img src="documents/media/depth_comparison_frame_35.png" style="width: 45%;">
+  <div style="width: 45%; text-align: center;">
+    <img src="documents/media/combined_images.png" style="width: 100%;" alt="Indoor Visual Comparison">
+    <p><strong>Indoor Visual Comparison</strong></p>
+  </div>
+
+  <div style="width: 45%; text-align: center;">
+    <img src="documents/media/combined_gif.gif" style="width: 100%;" alt="Outdoor Visual Comparison">
+    <p><strong>Outdoor Visual Comparison</strong></p>
+  </div>
+
 </div>
 
-<div style="display: flex; justify-content: space-between;">
-  <img src="documents/media/indoor_gif.gif" style="width: 40%;" alt="Indoor Visual Comparison">
-  <img src="documents/media/outdoor_gif.gif" style="width: 40%;" alt="Outdoor Visual Comparison">
-</div>
 
 
 <!--
