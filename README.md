@@ -49,7 +49,7 @@ The Project's Report can be found in [documents](documents/).
     - [Check `config.toml`](#check-configtoml)
     - [Reload and Restart Docker](#reload-and-restart-docker)
   - [Startup Command Execution](#startup-command-execution)
-- [Instructions for Using the Containers](#instructions)
+- [Instructions for Using the Containers](#instructions-for-using-the-containers)
   - [Communication](#communication)
   - [Camera Initialization](#camera-initialization)
   - [Stereo Triangulation](#stereo-triangulation)
