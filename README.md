@@ -39,8 +39,8 @@ The system leverages advanced computer vision techniques and neural networks to 
 </div>
 
 <div style="display: flex; justify-content: space-between;">
-  <img src="documents/media/indoor_gif.gif" style="width: 45%;" alt="Indoor Visual Comparison">
-  <img src="documents/media/outdoor_gif.gif" style="width: 45%;" alt="Outdoor Visual Comparison">
+  <img src="documents/media/indoor_gif.gif" style="width: 40%;" alt="Indoor Visual Comparison">
+  <img src="documents/media/outdoor_gif.gif" style="width: 40%;" alt="Outdoor Visual Comparison">
 </div>
 
 
