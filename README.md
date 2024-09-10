@@ -3,7 +3,7 @@ This repository contains the work for my Bachelor of Science (B.Sc.) degree in M
 
 The system leverages advanced computer vision techniques and neural networks to estimate depth from stereo camera inputs, offering valuable insights for applications in robotics and autonomous systems. This repository includes detailed instructions for setting up the project environment using Docker to ensure compatibility and ease of deployment.
 
-The Projectc's Report can be found in [documents](#documents)
+The Project's Report can be found in [documents](documents/).
 
 <!--
 <img src="documents/media/combined_images.png" style="width: 100%;">
