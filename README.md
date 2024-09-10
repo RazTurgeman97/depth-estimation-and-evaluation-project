@@ -23,7 +23,7 @@ The system leverages advanced computer vision techniques and neural networks to 
   <!-- Single caption centered below both images -->
   <div style="width: 100%; text-align: center; margin-top: 10px;">
     <p style="width: 100%; text-align: center;">
-      <strong>Indoor Visual Comparison (Left Side) and Outdoor Visual Comparison (Right Side)</strong>
+      <strong>                     Indoor Visual Comparison (Left Side) and Outdoor Visual Comparison (Right Side)</strong>
     </p>
   </div>
 
