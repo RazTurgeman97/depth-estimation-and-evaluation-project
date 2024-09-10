@@ -3,31 +3,6 @@ This repository contains the work for my Bachelor of Science (B.Sc.) degree in M
 
 The system leverages advanced computer vision techniques and neural networks to estimate depth from stereo camera inputs, offering valuable insights for applications in robotics and autonomous systems. This repository includes detailed instructions for setting up the project environment using Docker to ensure compatibility and ease of deployment.
 
-<!-- 
-<div style="display: flex; justify-content: center;">
-  <div style="text-align: center; margin-right: 20px;">
-    <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" style="width: 100%;">
-    <p><strong>Figure 1:</strong> Indoor Visual Comparison</p>
-  </div>
-  <div style="text-align: center;">
-    <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" style="width: 100%;">
-    <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
-  </div>
-</div>
--->
-
-<!-- 
-<td style="text-align: center; border: none; vertical-align: top; width: 45%;" align="left">
-  <img src="documents/media/depth_comparison_frame_97.png" style="width: 45%;" align="left">
-  <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" alt="Indoor Visual Comparison" style="width: 45%;" align="left">
-  <p><strong>Figure 1:</strong> Indoor Visual Comparison</p>
-</td>
-<td style="text-align: center; border: none; vertical-align: top; width: 45%;" align="right">
-  <img src="documents/media/depth_comparison_frame_35.png" style="width: 45%;" align="right">
-  <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" style="width: 45%;" align="right">
-  <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
-</td>
--->
 
 <img src="documents/media/combined_images.png" style="width: 100%;">
 <img src="documents/media/combined_gif.gif" style="width: 100%;">
@@ -48,75 +23,11 @@ The system leverages advanced computer vision techniques and neural networks to 
   <!-- Captions centered at the bottom -->
   <div style="display: flex; justify-content: space-between; width: 100%; margin-top: 10px;">
     <div style="width: 45%; text-align: center;">
-      <p><strong>Indoor Visual Comparison</strong></p>
-    </div>
-    <div style="width: 45%; text-align: center;">
-      <p><strong>Outdoor Visual Comparison</strong></p>
+      <p><strong>Indoor Visual Comparison (Left Side) and Outdoor Visual Comparison (Right Side)</strong></p>
     </div>
   </div>
 
 </div>
-
-
-
-
-<!--
-<div style="display: flex; justify-content: space-between; align-items: flex-start; width: 45%;">
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 45%; text-align: center;" align="left">
-    <img src="documents/media/depth_comparison_frame_97.png" style="width: 45%;">
-    <img src="documents/media/indoor_gif.gif" style="width: 45%; text-align: center;" alt="Indoor Visual Comparison">
-    <p><strong>Figure 1:</strong> Indoor Visual Comparison</p>
-  </div>
-</div>
-
-<div style="display: flex; justify-content: space-between; align-items: flex-start; width: 45%;">
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 45%; text-align: center;" align="right">
-    <img src="documents/media/depth_comparison_frame_35.png" style="width: 45%;">
-    <img src="documents/media/outdoor_gif.gif" style="width: 45%; text-align: center;" alt="Outdoor Visual Comparison">
-    <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
-  </div>
-</div>
--->
-
-<!--
-<div style="display: flex; justify-content: space-between; align-items: flex-start; width: 45%;" align="left">
-  <div style="text-align: center; width: 45%;">
-    <img src="documents/media/depth_comparison_frame_97.png" style="width: 45%;" alt="Depth Comparison Frame 97">
-    <img src="documents/media/indoor_gif.gif" style="width: 45%;" alt="Indoor Visual Comparison">
-    <p><strong>Figure 1:</strong> Indoor Visual Comparison</p>
-  </div>
-
-  <div style="text-align: center; width: 45%;" align="right">
-    <img src="documents/media/depth_comparison_frame_35.png" style="width: 45%;" alt="Depth Comparison Frame 35">
-    <img src="documents/media/outdoor_gif.gif" style="width: 45%;" alt="Outdoor Visual Comparison">
-    <p><strong>Figure 2:</strong> Outdoor Visual Comparison</p>
-  </div>
-</div>
--->
-
-<!--
-<p align="center">
-      <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" alt="Indoor Visual Comparison" width="45%" align="left">
-      <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison" alt="Outdoor Visual Comparison" width="45%" align="right">
-</p>
--->
-
-
-<!--
-<table class="images" width="100%"  style="border:0; width:100%;">
-    <tr style="border: 0px;">
-        <td width="50%" style="border:0px; width:50%">
-            <img src="documents/media/depth_comparison_frame_97.png"/>
-            <img src="documents/media/indoor_gif.gif" alt="Indoor Visual Comparison" alt="Indoor Visual Comparison"/>
-        </td>
-        <td width="50%" style="border:0px; width:50%">
-            <img src="documents/media/depth_comparison_frame_35.png"/>
-            <img src="documents/media/outdoor_gif.gif" alt="Outdoor Visual Comparison"/>
-        </td>
-    </tr>
-</table>
--->
-
 
 
 ## Table of Contents
