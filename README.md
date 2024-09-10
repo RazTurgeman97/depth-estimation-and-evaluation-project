@@ -95,11 +95,11 @@ For Nvidia GPU computers: ```pip install onnxruntime-gpu```
 Otherwise: ```pip install onnxruntime```
 
 
-# Post-Instalition Instructions:
+# Post-Installation Instructions:
 
 ## Enable nvidia runtime after reboot:
 
-If you already conducted the instruction below and for some reason you do not want to create a custom systemd service, run the following commands and you are good to go.
+If you already did the instruction below and for some reason you don't want to create a custom systemd service, you can just run the following commands and you are good to go.
 
 ```bash
 sudo systemctl stop docker.socket
@@ -444,7 +444,7 @@ The ONNX models used in this project were converted from the original PyTorch im
 - License of the models: [Apache-2.0 License](https://github.com/megvii-research/CREStereo/blob/master/LICENSE)
 
 ### References
-Here are the original sources and references for the models and datasets used in this project:
+Here are the sources and references for the models and datasets used in this project:
 
 - [CREStereo Model](https://github.com/megvii-research/CREStereo)
 - [HITNET Model](https://github.com/google-research/google-research/tree/master/hitnet)
