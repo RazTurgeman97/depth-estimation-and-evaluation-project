@@ -56,7 +56,6 @@ The Project's Report can be found in [documents](documents/).
   - [Neural Networks Depth Estimation](#neural-networks-depth-estimation)
   - [Recording Topics](#recording-topics)
   - [Depth Evaluation](#depth-evaluation)
-  - [Auxiliary Packages for Syncing and Trimming](#auxiliary-packages-for-syncing-and-trimming)
 - [Common Errors](#common-errors)
 - [Credits](#credits)
 
