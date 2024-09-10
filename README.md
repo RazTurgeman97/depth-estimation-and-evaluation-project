@@ -29,6 +29,8 @@ The system leverages advanced computer vision techniques and neural networks to 
 </td>
 -->
 
+<img src="documents/media/depth_comparison_frame_97.png" style="width: 45%;"> <img src="documents/media/depth_comparison_frame_35.png" style="width: 45%;">
+
 
 <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 45%;">
   <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 45%; text-align: center;" align="left">
