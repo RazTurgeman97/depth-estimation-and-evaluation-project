@@ -49,14 +49,13 @@ The Project's Report can be found in [documents](documents/).
     - [Check `config.toml`](#check-configtoml)
     - [Reload and Restart Docker](#reload-and-restart-docker)
   - [Startup Command Execution](#startup-command-execution)
-- [Instructions](#instructions)
-  - [General Instructions for Using the Containers](#general-instructions-for-using-the-containers)
-    - [Communication](#communication)
-    - [Camera Initialization](#camera-initialization)
-    - [Stereo Triangulation](#stereo-triangulation)
-    - [Neural Networks Depth Estimation](#neural-networks-depth-estimation)
-    - [Recording Topics](#recording-topics)
-    - [Depth Evaluation](#depth-evaluation)
+- [Instructions for Using the Containers](#instructions)
+  - [Communication](#communication)
+  - [Camera Initialization](#camera-initialization)
+  - [Stereo Triangulation](#stereo-triangulation)
+  - [Neural Networks Depth Estimation](#neural-networks-depth-estimation)
+  - [Recording Topics](#recording-topics)
+  - [Depth Evaluation](#depth-evaluation)
   - [Auxiliary Packages for Syncing and Trimming](#auxiliary-packages-for-syncing-and-trimming)
 - [Common Errors](#common-errors)
 - [Credits](#credits)
@@ -274,11 +273,9 @@ After rebooting, check Docker runtime settings again:
 docker info | grep -i runtime
 ```
 
-# Instructions
+# Instructions for Using the Containers
 
-## General Instructions for Using the Containers
-
-### Communication:
+## Communication:
 
 Each Docker container used in this project is pre-configured with all necessary dependencies, including ROS2 and neural network packages. No additional installations are required.
 
@@ -291,7 +288,7 @@ To bridge data access between the Docker container and the host machine (for exa
 ```
 **Note:** Replace "student" with your actual username or replace the whole path to the actual path of your ros2 workspace.
 
-### Camera Initialization:
+## Camera Initialization:
 
 The camera initialization container is responsible for launching and configuring the Intel RealSense D455 camera. By default, it is set to launch the camera with a resolution of 640x480 at 30 FPS. If desired, you can modify these settings by editing the custom_config.yaml file.
 
@@ -305,7 +302,7 @@ to use default launch: ```ros2 run realsense2_camera realsense2_camera_node```
 
 Customization: You can change the resolution or frame rate by modifying the custom config file at the provided path: ```camera_initialization/src/config/custom_config.yaml```.
 
-### stereo_triangulation:
+## Stereo Triangulation:
 
 The stereo triangulation container handles sparse depth estimation using a stereo camera setup. All node settings can be adjusted as needed, Feel free to adjust the node as you desire.
 
@@ -315,7 +312,7 @@ To run the stereo triangulation node:
 ros2 run stereo_triangulation triangulation_node.py
 ```
 
-### Neural Networks Depth Estimation:
+## Neural Networks Depth Estimation:
 
 This container applies both CRE and HITNET neural networks for depth estimation. The node supports automatic frame detection and calibration. Both models are applied by default, but you can comment out one if you prefer to run only one model.
 
@@ -327,7 +324,7 @@ To run the neural network depth estimation node:
 ros2 run neural_network_stereo_depth_pkg neural_network_depth_estimation_node
 ```
 
-### Recording Topics:
+## Recording Topics:
 
 To record the necessary topics for depth estimation, use the following command to start a ROS2 bag recording. Replace <recording_name> with your desired file name for the recording.
 
@@ -335,7 +332,7 @@ To record the necessary topics for depth estimation, use the following command t
 ros2 bag record -o <recording_name> /camera/camera/infra1/image_rect_raw /camera/camera/infra2/image_rect_raw /camera_triangulation/raw_depth_map /camera_triangulation/depth_image /camera/camera/depth/image_rect_raw /CRE/raw_depth /HITNET/raw_depth
 ```
 
-### Depth Evaluation
+## Depth Evaluation
 
 The depth evaluation container is used to analyze recordings that have synchronized frames. Although the node published synchronized frames, It is advised to use the [Auxiliary Packages](Auxiliary_Packages/) for syncing and trimming your recordings: sync_topics_pkg and bag_trim_pkg.
 
