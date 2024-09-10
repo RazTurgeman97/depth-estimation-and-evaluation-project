@@ -20,12 +20,12 @@ The system leverages advanced computer vision techniques and neural networks to 
     </div>
   </div>
 
-  <!-- Captions centered at the bottom -->
-  <div style="display: flex; justify-content: space-between; width: 100%; margin-top: 10px;">
-    <div style="width: 45%; text-align: center;">
-      <p><strong>Indoor Visual Comparison (Left Side) and Outdoor Visual Comparison (Right Side)</strong></p>
-    </div>
+  <!-- Single caption centered below both images -->
+  <div style="text-align: center; width: 100%; margin-top: 10px;">
+    <p><strong>Indoor Visual Comparison (Left Side) and Outdoor Visual Comparison (Right Side)</strong></p>
   </div>
+
+</div>
 
 </div>
 
