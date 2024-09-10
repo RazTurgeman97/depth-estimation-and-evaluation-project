@@ -7,27 +7,27 @@ The system leverages advanced computer vision techniques and neural networks to 
 <img src="documents/media/combined_images.png" style="width: 100%;">
 <img src="documents/media/combined_gif.gif" style="width: 100%;">
 
-
 <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
 
   <!-- Images displayed side by side -->
   <div style="display: flex; justify-content: space-between; width: 100%;">
-    <div style="width: 45%; text-align: center;">
+    <div style="width: 45%;">
       <img src="documents/media/combined_images.png" style="width: 100%;" alt="Indoor Visual Comparison">
     </div>
-    <div style="width: 45%; text-align: center;">
+    <div style="width: 45%;">
       <img src="documents/media/combined_gif.gif" style="width: 100%;" alt="Outdoor Visual Comparison">
     </div>
   </div>
 
   <!-- Single caption centered below both images -->
-  <div style="text-align: center; width: 100%; margin-top: 10px;">
-    <p><strong>Indoor Visual Comparison (Left Side) and Outdoor Visual Comparison (Right Side)</strong></p>
+  <div style="width: 100%; text-align: center; margin-top: 10px;">
+    <p style="width: 100%; text-align: center;">
+      <strong>Indoor Visual Comparison (Left Side) and Outdoor Visual Comparison (Right Side)</strong>
+    </p>
   </div>
 
 </div>
 
-</div>
 
 
 ## Table of Contents
