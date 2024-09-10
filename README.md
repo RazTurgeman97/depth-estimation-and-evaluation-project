@@ -29,7 +29,7 @@ The system leverages advanced computer vision techniques and neural networks to 
 </td>
 -->
 
-<img src="documents/media/depth_comparison_frame_97.png" style="width: 50%;"> <img src="documents/media/depth_comparison_frame_35.png" style="width: 50%;">
+<img src="documents/media/depth_comparison_frame_97.png" style="width: 49.5%;"> <img src="documents/media/depth_comparison_frame_35.png" style="width: 49.5%;">
 <img src="documents/media/indoor_gif.gif" style="width: 100%;">
 
 
