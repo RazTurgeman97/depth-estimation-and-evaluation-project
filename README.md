@@ -33,19 +33,30 @@ The system leverages advanced computer vision techniques and neural networks to 
 <img src="documents/media/combined_gif.gif" style="width: 100%;">
 
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
+<div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
 
-  <div style="width: 45%; text-align: center;">
-    <img src="documents/media/combined_images.png" style="width: 100%;" alt="Indoor Visual Comparison">
-    <p><strong>Indoor Visual Comparison</strong></p>
+  <!-- Images displayed side by side -->
+  <div style="display: flex; justify-content: space-between; width: 100%;">
+    <div style="width: 45%; text-align: center;">
+      <img src="documents/media/combined_images.png" style="width: 100%;" alt="Indoor Visual Comparison">
+    </div>
+    <div style="width: 45%; text-align: center;">
+      <img src="documents/media/combined_gif.gif" style="width: 100%;" alt="Outdoor Visual Comparison">
+    </div>
   </div>
 
-  <div style="width: 45%; text-align: center;">
-    <img src="documents/media/combined_gif.gif" style="width: 100%;" alt="Outdoor Visual Comparison">
-    <p><strong>Outdoor Visual Comparison</strong></p>
+  <!-- Captions centered at the bottom -->
+  <div style="display: flex; justify-content: space-between; width: 100%; margin-top: 10px;">
+    <div style="width: 45%; text-align: center;">
+      <p><strong>Indoor Visual Comparison</strong></p>
+    </div>
+    <div style="width: 45%; text-align: center;">
+      <p><strong>Outdoor Visual Comparison</strong></p>
+    </div>
   </div>
 
 </div>
+
 
 
 
