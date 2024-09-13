@@ -108,7 +108,7 @@ Otherwise: ```pip install onnxruntime```
 
 ## Enable nvidia runtime after reboot:
 
-If you already did the instruction below and for some reason you don't want to create a custom systemd service, you can just run the following commands and you are good to go.
+**If you already did the instruction below** and for some reason you don't want to create a custom systemd service, you can just run the following commands and you are good to go.
 
 ```bash
 sudo systemctl stop docker.socket
