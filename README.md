@@ -42,13 +42,6 @@ The Project's Report can be found in [documents](documents/).
   - [ROS Wrapper for Intel® RealSense™ cameras](#ros-wrapper-for-intel-realsense-cameras)
   - [Additional Requirements](#additional-requirements)
   - [ONNX Runtime](#onnx-runtime)
-- [Post-Installation Instructions](#post-installation-instructions)
-  - [Enable NVIDIA Runtime After Reboot](#enable-nvidia-runtime-after-reboot)
-  - [To Use NVIDIA Runtime](#to-use-nvidia-runtime)
-    - [Check `daemon.json`](#check-daemonjson)
-    - [Check `config.toml`](#check-configtoml)
-    - [Reload and Restart Docker](#reload-and-restart-docker)
-  - [Startup Command Execution](#startup-command-execution)
 - [Instructions for Using the Containers](#instructions-for-using-the-containers)
   - [Communication](#communication)
   - [Camera Initialization](#camera-initialization)
@@ -56,6 +49,13 @@ The Project's Report can be found in [documents](documents/).
   - [Neural Networks Depth Estimation](#neural-networks-depth-estimation)
   - [Recording Topics](#recording-topics)
   - [Depth Evaluation](#depth-evaluation)
+- [Post-Installation Instructions](#post-installation-instructions)
+  - [Enable NVIDIA Runtime After Reboot](#enable-nvidia-runtime-after-reboot)
+  - [To Use NVIDIA Runtime](#to-use-nvidia-runtime)
+    - [Check `daemon.json`](#check-daemonjson)
+    - [Check `config.toml`](#check-configtoml)
+    - [Reload and Restart Docker](#reload-and-restart-docker)
+  - [Startup Command Execution](#startup-command-execution)
 - [Common Errors](#common-errors)
 - [Credits](#credits)
 
@@ -102,6 +102,91 @@ pip install -r requirements.txt
 For Nvidia GPU computers: ```pip install onnxruntime-gpu```
 
 Otherwise: ```pip install onnxruntime```
+
+
+# Instructions for Using the Containers
+
+## Communication:
+
+Each Docker container used in this project is pre-configured with all necessary dependencies, including ROS2 and neural network packages. No additional installations are required.
+
+The containers are set up to use **ROS domain ID 97**, which allows communication between nodes over a shared network. Additionally, the **Cyclone DDS** middleware is configured to be the default ROS 2 DDS implementation. The container environment is also configured to work with the provided `cyclonedds.xml` configuration file for DDS communication settings.
+
+To bridge data access between the Docker container and the host machine (for example, for large recordings), the following volume is mounted using the following line in the devcontainer.json file:
+
+```bash
+--volume=/home/student/ros2_ws:/mnt/data
+```
+**Note:** Replace "student" with your actual username or replace the whole path to the actual path of your ros2 workspace.
+
+## Camera Initialization:
+
+The camera initialization container is responsible for launching and configuring the Intel RealSense D455 camera. By default, it is set to launch the camera with a resolution of 640x480 at 30 FPS. If desired, you can modify these settings by editing the custom_config.yaml file.
+
+Default launch settings: Uses the predefined settings in the custom_config.yaml using the command:
+
+```bash
+ros2 launch realsense2_camera rs_launch_get_params_from_yaml.py config_file:="//workspaces/depth-estimation-project/camera_initialization/src/config/custom_config.yaml"
+```
+
+to use default launch: ```ros2 run realsense2_camera realsense2_camera_node```
+
+Customization: You can change the resolution or frame rate by modifying the custom config file at the provided path: ```camera_initialization/src/config/custom_config.yaml```.
+
+## Stereo Triangulation:
+
+The stereo triangulation container handles sparse depth estimation using a stereo camera setup. All node settings can be adjusted as needed, Feel free to adjust the node as you desire.
+
+To run the stereo triangulation node:
+
+```bash
+ros2 run stereo_triangulation triangulation_node.py
+```
+
+## Neural Networks Depth Estimation:
+
+This container applies both CRE and HITNET neural networks for depth estimation. The node supports automatic frame detection and calibration. Both models are applied by default, but you can comment out one if you prefer to run only one model.
+
+**Important:** The camera calibration data (intrinsic and extrinsic) is specific to the Intel RealSense D455 used on my setup. To adjust this for your camera, use the RealSense Viewer to obtain the necessary calibration data by launching it with the command: ```realsense-viewer```
+
+To run the neural network depth estimation node:
+
+```bash
+ros2 run neural_network_stereo_depth_pkg neural_network_depth_estimation_node
+```
+
+## Recording Topics:
+
+To record the necessary topics for depth estimation, use the following command to start a ROS2 bag recording. Replace <recording_name> with your desired file name for the recording.
+
+```bash
+ros2 bag record -o <recording_name> /camera/camera/infra1/image_rect_raw /camera/camera/infra2/image_rect_raw /camera_triangulation/raw_depth_map /camera_triangulation/depth_image /camera/camera/depth/image_rect_raw /CRE/raw_depth /HITNET/raw_depth
+```
+
+## Depth Evaluation
+
+The depth evaluation container is used to analyze recordings that have synchronized frames. Although the node published synchronized frames, It is advised to use the [Auxiliary Packages](Auxiliary_Packages/) for syncing and trimming your recordings: sync_topics_pkg and bag_trim_pkg.
+
+Move the auxiliary packages to your src directory inside your ros2_ws workspace.
+
+Build the packages using colcon inside your ros2_ws directory:
+
+```bash
+colcon build --packages-select sync_topics_pkg bag_trim_pkg
+```
+
+To ensure only synchronized frames are recorded, use the sync_topics_pkg. After building the package, use the following command to record synchronized topics:
+
+```bash
+ros2 bag record -o <recording_name> /camera/camera/infra1/image_rect_raw_ /camera/camera/infra2/image_rect_raw_ /camera_triangulation/raw_depth_map_ /camera_triangulation/depth_image_ /camera/camera/depth/image_rect_raw_ /CRE/raw_depth_ /HITNET/raw_depth_
+```
+**Note:** The depth evaluation node is already pre-configured to use both updated topic names for synchronized frames and original topic names (just uncomment the unnecessary inside the depth eval node).
+
+To run the depth evaluation node on a processed and synchronized recording, use the following command:
+
+```bash
+ros2 run depth_eval depth_eval_node
+```
 
 
 # Post-Installation Instructions:
@@ -272,89 +357,6 @@ After rebooting, check Docker runtime settings again:
 docker info | grep -i runtime
 ```
 
-# Instructions for Using the Containers
-
-## Communication:
-
-Each Docker container used in this project is pre-configured with all necessary dependencies, including ROS2 and neural network packages. No additional installations are required.
-
-The containers are set up to use **ROS domain ID 97**, which allows communication between nodes over a shared network. Additionally, the **Cyclone DDS** middleware is configured to be the default ROS 2 DDS implementation. The container environment is also configured to work with the provided `cyclonedds.xml` configuration file for DDS communication settings.
-
-To bridge data access between the Docker container and the host machine (for example, for large recordings), the following volume is mounted using the following line in the devcontainer.json file:
-
-```bash
---volume=/home/student/ros2_ws:/mnt/data
-```
-**Note:** Replace "student" with your actual username or replace the whole path to the actual path of your ros2 workspace.
-
-## Camera Initialization:
-
-The camera initialization container is responsible for launching and configuring the Intel RealSense D455 camera. By default, it is set to launch the camera with a resolution of 640x480 at 30 FPS. If desired, you can modify these settings by editing the custom_config.yaml file.
-
-Default launch settings: Uses the predefined settings in the custom_config.yaml using the command:
-
-```bash
-ros2 launch realsense2_camera rs_launch_get_params_from_yaml.py config_file:="//workspaces/depth-estimation-project/camera_initialization/src/config/custom_config.yaml"
-```
-
-to use default launch: ```ros2 run realsense2_camera realsense2_camera_node```
-
-Customization: You can change the resolution or frame rate by modifying the custom config file at the provided path: ```camera_initialization/src/config/custom_config.yaml```.
-
-## Stereo Triangulation:
-
-The stereo triangulation container handles sparse depth estimation using a stereo camera setup. All node settings can be adjusted as needed, Feel free to adjust the node as you desire.
-
-To run the stereo triangulation node:
-
-```bash
-ros2 run stereo_triangulation triangulation_node.py
-```
-
-## Neural Networks Depth Estimation:
-
-This container applies both CRE and HITNET neural networks for depth estimation. The node supports automatic frame detection and calibration. Both models are applied by default, but you can comment out one if you prefer to run only one model.
-
-**Important:** The camera calibration data (intrinsic and extrinsic) is specific to the Intel RealSense D455 used on my setup. To adjust this for your camera, use the RealSense Viewer to obtain the necessary calibration data by launching it with the command: ```realsense-viewer```
-
-To run the neural network depth estimation node:
-
-```bash
-ros2 run neural_network_stereo_depth_pkg neural_network_depth_estimation_node
-```
-
-## Recording Topics:
-
-To record the necessary topics for depth estimation, use the following command to start a ROS2 bag recording. Replace <recording_name> with your desired file name for the recording.
-
-```bash
-ros2 bag record -o <recording_name> /camera/camera/infra1/image_rect_raw /camera/camera/infra2/image_rect_raw /camera_triangulation/raw_depth_map /camera_triangulation/depth_image /camera/camera/depth/image_rect_raw /CRE/raw_depth /HITNET/raw_depth
-```
-
-## Depth Evaluation
-
-The depth evaluation container is used to analyze recordings that have synchronized frames. Although the node published synchronized frames, It is advised to use the [Auxiliary Packages](Auxiliary_Packages/) for syncing and trimming your recordings: sync_topics_pkg and bag_trim_pkg.
-
-Move the auxiliary packages to your src directory inside your ros2_ws workspace.
-
-Build the packages using colcon inside your ros2_ws directory:
-
-```bash
-colcon build --packages-select sync_topics_pkg bag_trim_pkg
-```
-
-To ensure only synchronized frames are recorded, use the sync_topics_pkg. After building the package, use the following command to record synchronized topics:
-
-```bash
-ros2 bag record -o <recording_name> /camera/camera/infra1/image_rect_raw_ /camera/camera/infra2/image_rect_raw_ /camera_triangulation/raw_depth_map_ /camera_triangulation/depth_image_ /camera/camera/depth/image_rect_raw_ /CRE/raw_depth_ /HITNET/raw_depth_
-```
-**Note:** The depth evaluation node is already pre-configured to use both updated topic names for synchronized frames and original topic names (just uncomment the unnecessary inside the depth eval node).
-
-To run the depth evaluation node on a processed and synchronized recording, use the following command:
-
-```bash
-ros2 run depth_eval depth_eval_node
-```
 
 # Common Errors
 
