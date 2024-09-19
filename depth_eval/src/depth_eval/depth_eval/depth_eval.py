@@ -32,7 +32,7 @@ class DepthEvaluationNode(Node):
         self.declare_parameter('stop_processing', False)
 
         # Set mother directory
-        self.motherdir = 'frame_analysis_indoor_merged'
+        self.motherdir = 'Data/frame_analysis_indoor_merged'
 
         # Create directory for saving frames
         self.create_frame_analysis_directory()
