@@ -119,6 +119,15 @@ To bridge data access between the Docker container and the host machine (for exa
 ```
 **Note:** Replace "student" with your actual username or replace the whole path to the actual path of your ros2 workspace.
 
+For ROS Domain ID and cyclone DDS add the following lines to .bashrc:
+
+```bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+
+export ROS_DOMAIN_ID=97
+export ROS_LOCALHOST_ONLY=0
+```
+
 ## Camera Initialization:
 
 The camera initialization container is responsible for launching and configuring the Intel RealSense D455 camera. By default, it is set to launch the camera with a resolution of 640x480 at 30 FPS. If desired, you can modify these settings by editing the custom_config.yaml file.
