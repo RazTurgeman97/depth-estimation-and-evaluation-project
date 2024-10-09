@@ -45,6 +45,7 @@ class DepthEvaluationNode(Node):
         # self.bagfile_path = '/mnt/data/recordings_proc/indoor_recording/indoor_recording_0.db3'
         # self.bagfile_path = '/mnt/data/recordings_proc/outdoor_recording/outdoor_recording_0.db3'
         # self.bagfile_path = '/mnt/data/recordings_trimmed/outdoor_recording/outdoor_recording_0_trimmed.db3'
+        
         self.CRE_topic = '/CRE/raw_depth_'
         self.HITNET_topic = '/HITNET/raw_depth_'
         # self.CRE_topic = '/CRE/raw_depth'
@@ -517,7 +518,6 @@ class DepthEvaluationNode(Node):
             # print(f"EPE Best: {best_epe} - This method ***Enter Promt***.")
             print(f"D1 Best: {best_d1} - This method ***Enter Promt***.")
 
-
     def plot_metrics(self):
         frames = np.arange(1, len(self.metrics["MAE_HITNET"]) + 1)
 
@@ -557,9 +557,6 @@ class DepthEvaluationNode(Node):
             plt.savefig(f'{self.motherdir}/error_progression/error_comp_plot_frame_{idx+1}.png')
             self.get_logger().info(f"{self.motherdir}/error_progression/error_comp_plot_frame_{idx+1}.png")
             plt.close()
-
-
-
 
     def has_converged(self, *metric_keys, threshold=1e-4, window_size=5):
         for key in metric_keys:
@@ -615,7 +612,6 @@ class DepthEvaluationNode(Node):
         # Save the DataFrame to a CSV file for easy access
         df.to_csv(f"{self.motherdir}/metrics_summary.csv")
 
-        
         report = []
         report.append("Summary of Depth Estimation Results:\n")
         
@@ -745,7 +741,6 @@ class DepthEvaluationNode(Node):
                 report_file.write(f"ROI {roi} - HITNET: {errors['HITNET']:.4f}, CRE: {errors['CRE']:.4f}, D455: {errors['D455']:.4f}\n")
                 self.get_logger().info(f"ROI {roi} - HITNET: {errors['HITNET']}, CRE: {errors['CRE']}, D455: {errors['D455']}")
 
-
     def track_error_progression(self):
         plt.figure(figsize=(10, 6))
 
@@ -840,7 +835,6 @@ class DepthEvaluationNode(Node):
             report_file.write(f"Center error: {np.mean(center_error):.4f}\n")
             report_file.write(f"Periphery error: {np.mean(periphery_error):.4f}\n")
 
-
     def compare_model_outputs(self, frame_idx):
         """Compare outputs between models for a specific frame."""
         diff_hitnet_cre = np.abs(self.hitnet_depth - self.cre_depth)
@@ -882,7 +876,6 @@ class DepthEvaluationNode(Node):
 
         self.get_logger().info(f"Cross-model comparison plots saved for frame {frame_idx+1}.")
 
-
     def analyze_model_disagreement(self, frame_idx):
         """Quantify disagreement between models for a specific frame."""
         depth_stack = np.stack([self.hitnet_depth, self.cre_depth, self.d455_depth], axis=0)
@@ -905,7 +898,6 @@ class DepthEvaluationNode(Node):
             report_file.write(f"Average disagreement (variance) among models: {np.mean(disagreement_map):.4f}\n")
 
         self.get_logger().info(f"Model disagreement analysis saved for frame {frame_idx+1}.")
-
 
     def calculate_statistics(self):
         statistics = {}
@@ -943,7 +935,6 @@ class DepthEvaluationNode(Node):
                 report_file.write(f"{key} - First Segment: {first_segment_metrics[key]:.4f}, Second Segment: {second_segment_metrics[key]:.4f}\n")
                 print(f"{key} - First Segment: {first_segment_metrics[key]:.4f}, Second Segment: {second_segment_metrics[key]:.4f}")
 
-
     def visualize_and_save_frame(self, frame_idx, metric_name):
         """Visualize the frame with the largest error and save the overlay image."""
         # Normalize depth maps before overlay
@@ -971,7 +962,6 @@ class DepthEvaluationNode(Node):
 
         self.get_logger().info(f"Overlay visualizations saved for frame {frame_idx+1}.")
 
-
     def generate_summary_report(self):
         with open(f"{self.motherdir}/summary_report.txt", "a") as report_file:
             report_file.write("Depth Estimation Analysis Report\n")
@@ -995,7 +985,6 @@ class DepthEvaluationNode(Node):
                 report_file.write(f"{key} - First Segment: {first_segment_metrics[key]:.4f}, Second Segment: {second_segment_metrics[key]:.4f}\n")
 
         print(f"Summary report generated in {self.motherdir}/summary_report.txt")
-
 
     def check_message_timeout(self):
         # Calculate the time elapsed since the last message was received

@@ -12,7 +12,7 @@ class StereoTriangulationNode(Node):
         super().__init__('stereo_triangulation_node')
         self.bridge = CvBridge()
 
-        # Load camera parameters
+        # Load camera parameters, Originally the function was used to actually load the calibration data from a yaml file.
         self.load_calibration()
         self.get_logger().info("Calibration Data Loaded Successfully.")
 
@@ -33,10 +33,14 @@ class StereoTriangulationNode(Node):
 
         self.get_logger().info("Triangulation Node has started.")
 
+        # Initialize placeholders for the camera images
         self.left_image = None
         self.right_image = None
 
+        # Node exit flag for one spin determination
         self.exit_flag = False
+        
+        # Frame size dictionaty key value for automatic calibration data load.
         self.frame_size_key = None
 
     def load_calibration(self):
@@ -144,6 +148,7 @@ class StereoTriangulationNode(Node):
     def image_callback(self, left_msg, right_msg, depth_msg):
         self.left_image = self.bridge.imgmsg_to_cv2(left_msg, 'bgr8')
         self.right_image = self.bridge.imgmsg_to_cv2(right_msg, 'bgr8')
+        # depth_msp used only for syncronization
 
         if self.frame_size_key is None:
             if not self.select_frame_size_key(self.left_image):
@@ -157,19 +162,34 @@ class StereoTriangulationNode(Node):
     def process_images(self, timestamp):
         if self.left_image is not None and self.right_image is not None:
             orb = cv2.ORB.create()
+            # Creates an ORB (Oriented FAST and Rotated BRIEF) detector for finding keypoints and computing descriptors in the images.
+            
             kp1, des1 = orb.detectAndCompute(self.left_image, None)
             kp2, des2 = orb.detectAndCompute(self.right_image, None)
+            # Detects keypoints and computes descriptors (kp1 for keypoints and des1 for descriptors)
+            
             bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+            # Initializes a brute-force matcher (BFMatcher) to match descriptors between the two images using the Hamming distance. The crossCheck parameter ensures matches are consistent in both directions.
+            
+            # Hamming distance - measures the minimum number of substitutions required to change one string into the other, or equivalently, the minimum number of errors that could have transformed one string into the other. In a more general context, the Hamming distance is one of several string metrics for measuring the edit distance between two sequences.
+            
+        
             matches = bf.match(des1, des2)
+            # Finds the best matches between the descriptors of the left and right images.
 
-            # Select matched points
+            ## Select matched points
             points_left = np.array([kp1[m.queryIdx].pt for m in matches], dtype=np.float32)
             points_right = np.array([kp2[m.trainIdx].pt for m in matches], dtype=np.float32)
 
-            # Triangulate points
+            ## Triangulate points
             points_4d_hom = cv2.triangulatePoints(self.P1, self.P2, points_left.T, points_right.T)
+            # Triangulates the matched points to compute 3D coordinates using the projection matrices (self.P1 and self.P2) of the cameras.
+            
             points_4d = points_4d_hom[:3] / points_4d_hom[3]
+            # Converts the 4D homogeneous coordinates to 3D by normalizing them.
+            
             depth = points_4d[2]
+            
 
             # Filter out invalid depths
             min_depth_threshold = 0.05
