@@ -164,6 +164,8 @@ To run the neural network depth estimation node:
 ros2 run neural_network_stereo_depth_pkg neural_network_depth_estimation_node
 ```
 
+Before changing to the D455 RealSense Camera, I was working with a simple stereo camera. I used Kalibr to calibrate it and used the calibration data stored in the ```calibration-camchain.yaml``` file located in the Stereo Triangulation Directory which also copied into the container using a command in the Dockerfile. Now it has no importance with the current configuration of the project, But I chose to leave it there so it would be easier it adjust the project to your own needs without RealSense camera.
+
 ## Recording Topics:
 
 To record the necessary topics for depth estimation, use the following command to start a ROS2 bag recording. Replace <recording_name> with your desired file name for the recording.
